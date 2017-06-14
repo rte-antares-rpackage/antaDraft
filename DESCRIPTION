@@ -3,11 +3,15 @@ Type: Package
 Title: parse entsoe data into antares format
 Version: 0.0.1
 Authors@R: c(
-    person("David", "Gohel", email = "david.gohel@rte-france.com", c("aut", "cre")),
-    person("Fabiola", "Aravena-Rojas", email = "fabiola.aravena-rojas@rte-france.com", "aut"),
-    person("RTE", role = "cph")
+    person(given = "David", family = "Gohel", 
+      email = "david.gohel@rte-france.com", role = c("aut", "cre")),
+    person(given = "Fabiola", family = "Aravena-Rojas", 
+      email = "fabiola.aravena-rojas@rte-france.com", role = "aut"),
+    person(given = "RTE", role = "cph")
   )
 Description: Read and transform data from entsoe to make them available in antares platform.
 License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true 
+Imports: dplyr, purrr, tibble, utils, magrittr
+RoxygenNote: 6.0.1
