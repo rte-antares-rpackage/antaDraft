@@ -1,0 +1,22 @@
+---
+title: "readme"
+output: rmarkdown::github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Objet
+
+Construction d'une base de données publique contenant des données ANTARES provenant du SI transparency.
+
+Les objectifs premiers du logiciel sont :
+
+- identifier les sources problématiques :
+    * y a t-il des données manquantes et où sont-elles?
+    * y a t-il des données nulles et où sont-elles?
+- quelles données sont mauvaises
+- comment estimer la données identifiée mauvaise
+
+

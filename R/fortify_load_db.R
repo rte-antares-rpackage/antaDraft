@@ -3,23 +3,23 @@ liste_area <- c("AT", "BE", "CH", "DE", "ES", "FR", "GB", "IE", "IT", "IT_CNOR",
 
 globalVariables(c("DateTime", "MapCode", "TotalLoadValue", "DateTime", "%>%", "AreaName", "AreaTypeCode"))
 
+
 #' @importFrom purrr map_df
 #' @importFrom tibble as_tibble
 #' @import magrittr
 #' @importFrom utils read.table
-#' @importFrom dplyr filter mutate group_by summarise transmute bind_rows ungroup
+#' @importFrom dplyr filter mutate
 #' @export
-#' @title parse load data files into a tibble
-#' @description parse check and correct data to build a unique dataset containing
-#' corrected values
+#' @title import load data files into a tibble
+#' @description import load data files into a tibble
 #' @param dir_src data source directory
 #' @note
 #' file are supposed to be UTF-16 encoded.
-fortify_load_db <- function( dir_src ){
+import_load_db <- function( dir_src ){
 
   agg_files <- list.files(dir_src, pattern = "(\\.csv)$", full.names = TRUE)
 
-  load_data <- map_df(agg_files, function(i){
+  map_df(agg_files, function(i){
     dat <- read.table(i, sep="\t", header=T,
                       fileEncoding = "UTF-16LE",
                       stringsAsFactors = FALSE) %>%
@@ -27,6 +27,16 @@ fortify_load_db <- function( dir_src ){
       filter(substr(DateTime,15,19)=="00:00") %>%
       mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S",tz="UTC") )
   })
+
+}
+
+
+#' @importFrom dplyr filter group_by summarise transmute bind_rows ungroup
+#' @export
+#' @title tidy load data
+#' @description tidy and correct load data
+#' @param load_data data returned by \code{\link{import_load_db}}
+fortify_load_db <- function( load_data ){
 
   # donnees pas structurée pareil - a aggreger , pas de doublons
   conso_DE <- load_data %>%

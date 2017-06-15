@@ -2,17 +2,13 @@
 % Please edit documentation in R/fortify_load_db.R
 \name{fortify_load_db}
 \alias{fortify_load_db}
-\title{parse load data files into a tibble}
+\title{tidy load data}
 \usage{
-fortify_load_db(dir_src)
+fortify_load_db(load_data)
 }
 \arguments{
-\item{dir_src}{data source directory}
+\item{load_data}{data returned by \code{\link{import_load_db}}}
 }
 \description{
-parse check and correct data to build a unique dataset containing
-corrected values
-}
-\note{
-file are supposed to be UTF-16 encoded.
+tidy and correct load data
 }

@@ -13,5 +13,8 @@ Description: Read and transform data from entsoe to make them available in antar
 License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true 
-Imports: dplyr, purrr, tibble, utils, magrittr
+Imports: dplyr, purrr, tibble, utils, magrittr, validate
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
