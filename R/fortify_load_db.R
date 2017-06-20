@@ -4,32 +4,6 @@ liste_area <- c("AT", "BE", "CH", "DE", "ES", "FR", "GB", "IE", "IT", "IT_CNOR",
 globalVariables(c("DateTime", "MapCode", "TotalLoadValue", "DateTime", "%>%", "AreaName", "AreaTypeCode"))
 
 
-#' @importFrom purrr map_df
-#' @importFrom tibble as_tibble
-#' @import magrittr
-#' @importFrom utils read.table
-#' @importFrom dplyr filter mutate
-#' @export
-#' @title import load data files into a tibble
-#' @description import load data files into a tibble
-#' @param dir_src data source directory
-#' @note
-#' file are supposed to be UTF-16 encoded.
-import_load_db <- function( dir_src ){
-
-  agg_files <- list.files(dir_src, pattern = "(\\.csv)$", full.names = TRUE)
-
-  map_df(agg_files, function(i){
-    dat <- read.table(i, sep="\t", header=T,
-                      fileEncoding = "UTF-16LE",
-                      stringsAsFactors = FALSE) %>%
-      as_tibble() %>%
-      filter(substr(DateTime,15,19)=="00:00") %>%
-      mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S",tz="UTC") )
-  })
-
-}
-
 
 #' @importFrom dplyr filter group_by summarise transmute bind_rows ungroup
 #' @export
@@ -41,7 +15,6 @@ fortify_load_db <- function( load_data ){
   # donnees pas structurée pareil - a aggreger , pas de doublons
   conso_DE <- load_data %>%
     filter(grepl("^DE_", MapCode ), !MapCode %in% "DE_AT_LU" ) %>%
-    # arrange(DateTime, MapCode) %>%
     group_by(DateTime) %>%
     summarise(TotalLoadValue = sum(TotalLoadValue)) %>% ungroup() %>%
     transmute(id_area = "DE", datetime = DateTime, load_value = TotalLoadValue)

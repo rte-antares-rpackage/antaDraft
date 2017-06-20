@@ -1,0 +1,28 @@
+
+rules:
+-
+  expr: is.finite(CTY)
+  name: CTY is a finite real
+  label: Country values are valid numeric values
+-
+  expr: is.finite(CTA)
+  name: CTA is a finite real
+  label: Country area values are valid numeric values
+-
+  expr: is.finite(BZN)
+  name: BZN is a finite real
+  label: Bidding zone values are valid numeric values
+
+
+-
+  expr: CTY == CTA
+  name: CTY and CTA are equals
+  label: Country values are equals to country area
+-
+  expr: CTY == BZN
+  name: CTY and BZN are equals
+  label: Country values are equals to bidding zone values
+-
+  expr: CTA == BZN
+  name: CTA and BZN are equals
+  label: country area values are equals to bidding zone values
