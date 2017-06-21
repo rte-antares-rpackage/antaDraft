@@ -7,7 +7,7 @@ output: rmarkdown::github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Objet
+## Goal of the project
 
 Construction d'une base de données publique contenant des données ANTARES provenant du SI transparency.
 
@@ -18,5 +18,50 @@ Les objectifs premiers du logiciel sont :
     * y a t-il des données nulles et où sont-elles?
 - quelles données sont mauvaises
 - comment estimer la données identifiée mauvaise
+
+
+## Installation
+
+This package is only available on Github.
+
+To install the last development version:
+
+```{r eval=FALSE}
+devtools::install_github("rte-antares-rpackage/antaDraft")
+```
+
+
+## Usage
+
+> Pour l'instant, seules les données de consommation sont traitées.
+
+### Importation des données brutes
+
+```{r}
+library(antadraft)
+
+system.time(
+  load_db <- import_load_db("D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée")
+)
+
+head(load_db)
+```
+
+### Préparation au format *antares*
+
+```{r}
+db <- build_db(raw_db = load_db )
+head(db)
+```
+
+### Recherche des anomalies
+
+La fonction `extract_nonvalid_data` permet de parcourir l'ensemble des données à la recherche d'incohérences. Ces recherches sont spécifiées dans un fichier yaml exprimant les tests de validité à réaliser.
+
+La fonction retourne un data.frame décrivant chaque invalidité, par pays et période entière.
+
+```{r}
+knitr::kable( extract_nonvalid_data(db) )
+```
 
 

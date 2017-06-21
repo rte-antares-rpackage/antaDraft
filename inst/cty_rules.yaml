@@ -98,3 +98,16 @@ UK:
   BZN:
     - GB
     - IE_SEM
+
+IRELAND:
+  CTY:
+    - IE
+  CTA:
+    - IE
+    - NIE
+  BZN:
+    - IE_SEM
+
+
+
+
