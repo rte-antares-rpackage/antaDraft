@@ -97,16 +97,22 @@ UK:
     - GB
   BZN:
     - GB
-    - IE_SEM
 
 IRELAND:
   CTY:
     - IE
   CTA:
     - IE
-    - NIE
   BZN:
     - IE_SEM
+
+NORTH_IRELAND:
+  CTY:
+    - NIE
+  CTA:
+    - NIE
+  BZN:
+    - NIE
 
 
 
