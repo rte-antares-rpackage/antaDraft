@@ -21,12 +21,10 @@ extract_raw_data <- function( raw_db, issues_db ){
     semi_join(db, ref_, by = c("AreaTypeCode", "MapCode") )
   }, db = raw_db, .id = "country")
 
-
   data_from_bzn <- map_df(cty_rules, function(cty_rule, db){
     ref_ <- tibble(AreaTypeCode = "BZN", MapCode = cty_rule$BZN)
     semi_join(db, ref_, by = c("AreaTypeCode", "MapCode") )
   }, db = raw_db, .id = "country")
-
 
   raw_data <- bind_rows(data_from_cty, data_from_cta, data_from_bzn )
   raw_data %>% inner_join(issues_db, by = c("DateTime", "country") )

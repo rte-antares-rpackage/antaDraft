@@ -1,12 +1,17 @@
-#' @importFrom validate validator confront values
+#' @importFrom validate validator confront values voptions
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr replace_na
 #' @export
 #' @title eval validation rules against a dataset
 #' @description Confront data with a set of validation rules
 #' @param db data to be confronted with rules
-get_invalidated_data <- function( db, yaml_rules = system.file(package = "antadraft", 'validation_rules.yml') ){
+qualcon <- function( db, yaml_rules = system.file(package = "antadraft", 'validation_rules.yml') ){
+
+
+
   v <- validator(.file = yaml_rules )
+  voptions(v,raise='all')
+
   all_res <- confront(db, v) %>% values()
   all_res[is.na(all_res)] <- FALSE
   keep_row <- apply( all_res, 1, function( x ) !all(x) )
@@ -23,7 +28,7 @@ get_invalidated_data <- function( db, yaml_rules = system.file(package = "antadr
 #' @title eval validation rules against a dataset
 #' @description Confront data with a set of validation rules
 #' @param db data to be confronted with rules
-fortify_invalidated_data <- function( dat ){
+fortify_qualcon <- function( dat ){
   gather( dat, validator, value, -DateTime, -country) %>%
     group_by(country, validator) %>%
     filter(!value) %>%
