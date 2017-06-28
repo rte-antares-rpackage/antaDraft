@@ -17,14 +17,13 @@ Les objectifs premiers du logiciel sont :
     * y a t-il des données manquantes et où sont-elles?
     * y a t-il des données nulles et où sont-elles?
 - quelles données sont mauvaises
+- Substituer de façon mécanique quand c'est possible des données manquantes par d'autres données supposées valides et échangeable.
 - comment estimer la données identifiée mauvaise
 
 
 ## Installation
 
-This package is only available on Github.
-
-To install the last development version:
+This package is only available on Github. To install the last development version:
 
 ```{r eval=FALSE}
 devtools::install_github("rte-antares-rpackage/antaDraft")
@@ -39,10 +38,11 @@ devtools::install_github("rte-antares-rpackage/antaDraft")
 
 ```{r}
 library(antadraft)
+library(dplyr)
 
-system.time(
-  load_db <- import_load_db("D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée")
-)
+rep_path <- "D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée"
+load_db <- rep_path %>% read_load_files()
+load_db <- load_db %>% dplyr::filter(year > 2014)
 
 head(load_db)
 ```
@@ -50,18 +50,35 @@ head(load_db)
 ### Préparation au format *antares*
 
 ```{r}
-db <- build_db(raw_db = load_db )
+db <- fortify_from_rules(raw_db = load_db )
 head(db)
 ```
 
 ### Recherche des anomalies
 
-La fonction `extract_nonvalid_data` permet de parcourir l'ensemble des données à la recherche d'incohérences. Ces recherches sont spécifiées dans un fichier yaml exprimant les tests de validité à réaliser.
+La fonction `qualcon` permet de tester les cohérences définies dans le fichier `validation_rules`. Il s'agit d'un fichier yaml exprimant les expressions R représentant ces tests.
 
 La fonction retourne un data.frame décrivant chaque invalidité, par pays et période entière.
 
 ```{r}
-knitr::kable( extract_nonvalid_data(db) )
+db_erros <- qualcon(db)
+db_erros
 ```
 
+Une vue synthétique peut être obtenue avec la fonction `fortify_qualcon`.
+
+
+```{r}
+erros_summary <- fortify_qualcon(db_erros)
+erros_summary %>% arrange(country, start, end)
+```
+
+
+### Détails des anomalies
+
+Les données brutes attachées à un problème identifié peuvent être obtenues avec la fonction `extract_raw_data`. 
+
+```{r}
+extract_raw_data(load_db, db_erros)
+```
 

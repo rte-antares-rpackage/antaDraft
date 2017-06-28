@@ -7,7 +7,8 @@
 fortify_qualcon(dat)
 }
 \arguments{
-\item{db}{data to be confronted with rules}
+\item{dat}{errors data.frame to be summarised. It should be a
+data.frame returned by the call to \code{\link{qualcon}}}
 }
 \description{
 Confront data with a set of validation rules

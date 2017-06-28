@@ -1,0 +1,31 @@
+globalVariables(c('DateTime', 'TotalLoadValue', 'value', 'country', 'time_frame'))
+
+
+#' @export
+#' @title test equality
+#' @description test equality when 2 values are not NA.
+#' This function is provided to be used in validity checking.
+#' @param y variable 1
+#' @param z variable 2
+#' @seealso \code{\link{qualcon}}
+are_equals_if_not_na <- function(y, z){
+
+  is.na(y) | is.na(z) | abs(y-z)<.Machine$double.eps
+
+}
+
+
+#' @export
+#' @title test difference below a threshold
+#' @description test difference between 2 values. The absolute value
+#' should be below a given threshold.
+#' @param y variable 1
+#' @param z variable 2
+#' @param abs_diff absolute difference to test in percent
+#' @seealso \code{\link{qualcon}}
+abs_diff_lt <- function(y, z, abs_diff = 0.05 ){
+  is.na(y) | is.na(z) | abs(1 - (y / z) ) < abs_diff
+}
+
+
+

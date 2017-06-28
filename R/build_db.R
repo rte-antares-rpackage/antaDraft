@@ -4,12 +4,16 @@
 #' @importFrom purrr map_df
 #' @export
 #' @title tidy raw data
-#' @description tidy data imported with function \code{import_load_db}.
+#' @description tidy data imported with function \code{read_load_files}.
 #' A set of rules defined in cty_rules.yaml will be used to reshape untidy data
-#' @param raw_db data returned by \code{\link{import_load_db}}
-build_db <- function( raw_db ){
+#' @param raw_db data returned by \code{\link{read_load_files}}
+#' @param file_rules yaml file containing rules for each country
+#' @section rules:
+#' A set of rules is to be defined for each country. Items CTY, CTA and BZN
+#' must be provided as array of MapCode to be aggregated together.
+fortify_from_rules <- function( raw_db, file_rules = NULL ){
 
-  cty_rules <- get_cty_rules()
+  cty_rules <- get_cty_rules(file_rules = file_rules)
 
   data_from_cty <- map_df(cty_rules, function(cty_rule, db){
     ref_ <- tibble(AreaTypeCode = "CTY", MapCode = cty_rule$CTY)

@@ -4,12 +4,22 @@
 #' @importFrom utils read.table
 #' @importFrom dplyr filter mutate
 #' @export
-#' @title import load data files into a tibble
-#' @description import load data files into a tibble
+#' @title import load data
+#' @description import all load data csv files from a directory.
 #' @param dir_src data source directory
-#' @note
-#' file are supposed to be UTF-16 encoded.
-import_load_db <- function( dir_src ){
+#' @section file encoding:
+#' file are expected to be UTF-16 encoded. This should be changed to UTF8 as
+#' it increases file size and is not a standard file encoding and is likely to
+#' cause troubles in the future.
+#' @examples
+#' \donttest{
+#' library(antadraft)
+#' library(magrittr)
+#'
+#' rep_path <- "D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée"
+#' load_db <- rep_path %>% read_load_files()
+#' }
+read_load_files <- function( dir_src ){
 
   agg_files <- list.files(dir_src, pattern = "(\\.csv)$", full.names = TRUE)
 

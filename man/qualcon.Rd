@@ -9,6 +9,8 @@ qualcon(db, yaml_rules = system.file(package = "antadraft",
 }
 \arguments{
 \item{db}{data to be confronted with rules}
+
+\item{yaml_rules}{yaml file containing rules to evaluate}
 }
 \description{
 Confront data with a set of validation rules

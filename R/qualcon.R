@@ -5,6 +5,7 @@
 #' @title eval validation rules against a dataset
 #' @description Confront data with a set of validation rules
 #' @param db data to be confronted with rules
+#' @param yaml_rules yaml file containing rules to evaluate
 qualcon <- function( db, yaml_rules = system.file(package = "antadraft", 'validation_rules.yml') ){
 
 
@@ -21,13 +22,15 @@ qualcon <- function( db, yaml_rules = system.file(package = "antadraft", 'valida
   all_res[keep_row, ]
 }
 
+
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr group_by filter mutate summarise
 #' @importFrom tidyr gather
 #' @export
 #' @title eval validation rules against a dataset
 #' @description Confront data with a set of validation rules
-#' @param db data to be confronted with rules
+#' @param dat errors data.frame to be summarised. It should be a
+#' data.frame returned by the call to \code{\link{qualcon}}
 fortify_qualcon <- function( dat ){
   gather( dat, validator, value, -DateTime, -country) %>%
     group_by(country, validator) %>%

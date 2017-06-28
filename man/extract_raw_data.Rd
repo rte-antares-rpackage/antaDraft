@@ -7,9 +7,9 @@
 extract_raw_data(raw_db, issues_db)
 }
 \arguments{
-\item{raw_db}{data returned by \code{\link{import_load_db}}}
+\item{raw_db}{data returned by \code{\link{read_load_files}}}
 
-\item{issues_db}{data returned by \code{\link{extract_nonvalid_data}}}
+\item{issues_db}{data returned by \code{\link{qualcon}}}
 }
 \description{
 extract raw data to be linked with errors diagnostics

@@ -1,12 +1,11 @@
 #' @importFrom tibble tibble
-#' @import data.table
-#' @importFrom dplyr semi_join bind_rows
+#' @importFrom dplyr semi_join bind_rows inner_join
 #' @importFrom purrr map_df
 #' @export
 #' @title extract raw data to be linked with errors diagnostics
 #' @description extract raw data to be linked with errors diagnostics
-#' @param raw_db data returned by \code{\link{import_load_db}}
-#' @param issues_db data returned by \code{\link{extract_nonvalid_data}}
+#' @param raw_db data returned by \code{\link{read_load_files}}
+#' @param issues_db data returned by \code{\link{qualcon}}
 extract_raw_data <- function( raw_db, issues_db ){
 
   cty_rules <- get_cty_rules()
