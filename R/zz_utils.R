@@ -28,4 +28,12 @@ abs_diff_lt <- function(y, z, abs_diff = 0.05 ){
 }
 
 
+#' @export
+#' @title test positive value
+#' @description test if values are positive when not NA
+#' @param y variable to test
+#' @seealso \code{\link{qualcon}}
+is_positive <- function( y ){
+  is.na(y) | y > 0
+}
 

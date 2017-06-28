@@ -7,6 +7,13 @@ rules:
 - expr: is.finite(BZN)
   name: BZN must not be missing
 
+- expr: is_positive(CTY)
+  name: CTY is positive
+- expr: is_positive(CTA)
+  name: CTA is positive
+- expr: is_positive(BZN)
+  name: BZN is positive
+
 
 - expr: are_equals_if_not_na(CTY,CTA)
   name: CTY and CTA must be equals if not missing

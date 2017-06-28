@@ -73,7 +73,7 @@ ITALY:
 
 GERMANY:
   CTY:
-    - PT
+    - DE
   CTA:
     - DE_TenneT_GER
     - DE_TransnetBW
@@ -88,7 +88,7 @@ AUSTRIA:
   CTA:
     - AT
   BZN:
-    - AT
+    - DE_AT_LU
 
 UK:
   CTY:
@@ -112,7 +112,7 @@ NORTH_IRELAND:
   CTA:
     - NIE
   BZN:
-    - NIE
+    - IE_SEM
 
 
 
