@@ -17,5 +17,6 @@ Imports: dplyr, purrr, tibble, utils, magrittr,
   validate, yaml, lubridate, rlang, tidyr
 RoxygenNote: 6.0.1
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr
