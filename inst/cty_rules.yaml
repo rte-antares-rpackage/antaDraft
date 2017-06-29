@@ -114,6 +114,12 @@ NORTH_IRELAND:
   BZN:
     - IE_SEM
 
-
+LUXEMBOURG:
+  CTY:
+    - LU
+  CTA:
+    - LU
+  BZN:
+    - DE_AT_LU
 
 
