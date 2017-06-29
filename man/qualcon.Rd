@@ -4,13 +4,17 @@
 \alias{qualcon}
 \title{eval validation rules against a dataset}
 \usage{
-qualcon(db, yaml_rules = system.file(package = "antadraft",
-  "validation_rules.yml"))
+qualcon(db, rules = system.file(package = "antadraft",
+  "validation_rules.yml"), fp_rules = system.file(package = "antadraft",
+  "false_positive_rules.yml"))
 }
 \arguments{
 \item{db}{data to be confronted with rules}
 
-\item{yaml_rules}{yaml file containing rules to evaluate}
+\item{rules}{yaml file containing rules to evaluate}
+
+\item{fp_rules}{yaml file containing false positive rules to exclude
+a posteriori.}
 }
 \description{
 Confront data with a set of validation rules

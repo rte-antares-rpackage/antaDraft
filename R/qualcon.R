@@ -5,12 +5,15 @@
 #' @title eval validation rules against a dataset
 #' @description Confront data with a set of validation rules
 #' @param db data to be confronted with rules
-#' @param yaml_rules yaml file containing rules to evaluate
-qualcon <- function( db, yaml_rules = system.file(package = "antadraft", 'validation_rules.yml') ){
+#' @param rules yaml file containing rules to evaluate
+#' @param fp_rules yaml file containing false positive rules to exclude
+#' a posteriori.
+#' @import data.table
+qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_rules.yml'),
+                     fp_rules = system.file(package = "antadraft", 'false_positive_rules.yml')
+                     ){
 
-
-
-  v <- validator(.file = yaml_rules )
+  v <- validator(.file = rules )
   voptions(v,raise='all')
 
   all_res <- confront(db, v) %>% values()
@@ -19,7 +22,19 @@ qualcon <- function( db, yaml_rules = system.file(package = "antadraft", 'valida
   all_res <- as_tibble(all_res) %>% replace_na()
   all_res$DateTime <- db$DateTime
   all_res$country <- db$country
-  all_res[keep_row, ]
+  all_res <- all_res[keep_row, ]
+
+  exclude_data <- yaml.load_file(fp_rules) %>%
+    map_df( function(x) tibble( alert = x$alert, country = x$drop_when, value = FALSE) ) %>%
+    as.data.table %>%
+    setkeyv(c("alert", "country", "value"))
+
+  all_res <- as.data.table(all_res) %>%
+    melt.data.table(id.vars = c("DateTime", "country"), variable.name = "alert" ) %>%
+    setkeyv(c("alert", "country", "value"))
+
+  dcast.data.table(all_res[!exclude_data], DateTime + country ~ alert) %>%
+    as_tibble()
 }
 
 
