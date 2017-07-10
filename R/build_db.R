@@ -15,6 +15,10 @@ fortify_from_rules <- function( raw_db, file_rules = NULL ){
 
   cty_rules <- get_cty_rules(file_rules = file_rules)
 
+  pivot_data <- expand.grid( country = names(cty_rules),
+               DateTime = seq( min(raw_db$DateTime), max(raw_db$DateTime), by = "hour" ),
+               stringsAsFactors = FALSE )
+
   data_from_cty <- map_df(cty_rules, function(cty_rule, db){
     ref_ <- tibble(AreaTypeCode = "CTY", MapCode = cty_rule$CTY)
     semi_join(db, ref_, by = c("AreaTypeCode", "MapCode") ) %>%
@@ -40,8 +44,8 @@ fortify_from_rules <- function( raw_db, file_rules = NULL ){
       ungroup()
   }, db = raw_db, .id = "country")
 
-  left_join(data_from_cty, data_from_cta, by = c("country", "DateTime")) %>%
+
+  pivot_data %>% left_join(data_from_cty, by = c("country", "DateTime")) %>%
+    left_join(data_from_cta, by = c("country", "DateTime")) %>%
     left_join(data_from_bzn, by = c("country", "DateTime"))
 }
-
-

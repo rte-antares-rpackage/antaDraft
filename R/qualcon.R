@@ -14,18 +14,24 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
                      ){
 
   v <- validator(.file = rules )
-  voptions(v,raise='all')
+  voptions(v, raise='all', na.value = FALSE)# from MVDL
 
   all_res <- confront(db, v) %>% values()
-  all_res[is.na(all_res)] <- FALSE
   keep_row <- apply( all_res, 1, function( x ) !all(x) )
-  all_res <- as_tibble(all_res) %>% replace_na()
+  all_res <- as_tibble(all_res)
   all_res$DateTime <- db$DateTime
   all_res$country <- db$country
   all_res <- all_res[keep_row, ]
 
+
   exclude_data <- yaml.load_file(fp_rules) %>%
-    map_df( function(x) tibble( alert = x$alert, country = x$drop_when, value = FALSE) ) %>%
+    map_df( function(x) {
+      x$stringsAsFactors <- FALSE
+      out <- as_tibble( do.call( expand.grid, x) )
+      names(out) <- c("alert", "country")
+      out$value <- rep(FALSE, nrow(out))
+      out
+      } ) %>%
     as.data.table %>%
     setkeyv(c("alert", "country", "value"))
 
@@ -33,7 +39,7 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
     melt.data.table(id.vars = c("DateTime", "country"), variable.name = "alert" ) %>%
     setkeyv(c("alert", "country", "value"))
 
-  dcast.data.table(all_res[!exclude_data], DateTime + country ~ alert) %>%
+  dcast.data.table(all_res[!exclude_data], DateTime + country ~ alert, fill = FALSE) %>%
     as_tibble()
 }
 
@@ -47,12 +53,16 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
 #' @param dat errors data.frame to be summarised. It should be a
 #' data.frame returned by the call to \code{\link{qualcon}}
 fortify_qualcon <- function( dat ){
-  gather( dat, validator, value, -DateTime, -country) %>%
+
+  out <- gather( dat, validator, value, -DateTime, -country) %>%
     group_by(country, validator) %>%
     filter(!value) %>%
     mutate(time_frame = cumsum( c( TRUE, diff(DateTime) != 1 ) ) ) %>%
     group_by(country, validator, time_frame) %>%
     summarise(start = min(DateTime), end = max( DateTime)) %>%
     ungroup()
+  out$time_frame <- NULL
+  out
 }
+
 

@@ -1,16 +1,18 @@
-- alert: CTA and BZN must be equals if not missing
+- alerts:
+    - CTY and BZN must be equals if not missing
+    - CTA and BZN must be equals if not missing
+    - CTY and BZN difference is not greater than 5%
+    - CTA and BZN difference is not greater than 5%
+    - CTY and BZN difference is not greater than 10%
+    - CTA and BZN difference is not greater than 10%
   drop_when:
     - GERMANY
     - AUSTRIA
     - IRELAND
+    - LUXEMBOURG
 
-- alert: CTY and BZN must be equals if not missing
-  drop_when:
-    - GERMANY
-    - AUSTRIA
-    - IRELAND
-
-- alert: CTY must not be missing
+- alerts:
+    - CTY must not be missing
   drop_when:
     - NORTH_IRELAND
 
