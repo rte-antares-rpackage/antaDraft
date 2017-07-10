@@ -1,2 +1,0 @@
-HTTP_PROXY="http://proxy-config.interne:8081/accelerated_pac_base.pac"
-HTTPS_PROXY="http://proxy-config.interne:8081/accelerated_pac_base.pac"
