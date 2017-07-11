@@ -36,6 +36,7 @@ antadraft_gadget <- function() {
                      dateRangeInput(inputId = "date_range", label = "Date range input:",
                                     start = Sys.Date()-2, end = Sys.Date() + 2),
                      selectInput(inputId = "country_id", label = "Choose a country", choices= character(0)),
+                     actionButton(inputId = "download_data", label = "Dowload"),
                      plotOutput("ts_plot")
                   )
       )
@@ -79,6 +80,19 @@ antadraft_gadget <- function() {
                            end = max(dat$DateTime) )
       updateSelectInput(session = session, inputId = "country_id", choices = unique(dat$country) )
     })
+
+    output$download_data <- downloadHandler(
+      filename = function() {
+        paste("data-", Sys.Date(), ".csv", sep="")
+      },
+      content = function(file) {
+        dat <- extract_raw_data(raw_db = load_db(), issues_db = errors() )
+        dat <- dat %>%
+          filter(country %in% input$country_id,
+                 between(as.Date(DateTime), input$date_range[1], input$date_range[2])) %>%
+        write.csv(data, file)
+      }
+    )
 
     errors <- eventReactive(req(load_datamart()), {
       qualcon(load_datamart())

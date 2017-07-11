@@ -5,14 +5,15 @@
     - CTA and BZN difference is not greater than 5%
     - CTY and BZN difference is not greater than 10%
     - CTA and BZN difference is not greater than 10%
-  drop_when:
+  drop_when_country:
     - GERMANY
     - AUSTRIA
     - IRELAND
     - LUXEMBOURG
+  drop_when_alert:
+    - CTY must not be missing
 
 - alerts:
     - CTY must not be missing
   drop_when:
     - NORTH_IRELAND
-

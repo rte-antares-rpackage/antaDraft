@@ -1,6 +1,6 @@
 library(timevis)
 
-sum_db_erros %>% select(-time_frame) %>%
+errors_summary %>%
   filter(country %in% "FRANCE") %>%
   rename(content = validator, group = country) %>%
   timevis()

@@ -38,5 +38,3 @@ rules:
 - expr: abs_diff_lt(CTA, BZN, 0.10)
   name: CTA and BZN difference is not greater than 10%
 
-
-
