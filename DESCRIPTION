@@ -1,7 +1,7 @@
 Package: antadraft
 Type: Package
 Title: parse entsoe data into antares format
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(
     person(given = "David", family = "Gohel", 
       email = "david.gohel@rte-france.com", role = c("aut", "cre")),
@@ -15,7 +15,7 @@ Encoding: UTF-8
 LazyData: true 
 Imports: dplyr, purrr, tibble, utils, magrittr, 
   validate, yaml, lubridate, rlang, tidyr,
-  data.table
+  data.table,shiny,shinyFiles
 RoxygenNote: 6.0.1.9000
 Suggests: knitr,
     rmarkdown,

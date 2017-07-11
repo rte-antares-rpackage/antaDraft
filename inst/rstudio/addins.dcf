@@ -1,0 +1,4 @@
+Name: Antares Data Build
+Description: Build Antares Dataset
+Binding: antadraft_addin
+Interactive: true
