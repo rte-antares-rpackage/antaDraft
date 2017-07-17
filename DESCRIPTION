@@ -15,7 +15,7 @@ Encoding: UTF-8
 LazyData: true 
 Imports: dplyr, purrr, tibble, utils, magrittr, 
   validate, yaml, lubridate, rlang, tidyr,
-  data.table,shiny,shinyFiles
+  data.table,shiny,shinyFiles,miniUI
 RoxygenNote: 6.0.1.9000
 Suggests: knitr,
     rmarkdown,

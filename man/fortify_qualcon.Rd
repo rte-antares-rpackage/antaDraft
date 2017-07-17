@@ -13,3 +13,11 @@ data.frame returned by the call to \code{\link{qualcon}}}
 \description{
 Confront data with a set of validation rules
 }
+\examples{
+library(antadraft)
+rep_path <- system.file(package = "antadraft", "files/load")
+load_db <- read_load_files(rep_path)
+db <- fortify_from_rules(raw_db = load_db)
+db_errors <- qualcon(db)
+errors_summary <- fortify_qualcon(db_errors)
+}

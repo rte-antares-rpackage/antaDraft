@@ -1,6 +1,8 @@
 #' @importFrom validate validator confront values voptions
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr replace_na
+#' @importFrom dplyr anti_join semi_join
+#' @importFrom purrr map map_df
 #' @export
 #' @title eval validation rules against a dataset
 #' @description Confront data with a set of validation rules
@@ -9,6 +11,12 @@
 #' @param fp_rules yaml file containing false positive rules to exclude
 #' a posteriori.
 #' @import data.table
+#' @examples
+#' library(antadraft)
+#' rep_path <- system.file(package = "antadraft", "files/load")
+#' load_db <- read_load_files(rep_path)
+#' db <- fortify_from_rules(raw_db = load_db)
+#' db_errors <- qualcon(db)
 qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_rules.yml'),
                      fp_rules = system.file(package = "antadraft", 'false_positive_rules.yml')
                      ){
@@ -23,23 +31,31 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
   all_res$country <- db$country
   all_res <- all_res[keep_row, ]
 
-
   exclude_data <- yaml.load_file(fp_rules) %>%
     map_df( function(x) {
       x$stringsAsFactors <- FALSE
       out <- as_tibble( do.call( expand.grid, x) )
-      names(out) <- c("alert", "country")
       out$value <- rep(FALSE, nrow(out))
       out
-      } ) %>%
-    as.data.table %>%
-    setkeyv(c("alert", "country", "value"))
+    } )
 
+  # unfiltered stacked alerts ----
   all_res <- as.data.table(all_res) %>%
-    melt.data.table(id.vars = c("DateTime", "country"), variable.name = "alert" ) %>%
-    setkeyv(c("alert", "country", "value"))
+    melt.data.table(id.vars = c("DateTime", "country"), variable.name = "alert", variable.factor = FALSE ) %>%
+    as.data.frame() %>% as_tibble()
 
-  dcast.data.table(all_res[!exclude_data], DateTime + country ~ alert, fill = FALSE) %>%
+  rows_when <- all_res %>%
+    semi_join(exclude_data, by = c("country" = "country", "alert" = "when", "value" = "value" ) ) %>%
+    select( DateTime, country) %>%
+    mutate( value = FALSE)
+
+  drop_data <- all_res %>%
+    semi_join(rows_when, by = c("DateTime", "country", "value") ) %>%
+    semi_join(exclude_data, by = c("country", "alert") )
+
+  all_res <- anti_join(all_res, drop_data, by = c("DateTime", "country", "alert", "value"))
+
+  dcast.data.table(as.data.table(all_res), DateTime + country ~ alert, fill = TRUE) %>%
     as_tibble()
 }
 
@@ -52,6 +68,13 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
 #' @description Confront data with a set of validation rules
 #' @param dat errors data.frame to be summarised. It should be a
 #' data.frame returned by the call to \code{\link{qualcon}}
+#' @examples
+#' library(antadraft)
+#' rep_path <- system.file(package = "antadraft", "files/load")
+#' load_db <- read_load_files(rep_path)
+#' db <- fortify_from_rules(raw_db = load_db)
+#' db_errors <- qualcon(db)
+#' errors_summary <- fortify_qualcon(db_errors)
 fortify_qualcon <- function( dat ){
 
   out <- gather( dat, validator, value, -DateTime, -country) %>%
@@ -64,5 +87,4 @@ fortify_qualcon <- function( dat ){
   out$time_frame <- NULL
   out
 }
-
 

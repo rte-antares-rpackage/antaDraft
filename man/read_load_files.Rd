@@ -20,11 +20,7 @@ cause troubles in the future.
 }
 
 \examples{
-\donttest{
 library(antadraft)
-library(magrittr)
-
-rep_path <- "D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée"
-load_db <- rep_path \%>\% read_load_files()
-}
+rep_path <- system.file(package = "antadraft", "files/load")
+load_db <- read_load_files(rep_path)
 }

@@ -1,19 +1,17 @@
 #' @title Mini UI
+#' @description rstudio mini UI to be used to drive
 #'
 #' @export
 antadraft_addin <- function() {
-  con <- rstudioapi::getActiveDocumentContext()
-  text <- con$selection[[1]]$text
-
   antadraft_gadget()
 }
 
 
-#' @import rvg
 #' @import miniUI
 #' @import shiny
 #' @import shinyFiles
 #' @importFrom tibble rownames_to_column
+#' @importFrom utils write.csv
 antadraft_gadget <- function() {
 
   ui <- miniPage(
@@ -90,7 +88,7 @@ antadraft_gadget <- function() {
         dat <- dat %>%
           filter(country %in% input$country_id,
                  between(as.Date(DateTime), input$date_range[1], input$date_range[2])) %>%
-        write.csv(data, file)
+        write.csv(dat, file)
       }
     )
 
@@ -113,11 +111,11 @@ antadraft_gadget <- function() {
       req(input$country_id)
       req(load_datamart())
       db <- load_datamart()
-      require("ggplot2")
-      gg <- db %>%
-        filter(country %in% input$country_id, between(as.Date(DateTime), input$date_range[1], input$date_range[2])) %>%
-        ggplot(aes(x = DateTime, y = CTY)) + geom_line()
-      print(gg)
+      # require("ggplot2")
+      # gg <- db %>%
+      #   filter(country %in% input$country_id, between(as.Date(DateTime), input$date_range[1], input$date_range[2])) %>%
+      #   ggplot(aes(x = DateTime, y = CTY)) + geom_line()
+      # print(gg)
     })
 
     observeEvent(input$done, {

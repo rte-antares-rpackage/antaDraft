@@ -11,10 +11,14 @@
 #' @section rules:
 #' A set of rules is to be defined for each country. Items CTY, CTA and BZN
 #' must be provided as array of MapCode to be aggregated together.
+#' @examples
+#' library(antadraft)
+#' rep_path <- system.file(package = "antadraft", "files/load")
+#' load_db <- read_load_files(rep_path)
+#' db <- fortify_from_rules(raw_db = load_db)
 fortify_from_rules <- function( raw_db, file_rules = NULL ){
 
   cty_rules <- get_cty_rules(file_rules = file_rules)
-
   pivot_data <- expand.grid( country = names(cty_rules),
                DateTime = seq( min(raw_db$DateTime), max(raw_db$DateTime), by = "hour" ),
                stringsAsFactors = FALSE )
@@ -44,8 +48,8 @@ fortify_from_rules <- function( raw_db, file_rules = NULL ){
       ungroup()
   }, db = raw_db, .id = "country")
 
-
-  pivot_data %>% left_join(data_from_cty, by = c("country", "DateTime")) %>%
+  pivot_data %>%
+    left_join(data_from_cty, by = c("country", "DateTime")) %>%
     left_join(data_from_cta, by = c("country", "DateTime")) %>%
     left_join(data_from_bzn, by = c("country", "DateTime"))
 }

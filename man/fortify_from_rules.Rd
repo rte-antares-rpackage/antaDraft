@@ -21,3 +21,9 @@ A set of rules is to be defined for each country. Items CTY, CTA and BZN
 must be provided as array of MapCode to be aggregated together.
 }
 
+\examples{
+library(antadraft)
+rep_path <- system.file(package = "antadraft", "files/load")
+load_db <- read_load_files(rep_path)
+db <- fortify_from_rules(raw_db = load_db)
+}

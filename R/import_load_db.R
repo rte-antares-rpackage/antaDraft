@@ -12,17 +12,11 @@
 #' it increases file size and is not a standard file encoding and is likely to
 #' cause troubles in the future.
 #' @examples
-#' \donttest{
 #' library(antadraft)
-#' library(magrittr)
-#'
-#' rep_path <- "D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée"
-#' load_db <- rep_path %>% read_load_files()
-#' }
+#' rep_path <- system.file(package = "antadraft", "files/load")
+#' load_db <- read_load_files(rep_path)
 read_load_files <- function( dir_src ){
-
   agg_files <- list.files(dir_src, pattern = "(\\.csv)$", full.names = TRUE)
-
   map_df(agg_files, function(i){
     dat <- read.table(i, sep="\t", header=T,
                       fileEncoding = "UTF-16LE",
