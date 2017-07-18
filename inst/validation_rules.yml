@@ -38,3 +38,11 @@ rules:
 - expr: abs_diff_lt(CTA, BZN, 0.10)
   name: CTA and BZN difference is not greater than 10%
 
+
+- expr: lag_diff_ok(CTY)
+  name: CTY measure is less than half its previous value
+- expr: lag_diff_ok(CTA)
+  name: CTA measure is less than half its previous value
+- expr: lag_diff_ok(BZN)
+  name: BZN measure is less than half its previous value
+

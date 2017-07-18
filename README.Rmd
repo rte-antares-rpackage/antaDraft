@@ -32,18 +32,16 @@ devtools::install_github("rte-antares-rpackage/antaDraft")
 
 ## Usage
 
-> Pour l'instant, seules les données de consommation sont traitées.
+> Scope is only on load data for now. Goal is to extend scope to production data.
 
-### Importation des données brutes
+### Raw data importation
 
 ```{r}
 library(antadraft)
 library(dplyr)
 
-rep_path <- "D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée"
-load_db <- rep_path %>% read_load_files()
-load_db <- load_db %>% dplyr::filter(year > 2014)
-
+rep_path <- system.file(package = "antadraft", "files", "load")
+load_db <- read_load_files(rep_path)
 head(load_db)
 ```
 

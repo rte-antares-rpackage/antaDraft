@@ -37,3 +37,12 @@ is_positive <- function( y ){
   is.na(y) | y > 0
 }
 
+
+
+
+#' @export
+lag_diff_ok <- function( y ){
+  calc <- ((y - lag(y)) / y)
+  is.na( calc ) | calc < .5
+}
+

@@ -23,7 +23,7 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
 
   v <- validator(.file = rules )
   voptions(v, raise='all', na.value = FALSE)# from MVDL
-
+  db <- db[order(db$country, db$DateTime),]
   all_res <- confront(db, v) %>% values()
   keep_row <- apply( all_res, 1, function( x ) !all(x) )
   all_res <- as_tibble(all_res)

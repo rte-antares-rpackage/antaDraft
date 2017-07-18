@@ -27,9 +27,9 @@ devtools::install_github("rte-antares-rpackage/antaDraft")
 Usage
 -----
 
-> Pour l'instant, seules les données de consommation sont traitées.
+> Scope is only on load data for now. Goal is to extend scope to production data.
 
-### Importation des données brutes
+### Raw data importation
 
 ``` r
 library(antadraft)
@@ -48,22 +48,20 @@ library(dplyr)
     ##     intersect, setdiff, setequal, union
 
 ``` r
-rep_path <- "D:/transparency_repo/staging_area/incoming/A-CONSOMMATION/A01-Consommation_réalisée"
-load_db <- rep_path %>% read_load_files()
-load_db <- load_db %>% dplyr::filter(year > 2014)
-
+rep_path <- system.file(package = "antadraft", "files", "load")
+load_db <- read_load_files(rep_path)
 head(load_db)
 ```
 
     ## # A tibble: 6 x 9
-    ##    year month   day            DateTime AreaTypeCode       AreaName
-    ##   <int> <int> <int>              <dttm>        <chr>          <chr>
-    ## 1  2015     1     7 2015-01-07 23:00:00          CTY Czech Republic
-    ## 2  2015     1     8 2015-01-08 22:00:00          CTY Czech Republic
-    ## 3  2015     1     8 2015-01-08 19:00:00          CTY Czech Republic
-    ## 4  2015     1     8 2015-01-08 07:00:00          CTY Czech Republic
-    ## 5  2015     1     8 2015-01-08 06:00:00          CTY Czech Republic
-    ## 6  2015     1     8 2015-01-08 12:00:00          CTY Czech Republic
+    ##    year month   day            DateTime AreaTypeCode           AreaName
+    ##   <int> <int> <int>              <dttm>        <chr>              <chr>
+    ## 1  2017     1    15 2017-01-15 20:00:00          BZN             NO5 BZ
+    ## 2  2017     1    15 2017-01-15 04:00:00          BZN             NO5 BZ
+    ## 3  2017     1    15 2017-01-15 22:00:00          BZN             NO5 BZ
+    ## 4  2017     1     2 2017-01-02 20:00:00          BZN Ireland - (SEM) BZ
+    ## 5  2017     1    18 2017-01-18 08:00:00          BZN Ireland - (SEM) BZ
+    ## 6  2017     1    12 2017-01-12 12:00:00          CTA      Cyprus TSO CA
     ## # ... with 3 more variables: MapCode <chr>, TotalLoadValue <dbl>,
     ## #   SubmissionTS <chr>
 
@@ -74,15 +72,13 @@ db <- fortify_from_rules(raw_db = load_db )
 head(db)
 ```
 
-    ## # A tibble: 6 x 5
-    ##   country            DateTime   CTY   CTA   BZN
-    ##     <chr>              <dttm> <dbl> <dbl> <dbl>
-    ## 1  FRANCE 2015-01-01 00:00:00 70929 70929 70929
-    ## 2  FRANCE 2015-01-01 01:00:00 69773 69773 69773
-    ## 3  FRANCE 2015-01-01 02:00:00 66417 66417 66417
-    ## 4  FRANCE 2015-01-01 03:00:00 64182 64182 64182
-    ## 5  FRANCE 2015-01-01 04:00:00 63859 63859 63859
-    ## 6  FRANCE 2015-01-01 05:00:00 63921 63921 63921
+    ##       country   DateTime      CTY      CTA      BZN
+    ## 1      FRANCE 2017-01-01 73330.00 73330.00 73330.00
+    ## 2     BELGIUM 2017-01-01  9970.44  9970.44  9970.44
+    ## 3 SWITZERLAND 2017-01-01  6536.40  6536.40  6536.40
+    ## 4       SPAIN 2017-01-01 23393.00 23393.00 23393.00
+    ## 5 NETHERLANDS 2017-01-01 10903.00 10903.00 10903.00
+    ## 6    PORTUGAL 2017-01-01  5076.70  5076.70  5076.70
 
 ### Recherche des anomalies
 
@@ -95,28 +91,32 @@ db_erros <- qualcon(db)
 db_erros
 ```
 
-    ## # A tibble: 80,625 x 14
-    ##    `CTY must not be missing` `CTA must not be missing`
-    ##                        <lgl>                     <lgl>
-    ##  1                      TRUE                     FALSE
-    ##  2                      TRUE                     FALSE
-    ##  3                      TRUE                     FALSE
-    ##  4                      TRUE                     FALSE
-    ##  5                      TRUE                     FALSE
-    ##  6                      TRUE                     FALSE
-    ##  7                      TRUE                     FALSE
-    ##  8                      TRUE                     FALSE
-    ##  9                      TRUE                     FALSE
-    ## 10                      TRUE                     FALSE
-    ## # ... with 80,615 more rows, and 12 more variables: `BZN must not be
-    ## #   missing` <lgl>, `CTY and CTA must be equals if not missing` <lgl>,
-    ## #   `CTY and BZN must be equals if not missing` <lgl>, `CTA and BZN must
-    ## #   be equals if not missing` <lgl>, `CTY and CTA difference is not
-    ## #   greater than 5%` <lgl>, `CTY and BZN difference is not greater than
-    ## #   5%` <lgl>, `CTA and BZN difference is not greater than 5%` <lgl>, `CTY
-    ## #   and CTA difference is not greater than 10%` <lgl>, `CTY and BZN
-    ## #   difference is not greater than 10%` <lgl>, `CTA and BZN difference is
-    ## #   not greater than 10%` <lgl>, DateTime <dttm>, country <chr>
+    ## # A tibble: 22,816 x 20
+    ##               DateTime       country `BZN is positive`
+    ##                 <dttm>         <chr>             <lgl>
+    ##  1 2017-01-01 00:00:00       AUSTRIA              TRUE
+    ##  2 2017-01-01 00:00:00       GERMANY              TRUE
+    ##  3 2017-01-01 00:00:00       IRELAND              TRUE
+    ##  4 2017-01-01 00:00:00    LUXEMBOURG              TRUE
+    ##  5 2017-01-01 00:00:00 NORTH_IRELAND              TRUE
+    ##  6 2017-01-01 00:00:00            UK              TRUE
+    ##  7 2017-01-01 01:00:00       AUSTRIA              TRUE
+    ##  8 2017-01-01 01:00:00       GERMANY              TRUE
+    ##  9 2017-01-01 01:00:00       IRELAND              TRUE
+    ## 10 2017-01-01 01:00:00    LUXEMBOURG              TRUE
+    ## # ... with 22,806 more rows, and 17 more variables: `BZN measure is less
+    ## #   than half its previous value` <lgl>, `BZN must not be missing` <lgl>,
+    ## #   `CTA and BZN difference is not greater than 10%` <lgl>, `CTA and BZN
+    ## #   difference is not greater than 5%` <lgl>, `CTA and BZN must be equals
+    ## #   if not missing` <lgl>, `CTA is positive` <lgl>, `CTA measure is less
+    ## #   than half its previous value` <lgl>, `CTA must not be missing` <lgl>,
+    ## #   `CTY and BZN difference is not greater than 10%` <lgl>, `CTY and BZN
+    ## #   difference is not greater than 5%` <lgl>, `CTY and BZN must be equals
+    ## #   if not missing` <lgl>, `CTY and CTA difference is not greater than
+    ## #   10%` <lgl>, `CTY and CTA difference is not greater than 5%` <lgl>,
+    ## #   `CTY and CTA must be equals if not missing` <lgl>, `CTY is
+    ## #   positive` <lgl>, `CTY measure is less than half its previous
+    ## #   value` <lgl>, `CTY must not be missing` <lgl>
 
 Une vue synthétique peut être obtenue avec la fonction `fortify_qualcon`.
 
@@ -125,20 +125,20 @@ erros_summary <- fortify_qualcon(db_erros)
 erros_summary %>% arrange(country, start, end)
 ```
 
-    ## # A tibble: 7,312 x 5
-    ##    country                                 validator time_frame
-    ##      <chr>                                     <chr>      <int>
-    ##  1 AUSTRIA                   BZN must not be missing          1
-    ##  2 BELGIUM                   CTA must not be missing          1
-    ##  3 BELGIUM                   CTA must not be missing          2
-    ##  4 BELGIUM                   CTA must not be missing          3
-    ##  5 BELGIUM                   CTA must not be missing          4
-    ##  6 BELGIUM                   CTA must not be missing          5
-    ##  7 BELGIUM                   CTA must not be missing          6
-    ##  8 BELGIUM CTA and BZN must be equals if not missing          1
-    ##  9 BELGIUM CTY and CTA must be equals if not missing          1
-    ## 10 BELGIUM                   CTA must not be missing          7
-    ## # ... with 7,302 more rows, and 2 more variables: start <dttm>, end <dttm>
+    ## # A tibble: 986 x 4
+    ##    country                                      validator
+    ##      <chr>                                          <chr>
+    ##  1 AUSTRIA CTA and BZN difference is not greater than 10%
+    ##  2 AUSTRIA  CTA and BZN difference is not greater than 5%
+    ##  3 AUSTRIA      CTA and BZN must be equals if not missing
+    ##  4 AUSTRIA CTY and BZN difference is not greater than 10%
+    ##  5 AUSTRIA  CTY and BZN difference is not greater than 5%
+    ##  6 AUSTRIA      CTY and BZN must be equals if not missing
+    ##  7 AUSTRIA                        CTA must not be missing
+    ##  8 AUSTRIA                        CTY must not be missing
+    ##  9 AUSTRIA                        BZN must not be missing
+    ## 10 BELGIUM                        BZN must not be missing
+    ## # ... with 976 more rows, and 2 more variables: start <dttm>, end <dttm>
 
 ### Détails des anomalies
 
@@ -148,27 +148,30 @@ Les données brutes attachées à un problème identifié peuvent être obtenues
 extract_raw_data(load_db, db_erros)
 ```
 
-    ## # A tibble: 284,303 x 22
-    ##    country  year month   day            DateTime AreaTypeCode AreaName
-    ##      <chr> <int> <int> <int>              <dttm>        <chr>    <chr>
-    ##  1  FRANCE  2016     9    19 2016-09-19 10:00:00          CTY   France
-    ##  2 BELGIUM  2015     3     7 2015-03-07 23:00:00          CTY  Belgium
-    ##  3 BELGIUM  2015     3    29 2015-03-29 02:00:00          CTY  Belgium
-    ##  4 BELGIUM  2015     3     8 2015-03-08 00:00:00          CTY  Belgium
-    ##  5 BELGIUM  2015     3     8 2015-03-08 06:00:00          CTY  Belgium
-    ##  6 BELGIUM  2015     3     8 2015-03-08 01:00:00          CTY  Belgium
-    ##  7 BELGIUM  2015     3     8 2015-03-08 07:00:00          CTY  Belgium
-    ##  8 BELGIUM  2015     3     8 2015-03-08 08:00:00          CTY  Belgium
-    ##  9 BELGIUM  2015     3     8 2015-03-08 03:00:00          CTY  Belgium
-    ## 10 BELGIUM  2015     3     8 2015-03-08 02:00:00          CTY  Belgium
-    ## # ... with 284,293 more rows, and 15 more variables: MapCode <chr>,
-    ## #   TotalLoadValue <dbl>, SubmissionTS <chr>, `CTY must not be
-    ## #   missing` <lgl>, `CTA must not be missing` <lgl>, `BZN must not be
-    ## #   missing` <lgl>, `CTY and CTA must be equals if not missing` <lgl>,
-    ## #   `CTY and BZN must be equals if not missing` <lgl>, `CTA and BZN must
-    ## #   be equals if not missing` <lgl>, `CTY and CTA difference is not
-    ## #   greater than 5%` <lgl>, `CTY and BZN difference is not greater than
-    ## #   5%` <lgl>, `CTA and BZN difference is not greater than 5%` <lgl>, `CTY
-    ## #   and CTA difference is not greater than 10%` <lgl>, `CTY and BZN
-    ## #   difference is not greater than 10%` <lgl>, `CTA and BZN difference is
-    ## #   not greater than 10%` <lgl>
+    ## # A tibble: 74,924 x 28
+    ##        country  year month   day            DateTime AreaTypeCode
+    ##          <chr> <int> <int> <int>              <dttm>        <chr>
+    ##  1 SWITZERLAND  2017     1    16 2017-01-16 15:00:00          CTY
+    ##  2       ITALY  2017     1     2 2017-01-02 19:00:00          CTY
+    ##  3       ITALY  2017     1     2 2017-01-02 03:00:00          CTY
+    ##  4       ITALY  2017     1     2 2017-01-02 22:00:00          CTY
+    ##  5       ITALY  2017     1     2 2017-01-02 14:00:00          CTY
+    ##  6       ITALY  2017     1     2 2017-01-02 04:00:00          CTY
+    ##  7       ITALY  2017     1     2 2017-01-02 01:00:00          CTY
+    ##  8       ITALY  2017     1     2 2017-01-02 06:00:00          CTY
+    ##  9       ITALY  2017     1     2 2017-01-02 16:00:00          CTY
+    ## 10       ITALY  2017     1     2 2017-01-02 13:00:00          CTY
+    ## # ... with 74,914 more rows, and 22 more variables: AreaName <chr>,
+    ## #   MapCode <chr>, TotalLoadValue <dbl>, SubmissionTS <chr>, `BZN is
+    ## #   positive` <lgl>, `BZN measure is less than half its previous
+    ## #   value` <lgl>, `BZN must not be missing` <lgl>, `CTA and BZN difference
+    ## #   is not greater than 10%` <lgl>, `CTA and BZN difference is not greater
+    ## #   than 5%` <lgl>, `CTA and BZN must be equals if not missing` <lgl>,
+    ## #   `CTA is positive` <lgl>, `CTA measure is less than half its previous
+    ## #   value` <lgl>, `CTA must not be missing` <lgl>, `CTY and BZN difference
+    ## #   is not greater than 10%` <lgl>, `CTY and BZN difference is not greater
+    ## #   than 5%` <lgl>, `CTY and BZN must be equals if not missing` <lgl>,
+    ## #   `CTY and CTA difference is not greater than 10%` <lgl>, `CTY and CTA
+    ## #   difference is not greater than 5%` <lgl>, `CTY and CTA must be equals
+    ## #   if not missing` <lgl>, `CTY is positive` <lgl>, `CTY measure is less
+    ## #   than half its previous value` <lgl>, `CTY must not be missing` <lgl>
