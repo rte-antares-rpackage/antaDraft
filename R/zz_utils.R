@@ -10,7 +10,7 @@ globalVariables(c('DateTime', 'TotalLoadValue', 'value', 'country', 'time_frame'
 #' @seealso \code{\link{qualcon}}
 are_equals_if_not_na <- function(y, z){
 
-  is.na(y) | is.na(z) | abs(y-z)<.Machine$double.eps
+  abs(y-z)<.Machine$double.eps
 
 }
 
@@ -24,7 +24,7 @@ are_equals_if_not_na <- function(y, z){
 #' @param abs_diff absolute difference to test in percent
 #' @seealso \code{\link{qualcon}}
 abs_diff_lt <- function(y, z, abs_diff = 0.05 ){
-  is.na(y) | is.na(z) | abs(1 - (y / z) ) < abs_diff
+  abs(1 - (y / z) ) < abs_diff
 }
 
 
@@ -34,7 +34,7 @@ abs_diff_lt <- function(y, z, abs_diff = 0.05 ){
 #' @param y variable to test
 #' @seealso \code{\link{qualcon}}
 is_positive <- function( y ){
-  is.na(y) | y > 0
+  y > 0
 }
 
 
@@ -43,6 +43,6 @@ is_positive <- function( y ){
 #' @export
 lag_diff_ok <- function( y ){
   calc <- ((y - lag(y)) / y)
-  is.na( calc ) | calc < .5
+  calc < .5
 }
 

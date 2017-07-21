@@ -31,6 +31,9 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
   all_res$country <- db$country
   all_res <- all_res[keep_row, ]
 
+
+  all_res <- anti_cascade_errors(yaml_rules = rules, data = all_res )
+
   exclude_data <- yaml.load_file(fp_rules) %>%
     map_df( function(x) {
       x$stringsAsFactors <- FALSE
@@ -88,3 +91,28 @@ fortify_qualcon <- function( dat ){
   out
 }
 
+
+
+
+
+#' @importFrom purrr map_df
+#' @importFrom yaml yaml.load_file
+#' @importFrom tibble tibble
+anti_cascade_errors <- function( yaml_rules, data ){
+  rules <- yaml.load_file(yaml_rules)$rules
+
+  rules_id <- map_df(rules, function(x){
+    tibble( name = x$name, rule_uid = x$id)
+  })
+
+  for( rule in rules ){
+    if ( is.null(rule$drop_if_not) )
+      next
+    column_ <- rules_id$name[rules_id$rule_uid %in% rule$id]
+    columns_to_scan_4_false <- rules_id$name[rules_id$rule_uid %in% rule$drop_if_not]
+    filter_vector <- lapply( data[columns_to_scan_4_false], function(x) !x)
+    filter_vector <- Reduce("|", filter_vector)
+    data[filter_vector,column_] <- TRUE
+  }
+  data
+}

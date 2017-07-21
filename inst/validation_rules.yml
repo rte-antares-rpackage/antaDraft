@@ -2,47 +2,104 @@ rules:
 
 - expr: is.finite(CTY)
   name: CTY must not be missing
+  id: CTY_NA
 - expr: is.finite(CTA)
   name: CTA must not be missing
+  id: CTA_NA
 - expr: is.finite(BZN)
   name: BZN must not be missing
+  id: BZN_NA
 
 - expr: is_positive(CTY)
   name: CTY is positive
+  id: CTY_POS
+  drop_if_not: CTY_NA
 - expr: is_positive(CTA)
   name: CTA is positive
+  id: CTA_POS
+  drop_if_not: CTA_NA
 - expr: is_positive(BZN)
   name: BZN is positive
+  id: BZN_POS
+  drop_if_not: BZN_NA
 
 
 - expr: are_equals_if_not_na(CTY,CTA)
-  name: CTY and CTA must be equals if not missing
+  name: CTY and CTA must be equals
+  id: CTY_EQ_CTA
+  drop_if_not:
+    - CTY_NA
+    - CTA_NA
 - expr: are_equals_if_not_na(CTY,BZN)
-  name: CTY and BZN must be equals if not missing
+  name: CTY and BZN must be equals
+  id: CTY_EQ_BZN
+  drop_if_not:
+    - CTY_NA
+    - BZN_NA
 - expr: are_equals_if_not_na(CTA,BZN)
-  name: CTA and BZN must be equals if not missing
+  name: CTA and BZN must be equals
+  id: CTA_EQ_BZN
+  drop_if_not:
+    - CTY_NA
+    - BZN_NA
 
 
 - expr: abs_diff_lt(CTY, CTA, 0.05)
   name: CTY and CTA difference is not greater than 5%
+  id: DIFF_CTY_CTA_05
+  drop_if_not:
+    - CTY_NA
+    - CTA_NA
+    - DIFF_CTY_CTA_10
 - expr: abs_diff_lt(CTY, BZN, 0.05)
   name: CTY and BZN difference is not greater than 5%
+  id: DIFF_CTY_BZN_05
+  drop_if_not:
+    - CTY_NA
+    - BZN_NA
+    - DIFF_CTY_BZN_10
 - expr: abs_diff_lt(CTA, BZN, 0.05)
   name: CTA and BZN difference is not greater than 5%
+  id: DIFF_CTA_BZN_05
+  drop_if_not:
+    - CTA_NA
+    - BZN_NA
+    - DIFF_CTA_BZN_10
 
 
 - expr: abs_diff_lt(CTY, CTA, 0.10)
   name: CTY and CTA difference is not greater than 10%
+  id: DIFF_CTY_CTA_10
+  drop_if_not:
+    - CTY_NA
+    - CTA_NA
 - expr: abs_diff_lt(CTY, BZN, 0.10)
   name: CTY and BZN difference is not greater than 10%
+  id: DIFF_CTY_BZN_10
+  drop_if_not:
+    - CTY_NA
+    - BZN_NA
 - expr: abs_diff_lt(CTA, BZN, 0.10)
   name: CTA and BZN difference is not greater than 10%
+  id: DIFF_CTA_BZN_10
+  drop_if_not:
+    - CTA_NA
+    - BZN_NA
 
 
 - expr: lag_diff_ok(CTY)
   name: CTY measure is less than half its previous value
+  id: LAG_CTY_50
+  drop_if_not:
+    - CTY_NA
 - expr: lag_diff_ok(CTA)
   name: CTA measure is less than half its previous value
+  id: LAG_CTA_50
+  drop_if_not:
+    - CTA_NA
 - expr: lag_diff_ok(BZN)
   name: BZN measure is less than half its previous value
+  id: LAG_BZN_50
+  drop_if_not:
+    - BZN_NA
 
