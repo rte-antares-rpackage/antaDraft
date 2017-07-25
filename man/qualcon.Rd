@@ -5,8 +5,8 @@
 \title{eval validation rules against a dataset}
 \usage{
 qualcon(db, rules = system.file(package = "antadraft",
-  "validation_rules.yml"), fp_rules = system.file(package = "antadraft",
-  "false_positive_rules.yml"))
+  "yaml_data/validate/validation_rules.yml"), fp_rules = system.file(package =
+  "antadraft", "yaml_data/validate/false_positive_rules.yml"))
 }
 \arguments{
 \item{db}{data to be confronted with rules}

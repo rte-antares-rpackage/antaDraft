@@ -82,6 +82,6 @@ extract_raw_data(load_db, db_erros)
 
 ```{r}
 yaml_valid <- system.file(package = "antadraft", "validation_rules.yml" )
-yaml_correct <- system.file(package = "antadraft", "auto_correct.yml" )
+yaml_correct <- system.file(package = "antadraft", "yaml_data/correction/cty_correct.yml" )
 correct_db(db, v_rules = yaml_valid, c_rules = yaml_correct ) %>% head()
 ```

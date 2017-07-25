@@ -13,7 +13,7 @@ fortify_from_rules(raw_db, file_rules = NULL)
 }
 \description{
 tidy data imported with function \code{read_load_files}.
-A set of rules defined in cty_rules.yaml will be used to reshape untidy data
+A set of rules defined in yaml_data/cty_rules.yaml will be used to reshape untidy data
 }
 \section{rules}{
 

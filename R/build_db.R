@@ -5,7 +5,7 @@
 #' @export
 #' @title tidy raw data
 #' @description tidy data imported with function \code{read_load_files}.
-#' A set of rules defined in cty_rules.yaml will be used to reshape untidy data
+#' A set of rules defined in yaml_data/cty_rules.yaml will be used to reshape untidy data
 #' @param raw_db data returned by \code{\link{read_load_files}}
 #' @param file_rules yaml file containing rules for each country
 #' @section rules:
@@ -53,3 +53,5 @@ fortify_from_rules <- function( raw_db, file_rules = NULL ){
     left_join(data_from_cta, by = c("country", "DateTime")) %>%
     left_join(data_from_bzn, by = c("country", "DateTime"))
 }
+
+

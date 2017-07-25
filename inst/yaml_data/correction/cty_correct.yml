@@ -1,14 +1,8 @@
 replace: CTY
 use: CTA
 country:
-  - FRANCE
   - BELGIUM
-  - SWITZERLAND
-  - SPAIN
   - NETHERLANDS
-  - PORTUGAL
-  - ITALY
-  - UK
   - IRELAND
   - NORTH_IRELAND
   - LUXEMBOURG
