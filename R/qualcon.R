@@ -14,11 +14,12 @@ eval_quality <- function( db, rules = system.file(package = "antadraft", 'valida
 #' @title correct a data frame
 #' @description Correction of a data frame with a set of yaml rules
 #' @param db data to be eventually modified
-#' @param rules yaml file containing rules for corrections
+#' @param v_rules yaml file containing rules to evaluate for quality evaluation
+#' @param c_rules yaml file containing rules for corrections
 #' @importFrom yaml yaml.load_file
-correct_db <- function( db, rules ){
-  quality <- eval_quality(db, rules )
-  auto_correct <- yaml::yaml.load_file( system.file(package = "antadraft", 'auto_correct.yml') )
+correct_db <- function( db, v_rules, c_rules ){
+  quality <- eval_quality(db, v_rules )
+  auto_correct <- yaml::yaml.load_file( c_rules )
   false_cond <- !quality[[auto_correct$when_false]]
   true_cond <- Reduce("&" , quality[auto_correct$when_true])
   country_cond <- quality$country %in% auto_correct$country

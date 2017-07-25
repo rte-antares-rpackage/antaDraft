@@ -11,8 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Construction d'une base de données publique contenant des données ANTARES provenant du SI transparency.
 
-Les objectifs premiers du logiciel sont :
-
 - identifier les sources problématiques :
     * y a t-il des données manquantes et où sont-elles?
     * y a t-il des données nulles et où sont-elles?
@@ -80,3 +78,10 @@ Les données brutes attachées à un problème identifié peuvent être obtenues
 extract_raw_data(load_db, db_erros)
 ```
 
+### Correction des données
+
+```{r}
+yaml_valid <- system.file(package = "antadraft", "validation_rules.yml" )
+yaml_correct <- system.file(package = "antadraft", "auto_correct.yml" )
+correct_db(db, v_rules = yaml_valid, c_rules = yaml_correct ) %>% head()
+```

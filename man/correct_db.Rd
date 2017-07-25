@@ -4,12 +4,14 @@
 \alias{correct_db}
 \title{correct a data frame}
 \usage{
-correct_db(db, rules)
+correct_db(db, v_rules, c_rules)
 }
 \arguments{
 \item{db}{data to be eventually modified}
 
-\item{rules}{yaml file containing rules for corrections}
+\item{v_rules}{yaml file containing rules to evaluate for quality evaluation}
+
+\item{c_rules}{yaml file containing rules for corrections}
 }
 \description{
 Correction of a data frame with a set of yaml rules
