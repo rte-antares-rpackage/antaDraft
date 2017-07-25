@@ -41,6 +41,11 @@ is_positive <- function( y ){
 
 
 #' @export
+#' @importFrom stats lag
+#' @title test lag values
+#' @description test if values are not less than fifty percent of their preceding values.
+#' @param y variable to test
+#' @seealso \code{\link{qualcon}}
 lag_diff_ok <- function( y ){
   calc <- ((y - lag(y)) / y)
   calc < .5

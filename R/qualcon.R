@@ -1,3 +1,31 @@
+eval_quality <- function( db, rules = system.file(package = "antadraft", 'validation_rules.yml') ){
+    v <- validator(.file = rules )
+    voptions(v, raise='all', na.value = FALSE)# from MVDL
+    all_res <- confront(db, v) %>% values()
+    all_valid <- apply( all_res, 1, function( x ) all(x) )
+    all_res <- as_tibble(all_res)
+    all_res$DateTime <- db$DateTime
+    all_res$country <- db$country
+    all_res$is_valid <- all_valid
+    all_res
+}
+
+#' @export
+#' @title correct a data frame
+#' @description Correction of a data frame with a set of yaml rules
+#' @param db data to be eventually modified
+#' @param rules yaml file containing rules for corrections
+#' @importFrom yaml yaml.load_file
+correct_db <- function( db, rules ){
+  quality <- eval_quality(db, rules )
+  auto_correct <- yaml::yaml.load_file( system.file(package = "antadraft", 'auto_correct.yml') )
+  false_cond <- !quality[[auto_correct$when_false]]
+  true_cond <- Reduce("&" , quality[auto_correct$when_true])
+  country_cond <- quality$country %in% auto_correct$country
+  db[false_cond & true_cond & country_cond, auto_correct$replace ] <- db[false_cond & true_cond & country_cond, auto_correct$use ]
+  db
+}
+
 #' @importFrom validate validator confront values voptions
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr replace_na
@@ -21,16 +49,10 @@ qualcon <- function( db, rules = system.file(package = "antadraft", 'validation_
                      fp_rules = system.file(package = "antadraft", 'false_positive_rules.yml')
                      ){
 
-  v <- validator(.file = rules )
-  voptions(v, raise='all', na.value = FALSE)# from MVDL
-  db <- db[order(db$country, db$DateTime),]
-  all_res <- confront(db, v) %>% values()
-  keep_row <- apply( all_res, 1, function( x ) !all(x) )
-  all_res <- as_tibble(all_res)
-  all_res$DateTime <- db$DateTime
-  all_res$country <- db$country
+  all_res <- eval_quality( db = db, rules = rules )
+  keep_row <- !(all_res$is_valid)
   all_res <- all_res[keep_row, ]
-
+  all_res$is_valid <- NULL
 
   all_res <- anti_cascade_errors(yaml_rules = rules, data = all_res )
 
