@@ -1,23 +1,28 @@
 Package: antadraft
 Type: Package
-Title: parse entsoe data into antares format
-Version: 0.0.3
+Title: parse entsoe datasets into antares format
+Version: 0.1.9000
 Authors@R: c(
     person(given = "David", family = "Gohel", 
       email = "david.gohel@rte-france.com", role = c("aut", "cre")),
     person(given = "Fabiola", family = "Aravena-Rojas", 
       email = "fabiola.aravena-rojas@rte-france.com", role = "aut"),
+    person(given = "Jalal-Edine", family = "Zawam", 
+      email = "jalal-edine.zawam@rte-france.com", role = "aut"),
     person(given = "RTE", role = "cph")
   )
-Description: Read and transform data from entsoe to make them available in antares platform.
+Description: Read and transform data from entsoe to make them available in antares platform. 
+  Several functions are provided, i.e. functions for quality control, error reporting, 
+  missing data imputation and data corrections.
 License: GPL (>= 2) | file LICENSE
 Encoding: UTF-8
 LazyData: true 
 Imports: dplyr, purrr, tibble, utils, magrittr, 
-  validate, yaml, lubridate, rlang, tidyr,
-  data.table,shiny,shinyFiles,miniUI
+  validate, yaml, lubridate, tidyr,
+  data.table,
+  shiny, shinyFiles, miniUI, rmarkdown, 
+  htmltools, R.utils
 RoxygenNote: 6.0.1.9000
 Suggests: knitr,
-    rmarkdown,
     testthat
 VignetteBuilder: knitr

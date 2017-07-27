@@ -20,7 +20,7 @@ eval_quality <- function( db, rules = system.file(package = "antadraft", 'yaml_d
 #' @title eval validation rules against a dataset
 #' @description Confront data with a set of validation rules
 #' @param db data to be confronted with rules
-#' @param rules yaml file containing rules to evaluate
+#' @param rules yaml file containing rules to be used to validate data
 #' @param fp_rules yaml file containing false positive rules to exclude
 #' a posteriori.
 #' @import data.table
@@ -95,9 +95,54 @@ fortify_qualcon <- function( dat ){
     summarise(start = min(DateTime), end = max( DateTime)) %>%
     ungroup()
   out$time_frame <- NULL
+
+
+
   out
 }
 
+#' produce reports for each country and error type
+#'
+#' @param error_sum result returned by function \code{fortify_qualcon}
+#' @param yaml_v_rules yaml file containing rules to be used to validate data
+#' @param dir directory where to write reports
+#' @importFrom rmarkdown render
+#' @importFrom R.utils getAbsolutePath
+#' @export
+report_errors_summary <- function( error_sum, yaml_v_rules = NULL, dir = getwd() ){
+  dir <- getAbsolutePath(dir)
+  if( !dir.exists(dir) ){
+    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  }
+
+  if( is.null(yaml_v_rules))
+    yaml_v_rules <- system.file(package = "antadraft", "yaml_data/validate/validation_rules.yml" )
+  reference_errors <- yaml.load_file(yaml_correct)$rules %>%
+    map_df(function(x) {
+      tibble(validator = x$name, id = paste(x$var, collapse = ", ") )
+    })
+
+  myerrors <- error_sum %>%
+    mutate(period = ifelse(end - start>0, TRUE, FALSE) ) %>%
+    group_by(!!!syms(c("country", "validator")) ) %>%
+    nest() %>%
+    right_join(reference_errors, by = "validator")
+
+  report_files <- list()
+  rmd_file <- system.file(package = "antadraft", "template_rapport1.Rmd" )
+  for(i in seq_len( nrow(myerrors) ) ){
+
+    par <- list( country = myerrors[i, "country"],
+                 id = myerrors[i, "id"],
+                 title = myerrors[i, "validator"],
+                 data = myerrors[[i, "data"]] )
+    outfile <- paste0(par$country, "_[" , par$title, "].html" )
+    outfile <- file.path(dir, outfile)
+    render(rmd_file, params = par, output_file = outfile )
+    report_files <- append( report_files, list(outfile) )
+  }
+  unlist(report_files)
+}
 
 
 

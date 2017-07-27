@@ -1,0 +1,51 @@
+---
+title: "quality report"
+date: "timestamp: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S')`"
+output: html_document
+params:
+    country: "any country"
+    id: "what is it about"
+    title: ""
+    data: adqd
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(htmltools)
+library(dplyr)
+library(purrr)
+library(knitr)
+```
+
+**Item: Actual Total Load [6.1]**
+
+Area: **`r params$id`** | **`r params$country`**
+
+
+```{r echo=FALSE}
+data <- params$data %>% 
+  filter( period ) %>% 
+  select(start, end) 
+if( nrow( data) > 0 ){
+  
+  between_values <- paste0(format(data$start, "%Y-%m-%d %H:%M:%S"), 
+                           " à ", format(data$end, "%Y-%m-%d %H:%M:%S"))
+  tags$ul( tags$li(tags$strong("Between")), 
+           tags$ul( map( between_values, tags$li ) ) 
+  )
+}
+```
+
+
+```{r echo=FALSE}
+data <- params$data %>% 
+  filter( !period ) %>% 
+  select(start) 
+
+if( nrow( data) > 0 ){
+  tags$ul( tags$li(tags$strong("At")), 
+           tags$ul( map( format(data$start, "%Y-%m-%d %H:%M:%S"), tags$li ) ) )
+}
+```
+
+

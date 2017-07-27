@@ -8,15 +8,7 @@
 #' @param issues_db data returned by \code{\link{qualcon}}
 extract_raw_data <- function( raw_db, issues_db ){
 
-
   cty_rules <- get_cty_rules()
-  # pivot_data <- expand.grid( country = names(cty_rules),
-  #                            DateTime = seq( min(raw_db$DateTime), max(raw_db$DateTime), by = "hour" ),
-  #                            stringsAsFactors = FALSE )
-  # pivot_data <- map_df( cty_rules, function( x ){
-  #   map_df( x, function(x) tibble(MapCode = x ), .id = "AreaTypecode" )
-  # }, .id = "country" ) %>% inner_join(pivot_data, by = "country")
-
 
   data_from_cty <- map_df(cty_rules, function(cty_rule, db){
     ref_ <- tibble(AreaTypeCode = "CTY", MapCode = cty_rule$CTY)

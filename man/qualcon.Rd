@@ -11,7 +11,7 @@ qualcon(db, rules = system.file(package = "antadraft",
 \arguments{
 \item{db}{data to be confronted with rules}
 
-\item{rules}{yaml file containing rules to evaluate}
+\item{rules}{yaml file containing rules to be used to validate data}
 
 \item{fp_rules}{yaml file containing false positive rules to exclude
 a posteriori.}

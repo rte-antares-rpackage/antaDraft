@@ -4,7 +4,7 @@
 \alias{correct_db}
 \title{correct a data frame}
 \usage{
-correct_db(db, v_rules, c_rules)
+correct_db(db, v_rules = NULL, c_rules = NULL)
 }
 \arguments{
 \item{db}{data to be eventually modified}
