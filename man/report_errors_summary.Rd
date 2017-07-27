@@ -4,10 +4,13 @@
 \alias{report_errors_summary}
 \title{produce reports for each country and error type}
 \usage{
-report_errors_summary(error_sum, yaml_v_rules = NULL, dir = getwd())
+report_errors_summary(error_sum, raw_data, yaml_v_rules = NULL,
+  dir = getwd())
 }
 \arguments{
 \item{error_sum}{result returned by function \code{fortify_qualcon}}
+
+\item{raw_data}{result returned by function \code{read_load_files}}
 
 \item{yaml_v_rules}{yaml file containing rules to be used to validate data}
 

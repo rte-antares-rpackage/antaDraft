@@ -104,20 +104,25 @@ fortify_qualcon <- function( dat ){
 #' produce reports for each country and error type
 #'
 #' @param error_sum result returned by function \code{fortify_qualcon}
+#' @param raw_data result returned by function \code{read_load_files}
 #' @param yaml_v_rules yaml file containing rules to be used to validate data
 #' @param dir directory where to write reports
 #' @importFrom rmarkdown render
 #' @importFrom R.utils getAbsolutePath
+#' @importFrom rlang syms
+#' @importFrom tidyr nest
+#' @importFrom dplyr group_by right_join mutate
 #' @export
-report_errors_summary <- function( error_sum, yaml_v_rules = NULL, dir = getwd() ){
+report_errors_summary <- function( error_sum, raw_data, yaml_v_rules = NULL, dir = getwd() ){
   dir <- getAbsolutePath(dir)
   if( !dir.exists(dir) ){
     dir.create(dir, recursive = TRUE, showWarnings = FALSE)
   }
 
+
   if( is.null(yaml_v_rules))
     yaml_v_rules <- system.file(package = "antadraft", "yaml_data/validate/validation_rules.yml" )
-  reference_errors <- yaml.load_file(yaml_correct)$rules %>%
+  reference_errors <- yaml.load_file(yaml_v_rules)$rules %>%
     map_df(function(x) {
       tibble(validator = x$name, id = paste(x$var, collapse = ", ") )
     })
@@ -131,6 +136,7 @@ report_errors_summary <- function( error_sum, yaml_v_rules = NULL, dir = getwd()
   report_files <- list()
   rmd_file <- system.file(package = "antadraft", "template_rapport1.Rmd" )
   for(i in seq_len( nrow(myerrors) ) ){
+    csv_data <- raw_data[ !raw_data[, myerrors[i, ]$"validator"] & raw_data$country %in% myerrors[i, ]$"country", ]
 
     par <- list( country = myerrors[i, "country"],
                  id = myerrors[i, "id"],
@@ -138,6 +144,12 @@ report_errors_summary <- function( error_sum, yaml_v_rules = NULL, dir = getwd()
                  data = myerrors[[i, "data"]] )
     outfile <- paste0(par$country, "_[" , par$title, "].html" )
     outfile <- file.path(dir, outfile)
+
+    outcsv <- paste0(par$country, "_[" , par$title, "].csv" )
+    outcsv <- file.path(dir, outcsv)
+    write.csv2(csv_data, file = outcsv)
+    par$csv <- basename(outcsv)
+
     render(rmd_file, params = par, output_file = outfile )
     report_files <- append( report_files, list(outfile) )
   }

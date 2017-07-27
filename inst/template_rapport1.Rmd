@@ -5,8 +5,10 @@ output: html_document
 params:
     country: "any country"
     id: "what is it about"
-    title: ""
-    data: adqd
+    title: "dummy title"
+    data: "adqd"
+    csv: "filepath"
+    
 ---
 
 ```{r setup, include=FALSE}
@@ -15,12 +17,15 @@ library(htmltools)
 library(dplyr)
 library(purrr)
 library(knitr)
+library(magrittr)
 ```
 
 **Item: Actual Total Load [6.1]**
 
 Area: **`r params$id`** | **`r params$country`**
 
+
+[Download CSV](./`r params$csv`)
 
 ```{r echo=FALSE}
 data <- params$data %>% 

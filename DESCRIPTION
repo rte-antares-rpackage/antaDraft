@@ -21,7 +21,7 @@ Imports: dplyr, purrr, tibble, utils, magrittr,
   validate, yaml, lubridate, tidyr,
   data.table,
   shiny, shinyFiles, miniUI, rmarkdown, 
-  htmltools, R.utils
+  htmltools, R.utils, openssl
 RoxygenNote: 6.0.1.9000
 Suggests: knitr,
     testthat
