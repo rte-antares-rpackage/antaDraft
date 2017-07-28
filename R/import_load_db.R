@@ -20,10 +20,11 @@ read_load_files <- function( dir_src ){
   map_df(agg_files, function(i){
     dat <- read.table(i, sep="\t", header=T,
                       fileEncoding = "UTF-16LE",
-                      stringsAsFactors = FALSE) %>%
-      as_tibble() %>%
-      filter(substr(DateTime,15,19)=="00:00") %>%
-      mutate(DateTime = as.POSIXct(DateTime, format="%Y-%m-%d %H:%M:%S",tz="UTC") )
+                      stringsAsFactors = FALSE)
+    dat <- as_tibble(dat)
+    dat <- filter(dat, substr(DateTime,15,19)=="00:00")
+    dat$DateTime <- as.POSIXct(dat$DateTime, format="%Y-%m-%d %H:%M:%S",tz="UTC")
+    dat
   })
 
 }

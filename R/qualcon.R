@@ -136,7 +136,10 @@ report_errors_summary <- function( error_sum, raw_data, yaml_v_rules = NULL, dir
   report_files <- list()
   rmd_file <- system.file(package = "antadraft", "template_rapport1.Rmd" )
   for(i in seq_len( nrow(myerrors) ) ){
+
+    # extraction du dataset ----
     csv_data <- raw_data[ !raw_data[, myerrors[i, ]$"validator"] & raw_data$country %in% myerrors[i, ]$"country", ]
+    csv_data <-  csv_data[, setdiff( colnames(csv_data), c(reference_errors$validator, "observed" ) )]
 
     par <- list( country = myerrors[i, "country"],
                  id = myerrors[i, "id"],
@@ -147,7 +150,8 @@ report_errors_summary <- function( error_sum, raw_data, yaml_v_rules = NULL, dir
 
     outcsv <- paste0(par$country, "_[" , par$title, "].csv" )
     outcsv <- file.path(dir, outcsv)
-    write.csv2(csv_data, file = outcsv)
+    write.csv2(csv_data, file = outcsv, row.names = FALSE)
+
     par$csv <- basename(outcsv)
 
     render(rmd_file, params = par, output_file = outfile )

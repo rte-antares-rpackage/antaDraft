@@ -27,7 +27,7 @@ fortify_from_rules <- function( raw_db, file_rules = NULL ){
     ref_ <- tibble(AreaTypeCode = "CTY", MapCode = cty_rule$CTY)
     semi_join(db, ref_, by = c("AreaTypeCode", "MapCode") ) %>%
       select(DateTime, TotalLoadValue ) %>% group_by(DateTime) %>%
-      summarise(CTY = sum(TotalLoadValue, na.rm = TRUE)) %>%
+      summarise(CTY = sum(TotalLoadValue, na.rm = FALSE)) %>%
       ungroup()
   }, db = raw_db, .id = "country")
 
@@ -35,7 +35,7 @@ fortify_from_rules <- function( raw_db, file_rules = NULL ){
     ref_ <- tibble(AreaTypeCode = "CTA", MapCode = cty_rule$CTA)
     semi_join(db, ref_, by = c("AreaTypeCode", "MapCode") ) %>%
       select(DateTime, TotalLoadValue ) %>% group_by(DateTime) %>%
-      summarise(CTA = sum(TotalLoadValue, na.rm = TRUE)) %>%
+      summarise(CTA = sum(TotalLoadValue, na.rm = FALSE)) %>%
       ungroup()
   }, db = raw_db, .id = "country")
 
@@ -44,7 +44,7 @@ fortify_from_rules <- function( raw_db, file_rules = NULL ){
     ref_ <- tibble(AreaTypeCode = "BZN", MapCode = cty_rule$BZN)
     semi_join(db, ref_, by = c("AreaTypeCode", "MapCode") ) %>%
       select(DateTime, TotalLoadValue ) %>% group_by(DateTime) %>%
-      summarise(BZN = sum(TotalLoadValue, na.rm = TRUE)) %>%
+      summarise(BZN = sum(TotalLoadValue, na.rm = FALSE)) %>%
       ungroup()
   }, db = raw_db, .id = "country")
 

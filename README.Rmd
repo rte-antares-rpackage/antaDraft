@@ -7,17 +7,6 @@ output: rmarkdown::github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Goal of the project
-
-Construction d'une base de données publique contenant des données ANTARES provenant du SI transparency.
-
-- identifier les sources problématiques :
-    * y a t-il des données manquantes et où sont-elles?
-    * y a t-il des données nulles et où sont-elles?
-- quelles données sont mauvaises
-- Substituer de façon mécanique quand c'est possible des données manquantes par d'autres données supposées valides et échangeable.
-- comment estimer la données identifiée mauvaise
-
 
 ## Installation
 
@@ -38,8 +27,8 @@ devtools::install_github("rte-antares-rpackage/antaDraft")
 library(antadraft)
 library(dplyr)
 
-rep_path <- system.file(package = "antadraft", "files", "load")
-load_db <- read_load_files(rep_path)
+rep_path <- "/Users/davidgohel/Documents/consulting/RTE/load"
+load_db <- rep_path %>% read_load_files() %>% fake_raw_data()
 head(load_db)
 ```
 
@@ -65,8 +54,8 @@ Une vue synthétique peut être obtenue avec la fonction `fortify_qualcon`.
 
 
 ```{r}
-erros_summary <- fortify_qualcon(db_erros)
-erros_summary %>% arrange(country, start, end)
+errors_summary <- fortify_qualcon(db_erros)
+errors_summary %>% arrange(country, start, end)
 ```
 
 
@@ -75,7 +64,16 @@ erros_summary %>% arrange(country, start, end)
 Les données brutes attachées à un problème identifié peuvent être obtenues avec la fonction `extract_raw_data`. 
 
 ```{r}
-extract_raw_data(load_db, db_erros)
+db_issues <- extract_raw_data(load_db, db_erros)
+head(db_issues)
+```
+
+### Reporting des erreurs par pays et par erreur
+
+```{r}
+yaml_correct <- system.file(package = "antadraft", "yaml_data/correction/cty_correct.yml" )
+all_report <- report_errors_summary( errors_summary, db_issues, dir = "reports" )
+all_report
 ```
 
 ### Correction des données

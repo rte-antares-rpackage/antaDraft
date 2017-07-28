@@ -27,6 +27,11 @@ extract_raw_data <- function( raw_db, issues_db ){
 
 
   raw_data <- bind_rows(data_from_cty, data_from_cta, data_from_bzn )
+
+  alert_summary <- gather( issues_db, alert, value, - DateTime, -country)
+  alert_summary <- group_by( alert_summary[!alert_summary$value,], DateTime, country )
+  alert_summary <- summarise(alert_summary, alert = paste(alert, collapse = ", "))
+  raw_data <- raw_data %>% inner_join(alert_summary, by = c("DateTime", "country") )
   raw_data <- raw_data %>% inner_join(issues_db, by = c("DateTime", "country") )
   raw_data
 }
