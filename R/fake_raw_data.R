@@ -1,11 +1,16 @@
-#' rebuild an expected fake dataset from raw data
+#' @title rebuild an expected fake dataset from raw data
+#'
+#' @description the function complete a dataset with all possible
+#' dates (computed with range of observed dates) and all possible
+#' countries (codes from CTY, CTA and BZN).
+#'
+#' @param raw_db the raw data returned by \code{read_load_files}
+#' @param file_rules yaml file containing country rules
 #'
 #' @importFrom purrr map_df
 #' @importFrom dplyr bind_rows full_join left_join
 #' @importFrom tibble tibble
 #' @export
-#' @param raw_db the raw data returned by \code{read_load_files}
-#' @param file_rules yaml file containing country rules
 fake_raw_data <- function(raw_db, file_rules = NULL){
   cty_rules <- get_cty_rules(file_rules = file_rules)
   ref_mapcode <- map_df(cty_rules, function(x) {

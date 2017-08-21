@@ -12,5 +12,7 @@ fake_raw_data(raw_db, file_rules = NULL)
 \item{file_rules}{yaml file containing country rules}
 }
 \description{
-rebuild an expected fake dataset from raw data
+the function complete a dataset with all possible
+dates (computed with range of observed dates) and all possible
+countries (codes from CTY, CTA and BZN).
 }
