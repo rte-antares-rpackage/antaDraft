@@ -184,3 +184,27 @@ anti_cascade_errors <- function( yaml_rules, data ){
   }
   data
 }
+
+
+
+
+
+
+
+#' @title eval validation rules against a raw dataset
+#' @description Confront raw data with a set of validation rules
+#' @param db data to be confronted with rules
+#' @param rules yaml file containing rules to be used to validate data
+#' @export
+pre_qualcon <- function( db, rules = system.file(package = "antadraft", 'yaml_data/validate/pre_validation_rules.yml') ){
+
+  v <- validator(.file = rules )
+  voptions(v, raise='all', na.value = FALSE)
+  all_res <- confront(db, v) %>% values()
+  all_valid <- apply( all_res, 1, function( x ) all(x) )
+  all_res <- as_tibble(all_res)[!all_valid, ]
+  db <- db[!all_valid,]
+  db <- cbind( db, all_res)
+  anti_cascade_errors(yaml_rules = rules, data = db )
+}
+
