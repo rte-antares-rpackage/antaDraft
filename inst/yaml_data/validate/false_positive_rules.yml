@@ -1,25 +1,113 @@
 - alert:
-    - CTY and BZN must be equals if not missing
-    - CTA and BZN must be equals if not missing
+    - CTY and CTA must be equals
+    - CTY and BZN must be equals
+    - CTY and CTA difference is not greater than 5%
+    - CTY and CTA difference is not greater than 10%
     - CTY and BZN difference is not greater than 5%
-    - CTA and BZN difference is not greater than 5%
     - CTY and BZN difference is not greater than 10%
-    - CTA and BZN difference is not greater than 10%
   country:
+    - FRANCE
+    - BELGIUM
+    - SWITZERLAND
+    - SPAIN
+    - NETHERLANDS
+    - PORTUGAL
+    - ITALY
     - GERMANY
     - AUSTRIA
+    - UK
     - IRELAND
+    - NORTH_IRELAND
     - LUXEMBOURG
   when:
     - CTY must not be missing
 
 - alert:
-    - CTY must not be missing
-    - CTY and BZN difference is not greater than 10%
-    - CTY and BZN difference is not greater than 5%
-    - CTY and CTA difference is not greater than 10%
+    - CTY and CTA must be equals
+    - CTA and BZN must be equals
     - CTY and CTA difference is not greater than 5%
+    - CTY and CTA difference is not greater than 10%
+    - CTA and BZN difference is not greater than 5%
+    - CTA and BZN difference is not greater than 10%
   country:
+    - FRANCE
+    - BELGIUM
+    - SWITZERLAND
+    - SPAIN
+    - NETHERLANDS
+    - PORTUGAL
+    - ITALY
+    - GERMANY
+    - AUSTRIA
+    - UK
+    - IRELAND
     - NORTH_IRELAND
+    - LUXEMBOURG
   when:
-    - CTY must not be missing
+    - CTA must not be missing
+
+
+- alert:
+    - CTY and BZN must be equals
+    - CTA and BZN must be equals
+    - CTY and BZN difference is not greater than 5%
+    - CTY and BZN difference is not greater than 10%
+    - CTA and BZN difference is not greater than 5%
+    - CTA and BZN difference is not greater than 10%
+  country:
+    - FRANCE
+    - BELGIUM
+    - SWITZERLAND
+    - SPAIN
+    - NETHERLANDS
+    - PORTUGAL
+    - ITALY
+    - GERMANY
+    - AUSTRIA
+    - UK
+    - IRELAND
+    - NORTH_IRELAND
+    - LUXEMBOURG
+  when:
+    - BZN must not be missing
+
+
+- alert:
+    - CTY and BZN difference is not greater than 5%
+  country:
+    - FRANCE
+    - BELGIUM
+    - SWITZERLAND
+    - SPAIN
+    - NETHERLANDS
+    - PORTUGAL
+    - ITALY
+    - GERMANY
+    - AUSTRIA
+    - UK
+    - IRELAND
+    - NORTH_IRELAND
+    - LUXEMBOURG
+  when:
+    - CTY and BZN difference is not greater than 10%
+
+
+- alert:
+    - CTA and BZN difference is not greater than 5%
+  country:
+    - FRANCE
+    - BELGIUM
+    - SWITZERLAND
+    - SPAIN
+    - NETHERLANDS
+    - PORTUGAL
+    - ITALY
+    - GERMANY
+    - AUSTRIA
+    - UK
+    - IRELAND
+    - NORTH_IRELAND
+    - LUXEMBOURG
+  when:
+    - CTA and BZN difference is not greater than 10%
+
