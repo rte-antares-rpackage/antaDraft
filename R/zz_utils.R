@@ -10,7 +10,8 @@ globalVariables(c('DateTime', 'TotalLoadValue', 'value', 'country', 'time_frame'
 #' @seealso \code{\link{qualcon}}
 are_equals_if_not_na <- function(y, z){
 
-  abs(y-z)<.Machine$double.eps
+  abs(y-z) < 1 #.Machine$double.eps
+  # Le logiciel antares ne gere pas les chiffres apres la virgule
 
 }
 
