@@ -1,8 +1,4 @@
 library(testthat)
-library(antadraft)
+library(entsoe)
 
-suppressPackageStartupMessages({
-  library(dplyr)
-})
-
-test_check("antadraft")
+test_check("entsoe")

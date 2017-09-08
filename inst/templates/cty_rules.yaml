@@ -1,0 +1,133 @@
+FRANCE:
+  CTY:
+    - FR
+  CTA:
+    - FR
+  BZN:
+    - FR
+
+
+
+BELGIUM:
+  CTY:
+    - BE
+  CTA:
+    - BE
+  BZN:
+    - BE
+
+
+
+SWITZERLAND:
+  CTY:
+    - CH
+  CTA:
+    - CH
+  BZN:
+    - CH
+
+
+
+SPAIN:
+  CTY:
+    - ES
+  CTA:
+    - ES
+  BZN:
+    - ES
+
+
+
+NETHERLANDS:
+  CTY:
+    - NL
+  CTA:
+    - NL
+  BZN:
+    - NL
+
+
+
+PORTUGAL:
+  CTY:
+    - PT
+  CTA:
+    - PT
+  BZN:
+    - PT
+
+
+
+ITALY:
+  CTY:
+    - IT
+  CTA:
+    - IT
+  BZN:
+    - IT_CNOR
+    - IT_CSUD
+    - IT_NORD
+    - IT_SARD
+    - IT_SICI
+    - IT_SUD
+
+GERMANY:
+  CTY:
+    - DE
+  CTA:
+    - DE_TenneT_GER
+    - DE_TransnetBW
+    - DE_Amprion
+    - DE_50HzT
+  BZN:
+    - DE_AT_LU
+    - "!CTY|AUSTRIA"
+    - "!CTY|LUXEMBOURG"
+
+AUSTRIA:
+  CTY:
+    - AT
+  CTA:
+    - AT
+  BZN:
+    - DE_AT_LU
+    - "!CTY|GERMANY"
+    - "!CTY|LUXEMBOURG"
+
+UK:
+  CTY:
+    - GB
+    - "CTA|NORTH_IRELAND"
+  CTA:
+    - GB
+  BZN:
+    - GB
+
+IRELAND:
+  CTY:
+    - IE
+  CTA:
+    - IE
+  BZN:
+    - IE_SEM
+    - "!CTA|NORTH_IRELAND"
+
+NORTH_IRELAND:
+  CTY:
+    - NIE
+  CTA:
+    - NIE
+  BZN:
+    - IE_SEM
+    - "!CTY|IRELAND"
+
+LUXEMBOURG:
+  CTY:
+    - LU
+  CTA:
+    - LU
+  BZN:
+    - DE_AT_LU
+    - "!CTY|GERMANY"
+    - "!CTY|AUSTRIA"
+

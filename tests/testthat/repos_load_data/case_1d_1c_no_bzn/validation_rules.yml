@@ -1,9 +1,0 @@
-rules:
-
-- expr: is.finite(CTY)
-  name: CTY_NA
-- expr: is.finite(CTA)
-  name: CTA_NA
-- expr: is.finite(BZN)
-  name: BZN_NA
-

@@ -1,0 +1,10 @@
+directories:
+  - "01_rawdata"
+  - "02_datasets"
+  - "03_aggregated"
+
+subdirectories:
+  - "01_feather"
+  - "logs"
+  - "qc"
+  - "00_config"

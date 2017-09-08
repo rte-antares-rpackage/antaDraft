@@ -1,7 +1,7 @@
-Package: antadraft
+Package: entsoe
 Type: Package
 Title: parse entsoe datasets into antares format
-Version: 0.1.9001
+Version: 0.1.0
 Authors@R: c(
     person(given = "David", family = "Gohel", 
       email = "david.gohel@rte-france.com", role = c("aut", "cre")),
@@ -15,14 +15,11 @@ Description: Read and transform data from entsoe to make them available in antar
   Several functions are provided, i.e. functions for quality control, error reporting, 
   missing data imputation and data corrections.
 License: GPL (>= 2) | file LICENSE
+Depends: R (>= 2.10)
+Imports: readr, purrr, yaml, tibble, dplyr, feather,
+  validate, rlang, data.table, lubridate,
+  rmarkdown, R.utils
 Encoding: UTF-8
-LazyData: true 
-Imports: dplyr, purrr, tibble, utils, magrittr, 
-  validate, yaml, lubridate, tidyr,
-  data.table,
-  shiny, shinyFiles, miniUI, rmarkdown, 
-  htmltools, R.utils, openssl
+LazyData: true
 RoxygenNote: 6.0.1.9000
-Suggests: knitr,
-    testthat
-VignetteBuilder: knitr
+Suggests: testthat, lubridate

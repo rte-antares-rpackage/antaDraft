@@ -1,0 +1,26 @@
+-
+  replace: CTY
+  use: CTA
+  country:
+    - FRANCE
+  when_false:
+    - CTY_NA
+  when_true:
+    - BZN_NA
+    - CTA_NA
+    - CTA_BZN_EQUAL
+
+
+-
+  replace: CTA
+  use: CTY
+  country:
+    - FRANCE
+  when_false:
+    - CTA_NA
+  when_true:
+    - BZN_NA
+    - CTY_NA
+    - CTY_BZN_EQUAL
+
+
