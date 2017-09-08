@@ -1,5 +1,5 @@
 #' @export
-#' @importFrom dplyr inner_join group_by summarise bind_rows ungroup
+#' @importFrom dplyr inner_join group_by summarise bind_rows ungroup distinct
 #' @importFrom data.table dcast.data.table
 #' @title Aggregate raw dataset from country rules
 #' @description From a raw dataset and a set of rules, aggregations are performed
