@@ -64,6 +64,10 @@ qualcon.controled <- function( x ){
 #' @importFrom rmarkdown render
 #' @importFrom R.utils getAbsolutePath
 #' @export
+#' @title report QC results
+#' @description create reports from results of \code{qualcon} call.
+#' @param x an object of class \code{qualcon}
+#' @param dir directory where reports should be written
 render_quality <- function( x, dir ){
   dir <- getAbsolutePath(dir)
   if( !dir.exists(dir) ){
