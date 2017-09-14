@@ -1,6 +1,6 @@
-Package: entsoe
+Package: antaresTransparencyData
 Type: Package
-Title: parse entsoe datasets into antares format
+Title: parse entsoe transparency platform datasets into antares format
 Version: 0.1.0
 Authors@R: c(
     person(given = "David", family = "Gohel", 
@@ -11,7 +11,7 @@ Authors@R: c(
       email = "jalal-edine.zawam@rte-france.com", role = "aut"),
     person(given = "RTE", role = "cph")
   )
-Description: Read and transform data from entsoe to make them available in antares platform. 
+Description: Read and transform data from entsoe transparency platform to make them available in antares platform. 
   Several functions are provided, i.e. functions for quality control, error reporting, 
   missing data imputation and data corrections.
 License: GPL (>= 2) | file LICENSE
