@@ -6,8 +6,6 @@ FRANCE:
   BZN:
     - FR
 
-
-
 BELGIUM:
   CTY:
     - BE
@@ -15,8 +13,6 @@ BELGIUM:
     - BE
   BZN:
     - BE
-
-
 
 SWITZERLAND:
   CTY:
@@ -26,8 +22,6 @@ SWITZERLAND:
   BZN:
     - CH
 
-
-
 SPAIN:
   CTY:
     - ES
@@ -35,8 +29,6 @@ SPAIN:
     - ES
   BZN:
     - ES
-
-
 
 NETHERLANDS:
   CTY:
@@ -46,8 +38,6 @@ NETHERLANDS:
   BZN:
     - NL
 
-
-
 PORTUGAL:
   CTY:
     - PT
@@ -55,8 +45,6 @@ PORTUGAL:
     - PT
   BZN:
     - PT
-
-
 
 ITALY:
   CTY:

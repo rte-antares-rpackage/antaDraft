@@ -1,9 +1,0 @@
-- drop:
-    - IS_FINITE
-    - IS_POS
-  when_not:
-    - IS_OBS
-- drop:
-    - IS_POS
-  when_not:
-    - IS_FINITE

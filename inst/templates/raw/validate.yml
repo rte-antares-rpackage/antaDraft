@@ -1,9 +1,0 @@
-rules:
-
-- expr: observed==TRUE
-  name: IS_OBS
-- expr: is.finite(TotalLoadValue)
-  name: IS_FINITE
-- expr: sign(TotalLoadValue)>0
-  name: IS_POS
-

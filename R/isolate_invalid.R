@@ -3,7 +3,6 @@ isolate_invalid <- function( x ){
 }
 
 
-#' @importFrom data.table as.data.table melt.data.table dcast.data.table
 isolate_invalid.controled <- function( x ){
 
   if( !inherits(x, what = "controled" ) )
@@ -13,19 +12,9 @@ isolate_invalid.controled <- function( x ){
     stop("no validator attributes found")
 
   validators <- attr(x, "validators")
+  invalids <- which(!apply(x[, validators ], 1, all))
+  out <- x[invalids, , drop = FALSE]
 
-  ref_db <- cbind( x[, validators ], id = seq_len(nrow(x) ) )
-  ref_db <- as.data.table(ref_db)
-  all_res <- melt.data.table(
-    data = ref_db, id.vars = "id", measure.vars = validators,
-    variable.name = "test", value.name = "validated" )
-
-  all_res <- all_res[!all_res$validated, ]
-
-  temp_db <- as.data.table( cbind( x[, setdiff(names(x), validators)], id = seq_len(nrow(x) ) ) )
-  cases <- dcast.data.table(all_res, id ~ test, fill = TRUE, value.var = "validated")
-  out <- merge(temp_db, cases, by="id")
-  out$id <- NULL
   out <- as.data.frame(out)
   class(out) <- c(class(x), "invalid_raw" )
   out

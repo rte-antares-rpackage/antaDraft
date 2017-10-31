@@ -1,7 +1,7 @@
-Package: entsoe
+Package: antaDraft
 Type: Package
-Title: parse entsoe datasets into antares format
-Version: 0.1.0
+Title: clean and validate entsoe datasets
+Version: 0.1.1
 Authors@R: c(
     person(given = "David", family = "Gohel", 
       email = "david.gohel@rte-france.com", role = c("aut", "cre")),
@@ -16,11 +16,9 @@ Description: Read and transform data from entsoe to make them available in antar
   missing data imputation and data corrections.
 License: GPL (>= 2) | file LICENSE
 Depends: R (>= 2.10)
-Imports: readr, purrr, yaml, tibble, dplyr, feather,
-  validate, rlang, data.table, lubridate,
-  rmarkdown, R.utils
+Imports: readr, purrr, tibble, lubridate, validate, tidyr, 
+  suncalc, rlang, R.utils, rmarkdown, dplyr, yaml
 Encoding: UTF-8
 LazyData: true
+Suggests: testthat, covr, magrittr
 RoxygenNote: 6.0.1.9000
-Suggests: testthat,
-    covr

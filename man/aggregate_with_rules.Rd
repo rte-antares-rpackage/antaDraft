@@ -17,13 +17,9 @@ to produce for each country and possible date points a set of three measures: CT
 and BZN.
 }
 \examples{
-data(load_example)
-cty_rules <- system.file(package = "entsoe", "templates/cty_rules.yaml")
-val_rules <- system.file(package = "entsoe", "templates/raw/validate.yml")
-fp_rules <- system.file(package = "entsoe", "templates/raw/false_positives.yml")
-raw_db <- augment_rules(load_example, file_rules = cty_rules)
-raw_db <- augment_validation(data = raw_db, val_rules = val_rules,
-  fp_rules = fp_rules)
-
-agg_data <- aggregate_with_rules(raw_db)
+if( dir.exists( Sys.getenv("LOAD_DIR") ) ){
+  load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
+  load_data <- augment_validation(data = load_data)
+  agg_db <- aggregate_with_rules(load_data)
+}
 }

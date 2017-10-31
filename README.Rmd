@@ -1,0 +1,126 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# antadata
+
+Le package contient un ensemble de fonctions pour vérifier et corriger des données entsoe.
+
+## Example
+
+### Préparation des données brutes
+
+```{r}
+library(antadata)
+library(magrittr)
+library(flextable)
+library(dplyr)
+library(purrr)
+library(randomForest)
+
+load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") ) %>% 
+  augment_validation()
+head(load_data)
+```
+
+### Préparation des données agrégées
+
+```{r}
+
+agg_db <- aggregate_with_rules(load_data) %>% 
+  augment_validation() 
+head(agg_db)
+```
+
+### Correction mécanique des données agrégées
+
+```{r}
+agg_db <- data_correct_with_rules(agg_db) 
+```
+
+### Vérification des flags sur données corrigées, originales
+
+```{r}
+agg_db <- augment_process_summary(agg_db) 
+agg_db %>%
+  group_by(country, summary ) %>%
+  tally() %>% ungroup() %>%
+  tidyr::complete(country, summary, fill = list(n=0) ) %>%
+  tidyr::spread(summary, n) %>%
+  regulartable() %>%
+  theme_booktabs() %>% autofit()
+```
+
+### Préparation des jeux de données en vue de la modélisation
+
+```{r}
+agg_db <- augment_holiday(agg_db) %>% 
+  augment_seasons_id() %>% 
+  augment_daylight() %>% 
+  augment_daily(col = "CTY", decay = 1) %>% 
+  augment_daily(col = "CTY", decay = 2)
+
+CTY_H1 <- agg_db %>%
+  select(country, DateTime, CTY) %>%
+  group_by(country) %>%
+  transmute(CTY_H1 = CTY, DateTime = DateTime - 60*60) %>%
+  ungroup()
+agg_db <- agg_db %>% left_join(CTY_H1, by = c("DateTime", "country") )
+
+
+training_datasets <- agg_db %>%
+  filter( year.iso %in% c(2015, 2016), summary %in% "original" ) %>%
+  group_by_at("country") %>%
+  tidyr::nest() 
+
+selected_ctry <- agg_db %>% filter( 
+  year.iso %in% c(2015, 2016), summary %in% "original" ) %>%
+  group_by_at("country") %>% tally() %>% 
+  ungroup() %>% filter(n > 16000)
+
+rf_formula <- CTY ~ week.iso + day.iso + hour.iso +
+  light_time + is_off + likely_off + AVG_CTY_D1 + 
+  MIN_CTY_D1 + MAX_CTY_D1 + AVG_CTY_D2 + MIN_CTY_D2 + 
+  MAX_CTY_D2 + CTY_H1
+
+library(randomForest)
+rt_by_country <- training_datasets %>% 
+  semi_join(selected_ctry) %>% 
+  mutate(model = map(data, function(x){
+  randomForest(formula = rf_formula, data = x, na.action = na.omit)
+}))
+
+
+rt_by_country %>% 
+  mutate( r.sq = map_dbl(model, function(x) mean(x$rsq) ) )
+unique(agg_db$country)
+
+country_datasets <- agg_db %>%
+  filter( year.iso %in% c(2015, 2016) ) %>%
+  group_by_at("country") %>%
+  tidyr::nest() %>% 
+  left_join(rt_by_country[,-2]) %>% 
+  mutate( data = map2(model, data, function(model, data){
+    data <- data[ data$summary %in% "invalid",]
+    if( !is.null(model) && !inherits(model, "try-error"))
+      prev <- as.vector(predict(model, newdata = data))
+    else prev <- rep(NA_real_, nrow(data) )
+    data$CTY <- prev
+    data$summary <- "mod_rf"
+    data[!is.na(prev),]
+  } ) ) %>% 
+  select(-model) %>% 
+  tidyr::unnest(data) 
+```

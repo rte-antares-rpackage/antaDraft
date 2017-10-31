@@ -2,15 +2,6 @@
 #' @title perform quality control
 #' @description perform quality control
 #' @param x data where controls have been evaluated
-#' @examples
-#' data(load_example)
-#' cty_rules <- system.file(package = "entsoe", "templates/cty_rules.yaml")
-#' val_rules <- system.file(package = "entsoe", "templates/raw/validate.yml")
-#' fp_rules <- system.file(package = "entsoe", "templates/raw/false_positives.yml")
-#' raw_db <- augment_rules(load_example, file_rules = cty_rules)
-#' raw_db <- augment_validation(data = raw_db, val_rules = val_rules,
-#'   fp_rules = fp_rules)
-#' qualcon(raw_db)
 qualcon <- function( x ){
   UseMethod("qualcon")
 }
@@ -18,8 +9,9 @@ qualcon <- function( x ){
 
 
 #' @importFrom tibble as_tibble
-#' @importFrom dplyr group_by filter mutate summarise
+#' @importFrom dplyr group_by filter mutate summarise one_of
 #' @importFrom rlang syms
+#' @importFrom tidyr gather
 #' @importFrom lubridate hours
 #' @rdname qualcon
 #' @export
@@ -32,12 +24,9 @@ qualcon.controled <- function( x ){
   validators <- attr( x, "validators")
 
   measure.vars <- intersect(names(dat), validators)
-
-  x <- melt.data.table(
-    data = as.data.table(dat), id.vars = id.vars, measure.vars = measure.vars,
-    variable.name = "validator", value.name = "validated" )
+  x <- gather(dat[,c(id.vars, measure.vars)], "validator", "validated", -one_of(id.vars) )
   x <- x[!x$validated, ]
-  x <- x[order(country, DateTime)]
+  # x <- x[order(x$country, x$DateTime)]
 
   index_vars_1 <- c( setdiff(id.vars, timevar), "validator" )
   index_vars_2 <- c( index_vars_1, "time_frame" )
@@ -82,11 +71,11 @@ render_quality <- function( x, dir ){
   by_data <- lapply( by_data, function(x)  split(x, x$validator) )
 
   report_files <- list()
-  rmd_file <- system.file(package = "entsoe", "template_rapport1.Rmd" )
+  rmd_file <- system.file(package = package_name, "template_raw_quality.Rmd" )
   for(country in names(by_data) ){
 
     for( validator in names(by_data[[country]]) ){
-
+      if( nrow( by_data[[country]][[validator]] ) < 1 ) next
       outfile <- paste0(country, "_[" , validator, "].html" )
       outfile <- file.path(dir, outfile)
 
@@ -94,7 +83,7 @@ render_quality <- function( x, dir ){
                    id = validator,
                    title = validator,
                    data = by_data[[country]][[validator]] )
-      render(rmd_file, params = par, output_file = outfile )
+      render(rmd_file, params = par, output_file = outfile, intermediates_dir = getwd() )
       report_files <- append( report_files, list(outfile) )
     }
   }
