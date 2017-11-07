@@ -40,7 +40,7 @@ aggregate_with_rules <- function(x, file_rules = NULL){
   add_db$id <- NULL
 
   out <- bind_rows(out, add_db)
-  out <- group_by_at(x, c("country", "AreaTypeCode", "DateTime"))
+  out <- group_by_at(out, c("country", "AreaTypeCode", "DateTime"))
   out <- summarise(out, TotalLoadValue = sum(TotalLoadValue, na.rm = FALSE))
   out <- spread(out, "AreaTypeCode", "TotalLoadValue")
   out <- as.data.frame(out)
