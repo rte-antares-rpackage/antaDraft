@@ -1,34 +1,23 @@
 -
-  replace: CTY
-  use: CTA
-  country:
-    - BELGIUM
-    - NETHERLANDS
-    - IRELAND
-    - NORTH_IRELAND
-    - LUXEMBOURG
-  when_false:
-    - CTY_NA
-  when_true:
-    - BZN_NA
-    - CTA_NA
-    - CTA_BZN_EQUAL
-
-
--
   replace: CTA
   use: CTY
-  country:
-    - BELGIUM
-    - NETHERLANDS
-    - IRELAND
-    - NORTH_IRELAND
-    - LUXEMBOURG
   when_false:
     - CTA_NA
   when_true:
     - BZN_NA
     - CTY_NA
     - CTY_BZN_EQUAL
+
+
+-
+  replace: CTY
+  use: CTA
+  country:
+  when_false:
+    - CTY_NA
+  when_true:
+    - BZN_NA
+    - CTA_NA
+    - CTA_BZN_EQUAL
 
 
