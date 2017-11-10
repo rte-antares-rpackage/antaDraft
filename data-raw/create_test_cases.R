@@ -6,8 +6,10 @@ load_data <- anta_load_read(
   data_dir = "/Users/davidgohel/Documents/consulting/RTE/load") %>%
   augment_validation()
 
+# cas de test avec agg ou ref autre pays a prendre en compte ----
 load_gerluxaus_20150115 <- filter(load_data,
                              as.Date(DateTime) == as.Date("2015-01-15") ,
                              lubridate::hour(DateTime) == 7,
                              country %in% c("AUSTRIA", "GERMANY", "LUXEMBOURG") )
+
 devtools::use_data(load_gerluxaus_20150115, overwrite = TRUE)
