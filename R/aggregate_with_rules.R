@@ -43,6 +43,11 @@ aggregate_with_rules <- function(x, file_rules = NULL){
   out <- group_by_at(out, c("country", "AreaTypeCode", "DateTime"))
   out <- summarise(out, TotalLoadValue = sum(TotalLoadValue, na.rm = FALSE))
   out <- spread(out, "AreaTypeCode", "TotalLoadValue")
+
+  all_comb <- expand.grid( country = unique(out$country),
+               DateTime = unique(out$DateTime), stringsAsFactors = FALSE )
+
+  out <- left_join(all_comb, out, by = c("country", "DateTime") )
   out <- as.data.frame(out)
   class(out) <- c( class( out ), "aggregated" )
   attr( out, "id.vars") <- c("country", "DateTime")
