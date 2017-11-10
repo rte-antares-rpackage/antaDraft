@@ -21,6 +21,7 @@
     - CTA_LAG_LT_50
   when_not:
     - CTA_NA
+
 - drop:
     - BZN_IS_POS
     - CTY_BZN_EQUAL
@@ -37,16 +38,19 @@
 
 - drop:
     - CTY_CTA_DIFF_LT_05
+    - CTY_CTA_EQUAL
   when_not:
     - CTY_CTA_DIFF_LT_10
 
 - drop:
     - CTY_BZN_DIFF_LT_05
+    - CTY_BZN_EQUAL
   when_not:
     - CTY_BZN_DIFF_LT_10
 
 - drop:
     - CTA_BZN_DIFF_LT_05
+    - CTA_BZN_EQUAL
   when_not:
     - CTA_BZN_DIFF_LT_10
 
