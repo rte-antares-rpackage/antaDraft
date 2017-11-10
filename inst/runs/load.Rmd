@@ -1,0 +1,86 @@
+---
+title: "entsoe electrical load"
+author: "David Gohel"
+date: "`r Sys.Date()`"
+output: 
+  rmdformats::readthedown:
+    highlight: kate
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(cache.path = "/Users/davidgohel/Downloads/entsoe/load/",
+  collapse = TRUE,
+  comment = "#>"
+)
+library(antaDraft)
+library(magrittr)
+library(timevis)
+library(DT)
+library(glue)
+library(purrr)
+library(data.table)
+library(flextable)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(ggiraph)
+library(UpSetR)
+library(ggalt)
+library(widgetframe)
+library(rmdformats)
+
+theme_ <- theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+load_path <- "/Users/davidgohel/Github/dat.entsoe/load"
+```
+
+```{r cache=TRUE}
+load_data <- anta_load_read(data_dir = load_path) 
+```
+
+## what is the time frame?
+
+```{r}
+# what is the time frame ---
+load_data %>% filter(observed) %>% 
+  select(DateTime, country) %>% 
+  group_by(country) %>% 
+  summarise(start = min(DateTime, na.rm = TRUE),
+            end = max(DateTime, na.rm = TRUE) ) %>% 
+  ungroup() %>% 
+  rename(content = country) %>% 
+  mutate(type = "range") %>% timevis(width = "100%", height = 650) 
+```
+
+## how load value is spread across dimensions
+
+```{r}
+load_data %>% filter(observed) %>% 
+  group_by(country, AreaTypeCode, MapCode) %>% 
+  summarise(min_load = min(TotalLoadValue, na.rm = TRUE),
+            med_load = median(TotalLoadValue, na.rm = TRUE),
+            avg_load = mean(TotalLoadValue, na.rm = TRUE),
+            max_load = max(TotalLoadValue, na.rm = TRUE) ) %>% 
+  datatable()
+```
+
+## Qualify invalidities 
+
+```{r}
+load_data <- augment_validation(load_data)
+head(load_data) %>% datatable()
+```
+
+## Quality control
+
+```{r}
+load_data %>% 
+  group_by(IS_OBS, IS_POS) %>% 
+  tally()
+
+
+qc <- load_data %>% qualcon()
+
+datatable(qc)
+```
+
