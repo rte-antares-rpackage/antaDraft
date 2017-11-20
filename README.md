@@ -40,7 +40,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpF7u2oj/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpGkoM9q/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -101,7 +101,7 @@ load_data <- anta_load_read(data_dir = load_dir )
 
 ### Validation des données brutes
 
-L'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `raw_validate.yml`.
+L'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `config/load/raw_validate.yml`.
 
 Ce fichier décrit les règles de validation de chaque ligne de donnée.
 
@@ -134,7 +134,7 @@ head(load_data)
 
 ### Les données agrégées
 
-On va produire les données agrégées avec la fonction `aggregate_with_rules`. Les règles sont exprimées dans le fichier `cty_rules.yaml`.
+On va produire les données agrégées avec la fonction `aggregate_with_rules`. Les règles sont exprimées dans le fichier `config/load/cty_rules.yml`.
 
 <!--html_preserve-->
 <pre>FRANCE:

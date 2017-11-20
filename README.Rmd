@@ -77,12 +77,13 @@ load_data <- anta_load_read(data_dir = load_dir )
 
 ### Validation des données brutes
 
-L'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `raw_validate.yml`.
+L'opération va ajouter autant de colonnes qu'il y a 
+de tests exprimés dans le fichier `config/load/raw_validate.yml`.
 
 Ce fichier décrit les règles de validation de chaque ligne de donnée.
 
 ```{r echo=FALSE}
-raw_validate <- system.file(package = "antaDraft", "raw_validate.yml")
+raw_validate <- system.file(package = "antaDraft", "config", "load", "raw_validate.yml")
 raw_validate <- paste0(readLines(raw_validate), collapse = "\n" )
 htmltools::tags$pre(raw_validate)
 ```
@@ -95,10 +96,12 @@ head(load_data)
 
 ### Les données agrégées
 
-On va produire les données agrégées avec la fonction `aggregate_with_rules`. Les règles sont exprimées dans le fichier `cty_rules.yaml`.
+On va produire les données agrégées avec la fonction 
+`aggregate_with_rules`. Les règles sont 
+exprimées dans le fichier `config/load/cty_rules.yml`.
 
 ```{r echo=FALSE}
-cty_rules <- system.file(package = "antaDraft", "cty_rules.yaml")
+cty_rules <- system.file(package = "antaDraft", "config", "load", "cty_rules.yml")
 cty_rules <- paste0(readLines(cty_rules), collapse = "\n" )
 htmltools::tags$pre(cty_rules)
 ```
@@ -114,7 +117,7 @@ aggregated_db <- aggregate_with_rules(load_data)
 Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `agg_validate.yml`.
 
 ```{r echo=FALSE}
-raw_validate <- system.file(package = "antaDraft", "agg_validate.yml")
+raw_validate <- system.file(package = "antaDraft", "config", "load", "agg_validate.yml")
 raw_validate <- paste0(readLines(raw_validate), collapse = "\n" )
 htmltools::tags$pre(raw_validate)
 ```

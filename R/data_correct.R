@@ -15,7 +15,7 @@
 #' head(aggregated_db)
 data_correct_with_rules <- function( data ){
 
-  corrections_rules <- system.file(package = package_name, "agg_correct.yml")
+  corrections_rules <- system.file(package = package_name, "config", "load", "agg_correct.yml")
 
   init_classes <- class(data)
   markers_exprs_ <- mark_correct_exprs(corrections_rules)

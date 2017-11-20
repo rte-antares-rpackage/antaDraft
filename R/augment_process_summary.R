@@ -18,7 +18,7 @@
 #' head(aggregated_db)
 augment_process_summary <- function( data, colname = "summary" ){
 
-  corrections_rules <- system.file(package = package_name, "agg_correct.yml")
+  corrections_rules <- system.file(package = package_name, "config", "load", "agg_correct.yml")
   rules <- yaml.load_file(corrections_rules)
   replace_var <- rule_names(rules)
 

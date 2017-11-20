@@ -3,7 +3,7 @@
 #' @importFrom tibble tibble
 get_rules <- function(add_complex = FALSE){
 
-  frules <- system.file(package = package_name, "cty_rules.yaml")
+  frules <- system.file(package = package_name, "config", "load", "cty_rules.yml")
 
   cty_rules <- yaml.load_file(frules)
 

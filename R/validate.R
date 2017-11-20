@@ -18,11 +18,11 @@
 augment_validation <- function( data ){
 
   if( inherits(data, "raw_level") ){
-    val_rules <- system.file(package = package_name, "raw_validate.yml")
-    fp_rules <- system.file(package = package_name, "raw_fp.yml")
+    val_rules <- system.file(package = package_name, "config", "load", "raw_validate.yml")
+    fp_rules <- system.file(package = package_name, "config", "load", "raw_fp.yml")
   } else if( inherits(data, "aggregated") ){
-    val_rules <- system.file(package = package_name, "agg_validate.yml")
-    fp_rules <- system.file(package = package_name, "agg_fp.yml")
+    val_rules <- system.file(package = package_name, "config", "load", "agg_validate.yml")
+    fp_rules <- system.file(package = package_name, "config", "load", "agg_fp.yml")
   }
 
 
