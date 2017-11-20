@@ -17,9 +17,11 @@ to produce for each country and possible date points a set of three measures: CT
 and BZN.
 }
 \examples{
-if( dir.exists( Sys.getenv("LOAD_DIR") ) ){
-  load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
-  load_data <- augment_validation(data = load_data)
-  agg_db <- aggregate_with_rules(load_data)
-}
+load_dir <- system.file(package = "antaDraft", "data_sample")
+
+load_data <- anta_load_read(data_dir = load_dir )
+load_data <- augment_validation(data = load_data)
+head(load_data)
+
+aggregated_db <- aggregate_with_rules(load_data)
 }

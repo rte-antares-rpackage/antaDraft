@@ -7,7 +7,8 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(
+library(knitr)
+opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "README-"
@@ -18,109 +19,129 @@ knitr::opts_chunk$set(
 
 Le package contient un ensemble de fonctions pour vérifier et corriger des données entsoe.
 
-## Example
+L'objectif du package est de permettre la création d'un jeu de données complet pour deux années de données et pour plusieurs pays. 
 
-### Préparation des données brutes
+Les données peuvent être manquantes ou imparfaites. Il s'agit de permettre :
+
+* l'identification des problèmes, 
+* leur reporting afin de permettre leur correction par l'entsoe, 
+* leur correction si la donnée n'a pu être corrigée par l'entsoe. 
+
+La procédure est pour l'instant implémentée pour les données de consommation.
+
+
+## Utilisation
+
+On va charger l'ensemble des données archivées sur archive.org à l'URL suivante : https://archive.org/details/RTE_load
+
+Le zip à charger est le suivant: https://archive.org/download/RTE_load/load.zip.
 
 ```{r}
-library(antadata)
-library(magrittr)
-library(flextable)
-library(dplyr)
-library(purrr)
-library(randomForest)
+load_dir <- file.path(tempdir(), "load_files" )
+load_zip <- file.path(tempdir(), "load.zip" )
 
-load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") ) %>% 
-  augment_validation()
+local_zip <- "/Users/davidgohel/Documents/consulting/RTE/load.zip"
+if( file.exists(local_zip))
+  file.copy(local_zip, load_zip, overwrite = TRUE )
+
+if( !file.exists(load_zip) )
+  download.file(url = "https://archive.org/download/RTE_load/load.zip", 
+                destfile = load_zip )
+
+if( dir.exists(load_dir) )
+  unlink(load_dir, recursive = TRUE, force = TRUE)
+
+utils::unzip(load_zip, exdir = load_dir )
+```
+
+Les données sont disponibles dans le répertoire `r load_dir`. Celui ci contient les fichiers suivants :
+
+```{r}
+csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
+csv_infos <- file.info(csv_files)[, c(1, 3) ]
+row.names(csv_infos) <- NULL
+csv_infos$file <- basename(csv_files)
+
+kable(csv_infos)
+```
+
+
+### Les données brutes
+
+Avant de dégager une série de consommation par pays
+
+```{r}
+library(antaDraft)
+load_data <- anta_load_read(data_dir = load_dir )
+```
+
+### Validation des données brutes
+
+L'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `raw_validate.yml`.
+
+Ce fichier décrit les règles de validation de chaque ligne de donnée.
+
+```{r echo=FALSE}
+raw_validate <- system.file(package = "antaDraft", "raw_validate.yml")
+raw_validate <- paste0(readLines(raw_validate), collapse = "\n" )
+htmltools::tags$pre(raw_validate)
+```
+
+
+```{r}
+load_data <- augment_validation(load_data)
 head(load_data)
 ```
 
-### Préparation des données agrégées
+### Les données agrégées
+
+On va produire les données agrégées avec la fonction `aggregate_with_rules`. Les règles sont exprimées dans le fichier `cty_rules.yaml`.
+
+```{r echo=FALSE}
+cty_rules <- system.file(package = "antaDraft", "cty_rules.yaml")
+cty_rules <- paste0(readLines(cty_rules), collapse = "\n" )
+htmltools::tags$pre(cty_rules)
+```
+
+La fonction prend des données de *load* comme argument, c'est à dire obtenue avec la fonction `anta_load_read()`.
 
 ```{r}
-
-agg_db <- aggregate_with_rules(load_data) %>% 
-  augment_validation() 
-head(agg_db)
+aggregated_db <- aggregate_with_rules(load_data)
 ```
+
+### Validation des données agrégées
+
+Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `agg_validate.yml`.
+
+```{r echo=FALSE}
+raw_validate <- system.file(package = "antaDraft", "agg_validate.yml")
+raw_validate <- paste0(readLines(raw_validate), collapse = "\n" )
+htmltools::tags$pre(raw_validate)
+```
+
+
+```{r}
+aggregated_db <- augment_validation(aggregated_db)
+```
+
 
 ### Correction mécanique des données agrégées
 
 ```{r}
-agg_db <- data_correct_with_rules(agg_db) 
+aggregated_db <- data_correct_with_rules(aggregated_db)
 ```
 
-### Vérification des flags sur données corrigées, originales
+### Qualification résumée des lignes agrégées
 
 ```{r}
-agg_db <- augment_process_summary(agg_db) 
-agg_db %>%
-  group_by(country, summary ) %>%
-  tally() %>% ungroup() %>%
-  tidyr::complete(country, summary, fill = list(n=0) ) %>%
-  tidyr::spread(summary, n) %>%
-  regulartable() %>%
-  theme_booktabs() %>% autofit()
+aggregated_db <- augment_process_summary(aggregated_db)
+
+library(dplyr)
+library(tidyr)
+aggregated_db %>% 
+  group_by_at(c( "country", "summary") ) %>% 
+  tally() %>% 
+  spread(summary, n) %>% 
+  kable()
 ```
 
-### Préparation des jeux de données en vue de la modélisation
-
-```{r}
-agg_db <- augment_holiday(agg_db) %>% 
-  augment_seasons_id() %>% 
-  augment_daylight() %>% 
-  augment_daily(col = "CTY", decay = 1) %>% 
-  augment_daily(col = "CTY", decay = 2)
-
-CTY_H1 <- agg_db %>%
-  select(country, DateTime, CTY) %>%
-  group_by(country) %>%
-  transmute(CTY_H1 = CTY, DateTime = DateTime - 60*60) %>%
-  ungroup()
-agg_db <- agg_db %>% left_join(CTY_H1, by = c("DateTime", "country") )
-
-
-training_datasets <- agg_db %>%
-  filter( year.iso %in% c(2015, 2016), summary %in% "original" ) %>%
-  group_by_at("country") %>%
-  tidyr::nest() 
-
-selected_ctry <- agg_db %>% filter( 
-  year.iso %in% c(2015, 2016), summary %in% "original" ) %>%
-  group_by_at("country") %>% tally() %>% 
-  ungroup() %>% filter(n > 16000)
-
-rf_formula <- CTY ~ week.iso + day.iso + hour.iso +
-  light_time + is_off + likely_off + AVG_CTY_D1 + 
-  MIN_CTY_D1 + MAX_CTY_D1 + AVG_CTY_D2 + MIN_CTY_D2 + 
-  MAX_CTY_D2 + CTY_H1
-
-library(randomForest)
-rt_by_country <- training_datasets %>% 
-  semi_join(selected_ctry) %>% 
-  mutate(model = map(data, function(x){
-  randomForest(formula = rf_formula, data = x, na.action = na.omit)
-}))
-
-
-rt_by_country %>% 
-  mutate( r.sq = map_dbl(model, function(x) mean(x$rsq) ) )
-unique(agg_db$country)
-
-country_datasets <- agg_db %>%
-  filter( year.iso %in% c(2015, 2016) ) %>%
-  group_by_at("country") %>%
-  tidyr::nest() %>% 
-  left_join(rt_by_country[,-2]) %>% 
-  mutate( data = map2(model, data, function(model, data){
-    data <- data[ data$summary %in% "invalid",]
-    if( !is.null(model) && !inherits(model, "try-error"))
-      prev <- as.vector(predict(model, newdata = data))
-    else prev <- rep(NA_real_, nrow(data) )
-    data$CTY <- prev
-    data$summary <- "mod_rf"
-    data[!is.na(prev),]
-  } ) ) %>% 
-  select(-model) %>% 
-  tidyr::unnest(data) 
-```

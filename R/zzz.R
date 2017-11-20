@@ -2,7 +2,7 @@ globalVariables(c("AreaTypeCode", "DateTime", "TotalLoadValue", "country", ":=")
 
 package_name <- "antaDraft"
 
-#' @importFrom readr read_delim cols col_integer col_datetime col_character col_double
+#' @importFrom readr read_delim cols col_integer col_datetime col_character col_double col_skip
 read_load_file <- function( f ){
   x <- read_delim(file = f, delim = "\t", col_names = TRUE,
                   col_types = cols(

@@ -7,22 +7,22 @@
 #' @param decay lag as a number of days
 #' @importFrom dplyr group_by_at
 #' @examples
+#' load_dir <- system.file(package = "antaDraft", "data_sample")
 #'
-#' if( dir.exists( Sys.getenv("LOAD_DIR") ) ){
-#'   load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
-#'   load_data <- augment_validation(data = load_data)
-#' }
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- augment_validation(data = load_data)
+#' head(load_data)
 #'
-#' if( require(magrittr) )
-#'   agg_db <- aggregate_with_rules(load_data) %>%
-#'     augment_validation() %>%
-#'     data_correct_with_rules() %>%
-#'     augment_process_summary() %>%
-#'     augment_holiday() %>%
-#'     augment_seasons_id() %>%
-#'     augment_daylight() %>%
-#'     augment_daily(col = "CTY", decay = 1) %>%
-#'     augment_daily(col = "CTY", decay = 2)
+#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- augment_validation(aggregated_db)
+#' aggregated_db <- data_correct_with_rules(aggregated_db)
+#' aggregated_db <- augment_process_summary(aggregated_db)
+#' aggregated_db <- augment_holiday(aggregated_db)
+#' aggregated_db <- augment_seasons_id(aggregated_db)
+#' aggregated_db <- augment_daylight(aggregated_db)
+#' aggregated_db <- augment_daily(aggregated_db, col = "CTY", decay = 1)
+#' aggregated_db <- augment_daily(aggregated_db, col = "CTY", decay = 2)
+#' head(aggregated_db)
 augment_daily <- function(x, col, country_id = "country", decay = 1){
 
   id.vars <- attr(x, "id.vars")

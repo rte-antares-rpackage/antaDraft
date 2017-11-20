@@ -2,19 +2,336 @@
 antadata
 ========
 
-Le package contient un ensemble de fonctions pour vérifier et corriger
-des données entsoe.
+Le package contient un ensemble de fonctions pour vérifier et corriger des données entsoe.
 
-Example
--------
+L'objectif du package est de permettre la création d'un jeu de données complet pour deux années de données et pour plusieurs pays.
 
-### Préparation des données brutes
+Les données peuvent être manquantes ou imparfaites. Il s'agit de permettre :
+
+-   l'identification des problèmes,
+-   leur reporting afin de permettre leur correction par l'entsoe,
+-   leur correction si la donnée n'a pu être corrigée par l'entsoe.
+
+La procédure est pour l'instant implémentée pour les données de consommation.
+
+Utilisation
+-----------
+
+On va charger l'ensemble des données archivées sur archive.org à l'URL suivante : <https://archive.org/details/RTE_load>
+
+Le zip à charger est le suivant: <https://archive.org/download/RTE_load/load.zip>.
 
 ``` r
-library(antadata)
-library(magrittr)
-library(flextable)
-#> Loading required package: officer
+load_dir <- file.path(tempdir(), "load_files" )
+load_zip <- file.path(tempdir(), "load.zip" )
+
+local_zip <- "/Users/davidgohel/Documents/consulting/RTE/load.zip"
+if( file.exists(local_zip))
+  file.copy(local_zip, load_zip, overwrite = TRUE )
+#> [1] TRUE
+
+if( !file.exists(load_zip) )
+  download.file(url = "https://archive.org/download/RTE_load/load.zip", 
+                destfile = load_zip )
+
+if( dir.exists(load_dir) )
+  unlink(load_dir, recursive = TRUE, force = TRUE)
+
+utils::unzip(load_zip, exdir = load_dir )
+```
+
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpF7u2oj/load\_files. Celui ci contient les fichiers suivants :
+
+``` r
+csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
+csv_infos <- file.info(csv_files)[, c(1, 3) ]
+row.names(csv_infos) <- NULL
+csv_infos$file <- basename(csv_files)
+
+kable(csv_infos)
+```
+
+|      size|  mode| file                          |
+|---------:|-----:|:------------------------------|
+|   4818386|   644| 2014\_12\_ActualTotalLoad.csv |
+|  11754185|   644| 2015\_1\_ActualTotalLoad.csv  |
+|  11875151|   644| 2015\_10\_ActualTotalLoad.csv |
+|  11310245|   644| 2015\_11\_ActualTotalLoad.csv |
+|  11781045|   644| 2015\_12\_ActualTotalLoad.csv |
+|  10726041|   644| 2015\_2\_ActualTotalLoad.csv  |
+|  11786273|   644| 2015\_3\_ActualTotalLoad.csv  |
+|  11696767|   644| 2015\_4\_ActualTotalLoad.csv  |
+|  12125893|   644| 2015\_5\_ActualTotalLoad.csv  |
+|  11541557|   644| 2015\_6\_ActualTotalLoad.csv  |
+|  11875512|   644| 2015\_7\_ActualTotalLoad.csv  |
+|  11475232|   644| 2015\_8\_ActualTotalLoad.csv  |
+|  11390834|   644| 2015\_9\_ActualTotalLoad.csv  |
+|  11418000|   644| 2016\_1\_ActualTotalLoad.csv  |
+|  11872808|   644| 2016\_10\_ActualTotalLoad.csv |
+|  11450892|   644| 2016\_11\_ActualTotalLoad.csv |
+|  11911508|   644| 2016\_12\_ActualTotalLoad.csv |
+|  10714419|   644| 2016\_2\_ActualTotalLoad.csv  |
+|  11895715|   644| 2016\_3\_ActualTotalLoad.csv  |
+|  11049161|   644| 2016\_4\_ActualTotalLoad.csv  |
+|  11393888|   644| 2016\_5\_ActualTotalLoad.csv  |
+|  11050699|   644| 2016\_6\_ActualTotalLoad.csv  |
+|  11617278|   644| 2016\_7\_ActualTotalLoad.csv  |
+|  11567217|   644| 2016\_8\_ActualTotalLoad.csv  |
+|  11134715|   644| 2016\_9\_ActualTotalLoad.csv  |
+|  11780627|   644| 2017\_1\_ActualTotalLoad.csv  |
+|  12195737|   644| 2017\_10\_ActualTotalLoad.csv |
+|   6721301|   644| 2017\_11\_ActualTotalLoad.csv |
+|  10569835|   644| 2017\_2\_ActualTotalLoad.csv  |
+|  11947416|   644| 2017\_3\_ActualTotalLoad.csv  |
+|  11574205|   644| 2017\_4\_ActualTotalLoad.csv  |
+|  11942550|   644| 2017\_5\_ActualTotalLoad.csv  |
+|  11595339|   644| 2017\_6\_ActualTotalLoad.csv  |
+|  11714825|   644| 2017\_7\_ActualTotalLoad.csv  |
+|  11457734|   644| 2017\_8\_ActualTotalLoad.csv  |
+|  11212010|   644| 2017\_9\_ActualTotalLoad.csv  |
+
+### Les données brutes
+
+Avant de dégager une série de consommation par pays
+
+``` r
+library(antaDraft)
+load_data <- anta_load_read(data_dir = load_dir )
+```
+
+### Validation des données brutes
+
+L'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `raw_validate.yml`.
+
+Ce fichier décrit les règles de validation de chaque ligne de donnée.
+
+<!--html_preserve-->
+<pre>rules:
+
+- expr: observed==TRUE
+  name: IS_OBS
+- expr: is.finite(TotalLoadValue)
+  name: IS_FINITE
+- expr: sign(TotalLoadValue)&gt;0
+  name: IS_POS
+</pre>
+<!--/html_preserve-->
+``` r
+load_data <- augment_validation(load_data)
+head(load_data)
+#> # A tibble: 6 x 10
+#>     DateTime country AreaTypeCode      AreaName       MapCode
+#>       <dttm>   <chr>        <chr>         <chr>         <chr>
+#> 1 2014-12-01 AUSTRIA          BZN      DE-AT-LU      DE_AT_LU
+#> 2 2014-12-01 BELGIUM          CTA       Elia CA            BE
+#> 3 2014-12-01 BELGIUM          CTY       Belgium            BE
+#> 4 2014-12-01 BELGIUM          BZN       Elia BZ            BE
+#> 5 2014-12-01  FRANCE         <NA>          <NA>          <NA>
+#> 6 2014-12-01 GERMANY          CTA TenneT GER CA DE_TenneT_GER
+#> # ... with 5 more variables: TotalLoadValue <dbl>, observed <lgl>,
+#> #   IS_OBS <lgl>, IS_FINITE <lgl>, IS_POS <lgl>
+```
+
+### Les données agrégées
+
+On va produire les données agrégées avec la fonction `aggregate_with_rules`. Les règles sont exprimées dans le fichier `cty_rules.yaml`.
+
+<!--html_preserve-->
+<pre>FRANCE:
+  CTY:
+    - FR
+  CTA:
+    - FR
+  BZN:
+    - FR
+
+BELGIUM:
+  CTY:
+    - BE
+  CTA:
+    - BE
+  BZN:
+    - BE
+
+SWITZERLAND:
+  CTY:
+    - CH
+  CTA:
+    - CH
+  BZN:
+    - CH
+
+SPAIN:
+  CTY:
+    - ES
+  CTA:
+    - ES
+  BZN:
+    - ES
+
+NETHERLANDS:
+  CTY:
+    - NL
+  CTA:
+    - NL
+  BZN:
+    - NL
+
+PORTUGAL:
+  CTY:
+    - PT
+  CTA:
+    - PT
+  BZN:
+    - PT
+
+ITALY:
+  CTY:
+    - IT
+  CTA:
+    - IT
+  BZN:
+    - IT_CNOR
+    - IT_CSUD
+    - IT_NORD
+    - IT_SARD
+    - IT_SICI
+    - IT_SUD
+
+GERMANY:
+  CTY:
+    - DE
+  CTA:
+    - DE_TenneT_GER
+    - DE_TransnetBW
+    - DE_Amprion
+    - DE_50HzT
+  BZN:
+    - DE_AT_LU
+    - "!CTY|AUSTRIA"
+    - "!CTY|LUXEMBOURG"
+
+AUSTRIA:
+  CTY:
+    - AT
+  CTA:
+    - AT
+  BZN:
+    - DE_AT_LU
+    - "!CTY|GERMANY"
+    - "!CTY|LUXEMBOURG"
+
+UK:
+  CTY:
+    - GB
+    - "CTA|NORTH_IRELAND"
+  CTA:
+    - GB
+  BZN:
+    - GB
+
+IRELAND:
+  CTY:
+    - IE
+  CTA:
+    - IE
+  BZN:
+    - IE_SEM
+    - "!CTA|NORTH_IRELAND"
+
+NORTH_IRELAND:
+  CTY:
+    - NIE
+  CTA:
+    - NIE
+  BZN:
+    - IE_SEM
+    - "!CTY|IRELAND"
+
+LUXEMBOURG:
+  CTY:
+    - LU
+  CTA:
+    - LU
+  BZN:
+    - DE_AT_LU
+    - "!CTY|GERMANY"
+    - "!CTY|AUSTRIA"
+</pre>
+<!--/html_preserve-->
+La fonction prend des données de *load* comme argument, c'est à dire obtenue avec la fonction `anta_load_read()`.
+
+``` r
+aggregated_db <- aggregate_with_rules(load_data)
+```
+
+### Validation des données agrégées
+
+Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `agg_validate.yml`.
+
+<!--html_preserve-->
+<pre>rules:
+
+- expr: is.finite(CTY)
+  name: CTY_NA
+- expr: is.finite(CTA)
+  name: CTA_NA
+- expr: is.finite(BZN)
+  name: BZN_NA
+
+- expr: CTY &gt; 0
+  name: CTY_IS_POS
+- expr: CTA &gt; 0
+  name: CTA_IS_POS
+- expr: BZN &gt; 0
+  name: BZN_IS_POS
+
+- expr: abs(CTY-CTA) &lt; 1
+  name: CTY_CTA_EQUAL
+- expr: abs(CTY-BZN) &lt; 1
+  name: CTY_BZN_EQUAL
+- expr: abs(CTA-BZN) &lt; 1
+  name: CTA_BZN_EQUAL
+
+
+- expr: abs(1 - (CTY / CTA) ) &lt; .05
+  name: CTY_CTA_DIFF_LT_05
+- expr: abs(1 - (CTY / BZN) ) &lt; .05
+  name: CTY_BZN_DIFF_LT_05
+- expr: abs(1 - (CTA / BZN) ) &lt; .05
+  name: CTA_BZN_DIFF_LT_05
+
+- expr: abs(1 - (CTY / CTA) ) &lt; .1
+  name: CTY_CTA_DIFF_LT_10
+- expr: abs(1 - (CTY / BZN) ) &lt; .1
+  name: CTY_BZN_DIFF_LT_10
+- expr: abs(1 - (CTA / BZN) ) &lt; .1
+  name: CTA_BZN_DIFF_LT_10
+
+
+- expr: ((CTY - lag(CTY)) / CTY) &lt; .5 &amp; ((lag(CTY) - CTY) / lag(CTY)) &lt; .5
+  name: CTY_LAG_LT_50
+- expr: ((CTA - lag(CTA)) / CTA) &lt; .5 &amp; ((lag(CTA) - CTA) / lag(CTA)) &lt; .5
+  name: CTA_LAG_LT_50
+- expr: ((BZN - lag(BZN)) / BZN)  &lt; .5 &amp; ((lag(BZN) - BZN) / lag(BZN)) &lt; .5
+  name: BZN_LAG_LT_50
+</pre>
+<!--/html_preserve-->
+``` r
+aggregated_db <- augment_validation(aggregated_db)
+```
+
+### Correction mécanique des données agrégées
+
+``` r
+aggregated_db <- data_correct_with_rules(aggregated_db)
+```
+
+### Qualification résumée des lignes agrégées
+
+``` r
+aggregated_db <- augment_process_summary(aggregated_db)
+
 library(dplyr)
 #> 
 #> Attaching package: 'dplyr'
@@ -24,191 +341,26 @@ library(dplyr)
 #> The following objects are masked from 'package:base':
 #> 
 #>     intersect, setdiff, setequal, union
-library(purrr)
-#> 
-#> Attaching package: 'purrr'
-#> The following object is masked from 'package:magrittr':
-#> 
-#>     set_names
-library(randomForest)
-#> randomForest 4.6-12
-#> Type rfNews() to see new features/changes/bug fixes.
-#> 
-#> Attaching package: 'randomForest'
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     combine
-
-load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") ) %>% 
-  augment_validation()
-head(load_data)
-#> # A tibble: 6 x 10
-#>     DateTime country AreaTypeCode AreaName  MapCode TotalLoadValue
-#>       <dttm>   <chr>        <chr>    <chr>    <chr>          <dbl>
-#> 1 2014-12-01 AUSTRIA          BZN DE-AT-LU DE_AT_LU       11239.13
-#> 2 2014-12-01 BELGIUM          CTA  Elia CA       BE        9100.34
-#> 3 2014-12-01 BELGIUM          CTY  Belgium       BE        9100.34
-#> 4 2014-12-01 BELGIUM          BZN  Elia BZ       BE        9100.34
-#> 5 2014-12-01  FRANCE         <NA>     <NA>     <NA>             NA
-#> 6 2014-12-01 GERMANY          CTY  Germany       DE       11239.13
-#> # ... with 4 more variables: observed <lgl>, IS_OBS <lgl>,
-#> #   IS_FINITE <lgl>, IS_POS <lgl>
+library(tidyr)
+aggregated_db %>% 
+  group_by_at(c( "country", "summary") ) %>% 
+  tally() %>% 
+  spread(summary, n) %>% 
+  kable()
 ```
 
-### Préparation des données agrégées
-
-``` r
-
-agg_db <- aggregate_with_rules(load_data) %>% 
-  augment_validation() 
-head(agg_db)
-#>   country            DateTime      BZN CTA CTY CTY_NA CTA_NA BZN_NA
-#> 1 AUSTRIA 2014-12-01 00:00:00 11239.13  NA  NA  FALSE  FALSE   TRUE
-#> 2 AUSTRIA 2014-12-01 01:00:00 10922.59  NA  NA  FALSE  FALSE   TRUE
-#> 3 AUSTRIA 2014-12-01 02:00:00 10996.24  NA  NA  FALSE  FALSE   TRUE
-#> 4 AUSTRIA 2014-12-01 03:00:00 11184.66  NA  NA  FALSE  FALSE   TRUE
-#> 5 AUSTRIA 2014-12-01 04:00:00 12234.47  NA  NA  FALSE  FALSE   TRUE
-#> 6 AUSTRIA 2014-12-01 05:00:00 14838.97  NA  NA  FALSE  FALSE   TRUE
-#>   CTY_IS_POS CTA_IS_POS BZN_IS_POS CTY_CTA_EQUAL CTY_BZN_EQUAL
-#> 1       TRUE       TRUE       TRUE          TRUE          TRUE
-#> 2       TRUE       TRUE       TRUE          TRUE          TRUE
-#> 3       TRUE       TRUE       TRUE          TRUE          TRUE
-#> 4       TRUE       TRUE       TRUE          TRUE          TRUE
-#> 5       TRUE       TRUE       TRUE          TRUE          TRUE
-#> 6       TRUE       TRUE       TRUE          TRUE          TRUE
-#>   CTA_BZN_EQUAL CTY_CTA_DIFF_LT_05 CTY_BZN_DIFF_LT_05 CTA_BZN_DIFF_LT_05
-#> 1          TRUE               TRUE               TRUE               TRUE
-#> 2          TRUE               TRUE               TRUE               TRUE
-#> 3          TRUE               TRUE               TRUE               TRUE
-#> 4          TRUE               TRUE               TRUE               TRUE
-#> 5          TRUE               TRUE               TRUE               TRUE
-#> 6          TRUE               TRUE               TRUE               TRUE
-#>   CTY_CTA_DIFF_LT_10 CTY_BZN_DIFF_LT_10 CTA_BZN_DIFF_LT_10 CTY_LAG_LT_50
-#> 1               TRUE               TRUE               TRUE          TRUE
-#> 2               TRUE               TRUE               TRUE          TRUE
-#> 3               TRUE               TRUE               TRUE          TRUE
-#> 4               TRUE               TRUE               TRUE          TRUE
-#> 5               TRUE               TRUE               TRUE          TRUE
-#> 6               TRUE               TRUE               TRUE          TRUE
-#>   CTA_LAG_LT_50 BZN_LAG_LT_50
-#> 1          TRUE         FALSE
-#> 2          TRUE          TRUE
-#> 3          TRUE          TRUE
-#> 4          TRUE          TRUE
-#> 5          TRUE          TRUE
-#> 6          TRUE          TRUE
-```
-
-### Correction mécanique des données agrégées
-
-``` r
-agg_db <- data_correct_with_rules(agg_db) 
-```
-
-### Vérification des flags sur données corrigées, originales
-
-``` r
-agg_db <- augment_process_summary(agg_db) 
-agg_db %>%
-  group_by(country, summary ) %>%
-  tally() %>% ungroup() %>%
-  tidyr::complete(country, summary, fill = list(n=0) ) %>%
-  tidyr::spread(summary, n) %>%
-  regulartable() %>%
-  theme_booktabs() %>% autofit()
-#> # A tibble: 13 x 4
-#>          country corrected invalid original
-#>  *         <chr>     <dbl>   <dbl>    <dbl>
-#>  1       AUSTRIA         0   22162        0
-#>  2       BELGIUM        26     167    21706
-#>  3        FRANCE         0       3    21774
-#>  4       GERMANY         0   22140       22
-#>  5       IRELAND         0   20639      595
-#>  6         ITALY         0      50    20890
-#>  7    LUXEMBOURG         0   22162        0
-#>  8   NETHERLANDS         3     886    21271
-#>  9 NORTH_IRELAND       144   21108        0
-#> 10      PORTUGAL         0    1048    20944
-#> 11         SPAIN         0     777    20900
-#> 12   SWITZERLAND         0     301    21236
-#> 13            UK         0   17965     3534
-```
-
-### Préparation des jeux de données en vue de la modélisation
-
-``` r
-agg_db <- augment_holiday(agg_db) %>% 
-  augment_seasons_id() %>% 
-  augment_daylight() %>% 
-  augment_daily(col = "CTY", decay = 1) %>% 
-  augment_daily(col = "CTY", decay = 2)
-
-CTY_H1 <- agg_db %>%
-  select(country, DateTime, CTY) %>%
-  group_by(country) %>%
-  transmute(CTY_H1 = CTY, DateTime = DateTime - 60*60) %>%
-  ungroup()
-#> Adding missing grouping variables: `country`
-agg_db <- agg_db %>% left_join(CTY_H1, by = c("DateTime", "country") )
-
-
-training_datasets <- agg_db %>%
-  filter( year.iso %in% c(2015, 2016), summary %in% "original" ) %>%
-  group_by_at("country") %>%
-  tidyr::nest() 
-
-selected_ctry <- agg_db %>% filter( 
-  year.iso %in% c(2015, 2016), summary %in% "original" ) %>%
-  group_by_at("country") %>% tally() %>% 
-  ungroup() %>% filter(n > 16000)
-
-rf_formula <- CTY ~ week.iso + day.iso + hour.iso +
-  light_time + is_off + likely_off + AVG_CTY_D1 + 
-  MIN_CTY_D1 + MAX_CTY_D1 + AVG_CTY_D2 + MIN_CTY_D2 + 
-  MAX_CTY_D2 + CTY_H1
-
-library(randomForest)
-rt_by_country <- training_datasets %>% 
-  semi_join(selected_ctry) %>% 
-  mutate(model = map(data, function(x){
-  randomForest(formula = rf_formula, data = x, na.action = na.omit)
-}))
-#> Joining, by = "country"
-
-
-rt_by_country %>% 
-  mutate( r.sq = map_dbl(model, function(x) mean(x$rsq) ) )
-#> # A tibble: 7 x 4
-#>       country                   data                      model      r.sq
-#>         <chr>                 <list>                     <list>     <dbl>
-#> 1     BELGIUM <tibble [17,398 x 39]> <S3: randomForest.formula> 0.9817431
-#> 2      FRANCE <tibble [17,617 x 39]> <S3: randomForest.formula> 0.9877654
-#> 3       ITALY <tibble [17,091 x 39]> <S3: randomForest.formula> 0.9905407
-#> 4 NETHERLANDS <tibble [16,790 x 39]> <S3: randomForest.formula> 0.9880920
-#> 5    PORTUGAL <tibble [17,096 x 39]> <S3: randomForest.formula> 0.9872155
-#> 6       SPAIN <tibble [17,060 x 39]> <S3: randomForest.formula> 0.9858113
-#> 7 SWITZERLAND <tibble [17,390 x 39]> <S3: randomForest.formula> 0.9680295
-unique(agg_db$country)
-#>  [1] "AUSTRIA"       "BELGIUM"       "FRANCE"        "GERMANY"      
-#>  [5] "IRELAND"       "ITALY"         "LUXEMBOURG"    "NETHERLANDS"  
-#>  [9] "NORTH_IRELAND" "PORTUGAL"      "SPAIN"         "SWITZERLAND"  
-#> [13] "UK"
-
-country_datasets <- agg_db %>%
-  filter( year.iso %in% c(2015, 2016) ) %>%
-  group_by_at("country") %>%
-  tidyr::nest() %>% 
-  left_join(rt_by_country[,-2]) %>% 
-  mutate( data = map2(model, data, function(model, data){
-    data <- data[ data$summary %in% "invalid",]
-    if( !is.null(model) && !inherits(model, "try-error"))
-      prev <- as.vector(predict(model, newdata = data))
-    else prev <- rep(NA_real_, nrow(data) )
-    data$CTY <- prev
-    data$summary <- "mod_rf"
-    data[!is.na(prev),]
-  } ) ) %>% 
-  select(-model) %>% 
-  tidyr::unnest(data) 
-#> Joining, by = "country"
-```
+| country        |  corrected|  invalid|  original|
+|:---------------|----------:|--------:|---------:|
+| AUSTRIA        |         NA|    14012|     11991|
+| BELGIUM        |          9|      268|     25726|
+| FRANCE         |          1|      389|     25613|
+| GERMANY        |         25|    13986|     11992|
+| IRELAND        |          8|     2661|     23334|
+| ITALY          |         NA|      783|     25220|
+| LUXEMBOURG     |         NA|    14226|     11777|
+| NETHERLANDS    |          1|       27|     25975|
+| NORTH\_IRELAND |      21310|     4693|        NA|
+| PORTUGAL       |         NA|     1216|     24787|
+| SPAIN          |         NA|     1252|     24751|
+| SWITZERLAND    |         25|      840|     25138|
+| UK             |         NA|    21975|      4028|

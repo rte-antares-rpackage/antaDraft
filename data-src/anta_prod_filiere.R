@@ -16,7 +16,6 @@ anta_prod_channel <- function( data_dir = NULL, utf16 = FALSE ){
 
   agg_files <- list.files(data_dir, pattern = "(\\.csv)$", full.names = TRUE)
   data <- map_df(agg_files, function(f){
-    if( utf16 ) f <- ficonv_utf8(f)
     read_delim(f, delim = "\t", col_types = cols(
                  year = col_skip(),
                  month = col_skip(),
@@ -61,7 +60,6 @@ anta_capacity_channel <- function( data_dir = NULL, utf16 = FALSE ){
 
   agg_files <- list.files(data_dir, pattern = "(\\.csv)$", full.names = TRUE)
   data <- map_df(agg_files, function(f){
-    if( utf16 ) f <- ficonv_utf8(f)
     read_delim(f, delim = "\t", col_types = cols(
       year = col_skip(),
       month = col_skip(),

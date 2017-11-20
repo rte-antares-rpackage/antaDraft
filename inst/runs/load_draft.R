@@ -4,6 +4,7 @@ library(flextable)
 library(mgcv)
 library(dplyr)
 library(purrr)
+library(randomForest)
 
 load_path <- "/Users/davidgohel/Github/dat.entsoe/load"
 

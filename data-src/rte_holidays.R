@@ -7,19 +7,19 @@ library(tidyr)
 library(readxl)
 library(timetk)
 
-unlink("data-raw/holdidays_zip", recursive = TRUE, force = TRUE)
+unlink("data-src/holdidays_zip", recursive = TRUE, force = TRUE)
 
 url <- 'http://clients.rte-france.com/lang/an/visiteurs/vie/vie_jours_feries.jsp'
 all_ref <- read_html(url) %>%
   xml_find_all("//a[text()='File.zip']") %>%
   xml_attr("href")
 
-dir.create("data-raw/holdidays_zip", showWarnings = FALSE)
+dir.create("data-src/holdidays_zip", showWarnings = FALSE)
 full_links <- paste0("http://clients.rte-france.com", all_ref)
-dest_files <- file.path("data-raw/holdidays_zip", basename(full_links))
+dest_files <- file.path("data-src/holdidays_zip", basename(full_links))
 download.file(full_links, dest_files)
 
-dest_files <- file.path("data-raw/holdidays_zip", basename(full_links))
+dest_files <- file.path("data-src/holdidays_zip", basename(full_links))
 
 map( dest_files, function(x) {
   dest <- dirname(x)
@@ -27,7 +27,7 @@ map( dest_files, function(x) {
   } )
 
 
-list.files("data-raw/holdidays_zip", full.names = TRUE, pattern = "\\.xls$") %>%
+list.files("data-src/holdidays_zip", full.names = TRUE, pattern = "\\.xls$") %>%
   map_df(function(path){
     data <- read_excel(path, skip = 2)
     names(data)[1:3] <- c("Day", "Date", "Name")
@@ -84,7 +84,7 @@ holidays <- bind_rows(list_data, ponts_eventuels) %>%
   ungroup()
 devtools::use_data(holidays, overwrite = TRUE)
 
-unlink("data-raw/holdidays_zip", recursive = TRUE, force = TRUE)
+unlink("data-src/holdidays_zip", recursive = TRUE, force = TRUE)
 remove(list = setdiff(ls(), "holidays") )
 gc()
 

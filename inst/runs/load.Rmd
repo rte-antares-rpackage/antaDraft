@@ -8,10 +8,7 @@ output:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(cache.path = "/Users/davidgohel/Documents/consulting/RTE/A01-Consommation_réalisée",
-  collapse = TRUE,
-  comment = "#>"
-)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 library(antaDraft)
 library(magrittr)
 library(timevis)

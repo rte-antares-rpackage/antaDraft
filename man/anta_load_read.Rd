@@ -14,6 +14,6 @@ import csv data representing load data
 from an entsoe repository.
 }
 \examples{
-if( dir.exists( Sys.getenv("LOAD_DIR") ) )
-  load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
+load_dir <- system.file(package = "antaDraft", "data_sample")
+load_data <- anta_load_read(data_dir = load_dir )
 }

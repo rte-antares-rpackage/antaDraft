@@ -5,19 +5,19 @@
 #' @param ts_key column name specifying the datetime column
 #' @importFrom lubridate isoyear isoweek hour wday
 #' @examples
+#' load_dir <- system.file(package = "antaDraft", "data_sample")
 #'
-#' if( dir.exists( Sys.getenv("LOAD_DIR") ) ){
-#'   load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
-#'   load_data <- augment_validation(data = load_data)
-#' }
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- augment_validation(data = load_data)
+#' head(load_data)
 #'
-#' if( require(magrittr) )
-#'   agg_db <- aggregate_with_rules(load_data) %>%
-#'     augment_validation() %>%
-#'     data_correct_with_rules() %>%
-#'     augment_process_summary() %>%
-#'     augment_holiday() %>%
-#'     augment_seasons_id()
+#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- augment_validation(aggregated_db)
+#' aggregated_db <- data_correct_with_rules(aggregated_db)
+#' aggregated_db <- augment_process_summary(aggregated_db)
+#' aggregated_db <- augment_holiday(aggregated_db)
+#' aggregated_db <- augment_seasons_id(aggregated_db)
+#' head(aggregated_db)
 augment_seasons_id <- function(x, ts_key = "DateTime"){
 
   x$year.iso <- isoyear(x[[ts_key]])

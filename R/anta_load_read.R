@@ -42,8 +42,8 @@ get_rules <- function(add_complex = FALSE){
 #' @importFrom lubridate minute
 #' @importFrom tidyr complete
 #' @examples
-#' if( dir.exists( Sys.getenv("LOAD_DIR") ) )
-#'   load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
+#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_data <- anta_load_read(data_dir = load_dir )
 anta_load_read <- function( data_dir = NULL ){
   stopifnot(dir.exists(data_dir))
 

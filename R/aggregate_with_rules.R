@@ -8,11 +8,13 @@
 #' @param x raw dataset (an object of class \code{raw_level})
 #' @param file_rules yaml file containing for each country aggregation rules
 #' @examples
-#' if( dir.exists( Sys.getenv("LOAD_DIR") ) ){
-#'   load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
-#'   load_data <- augment_validation(data = load_data)
-#'   agg_db <- aggregate_with_rules(load_data)
-#' }
+#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#'
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- augment_validation(data = load_data)
+#' head(load_data)
+#'
+#' aggregated_db <- aggregate_with_rules(load_data)
 aggregate_with_rules <- function(x, file_rules = NULL){
 
   x <- x[ apply( x[, attr(x, "validators"), drop = FALSE], 1, all ) , , drop = FALSE]
