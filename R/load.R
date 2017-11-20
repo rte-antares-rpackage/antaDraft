@@ -27,6 +27,7 @@
 #' @param raw_val_fp rules to exclude irrelevant raw validations because defined as false positive
 #' @param agg_val rules to validate aggregated data
 #' @param agg_val_fp rules to exclude irrelevant aggregation validations because defined as false positive
+#' @param correct_rules correction rules for aggregated data
 set_antadraft_load_option <- function( cty_rules = NULL, raw_val = NULL, raw_val_fp = NULL,
                                        agg_val = NULL, agg_val_fp = NULL, correct_rules = NULL){
 

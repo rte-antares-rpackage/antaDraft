@@ -15,11 +15,11 @@
 #' head(aggregated_db)
 data_correct_with_rules <- function( data ){
 
-  corrections_rules <- system.file(package = package_name, "config", "load", "agg_correct.yml")
+  load_options <- getOption("load_options")
 
   init_classes <- class(data)
-  markers_exprs_ <- mark_correct_exprs(corrections_rules)
-  correct_exprs_ <- correct_exprs(corrections_rules)
+  markers_exprs_ <- mark_correct_exprs(load_options$correct)
+  correct_exprs_ <- correct_exprs(load_options$correct)
   data <- within(data, eval(markers_exprs_))
   data <- within(data, eval(correct_exprs_))
 

@@ -3,9 +3,9 @@
 #' @importFrom tibble tibble
 get_rules <- function(add_complex = FALSE){
 
-  frules <- system.file(package = package_name, "config", "load", "cty_rules.yml")
+  load_options <- getOption("load_options")
 
-  cty_rules <- yaml.load_file(frules)
+  cty_rules <- yaml.load_file(load_options$cty_rules)
 
   ref_mapcode <- map_df(cty_rules, function(x) {
     rbind(

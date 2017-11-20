@@ -17,12 +17,14 @@
 #' head(aggregated_db)
 augment_validation <- function( data ){
 
+  load_options <- getOption("load_options")
+
   if( inherits(data, "raw_level") ){
-    val_rules <- system.file(package = package_name, "config", "load", "raw_validate.yml")
-    fp_rules <- system.file(package = package_name, "config", "load", "raw_fp.yml")
+    val_rules <- load_options$validate$raw$validate
+    fp_rules <- load_options$validate$raw$false_pos
   } else if( inherits(data, "aggregated") ){
-    val_rules <- system.file(package = package_name, "config", "load", "agg_validate.yml")
-    fp_rules <- system.file(package = package_name, "config", "load", "agg_fp.yml")
+    val_rules <- load_options$validate$agg$validate
+    fp_rules <- load_options$validate$agg$false_pos
   }
 
 

@@ -18,8 +18,10 @@
 #' head(aggregated_db)
 augment_process_summary <- function( data, colname = "summary" ){
 
-  corrections_rules <- system.file(package = package_name, "config", "load", "agg_correct.yml")
-  rules <- yaml.load_file(corrections_rules)
+  load_options <- getOption("load_options")
+
+  rules <- yaml.load_file(load_options$correct)
+
   replace_var <- rule_names(rules)
 
   invalid <- data[, attr(data, "validators"), drop = FALSE]

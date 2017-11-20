@@ -18,6 +18,8 @@ set_antadraft_load_option(cty_rules = NULL, raw_val = NULL,
 \item{agg_val}{rules to validate aggregated data}
 
 \item{agg_val_fp}{rules to exclude irrelevant aggregation validations because defined as false positive}
+
+\item{correct_rules}{correction rules for aggregated data}
 }
 \description{
 set options for load data processing by specifying
