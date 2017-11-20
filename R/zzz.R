@@ -2,12 +2,6 @@ globalVariables(c("AreaTypeCode", "DateTime", "TotalLoadValue", "country", ":=")
 
 package_name <- "antaDraft"
 
-ficonv_utf8 <- function( file, outfile = tempfile(fileext = ".txt") ){
-  cmd_ <- sprintf("iconv -f UTF-16LE -t UTF-8 %s > %s", file, outfile)
-  system(command = cmd_, intern = TRUE)
-  outfile
-}
-
 #' @importFrom readr read_delim cols col_integer col_datetime col_character col_double
 read_load_file <- function( f ){
   x <- read_delim(file = f, delim = "\t", col_names = TRUE,

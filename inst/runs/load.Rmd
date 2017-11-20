@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(cache.path = "/Users/davidgohel/Downloads/entsoe/load/",
+knitr::opts_chunk$set(cache.path = "/Users/davidgohel/Documents/consulting/RTE/A01-Consommation_réalisée",
   collapse = TRUE,
   comment = "#>"
 )
@@ -31,10 +31,10 @@ library(rmdformats)
 
 theme_ <- theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-load_path <- "/Users/davidgohel/Github/dat.entsoe/load"
+load_path <- "/Users/davidgohel/Documents/consulting/RTE/A01-Consommation_réalisée"
 ```
 
-```{r cache=TRUE}
+```{r}
 load_data <- anta_load_read(data_dir = load_path) 
 ```
 

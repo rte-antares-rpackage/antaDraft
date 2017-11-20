@@ -48,6 +48,7 @@ aggregate_with_rules <- function(x, file_rules = NULL){
                DateTime = unique(out$DateTime), stringsAsFactors = FALSE )
 
   out <- left_join(all_comb, out, by = c("country", "DateTime") )
+  out <- out[order(out$country, out$DateTime), ]
   out <- as.data.frame(out)
   class(out) <- c( class( out ), "aggregated" )
   attr( out, "id.vars") <- c("country", "DateTime")

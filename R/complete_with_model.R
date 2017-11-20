@@ -12,26 +12,7 @@ copy_load_attributes <- function(x){
 
 #' @export
 complete_with_model <- function( dat, models ){
-
-  dat2 <- dat %>%
-    copy_load_attributes() %>%
-    augment_holiday() %>%
-    augment_seasons_id() %>%
-    augment_daylight() %>%
-    augment_daily(col = "CTY", decay = 1) %>%
-    augment_daily(col = "CTY", decay = 2)
-
-
-  CTY_H1 <- dat2 %>%
-    select(country, DateTime, CTY) %>%
-    group_by(country) %>%
-    transmute(CTY_H1 = CTY, DateTime = DateTime - 60*60) %>%
-    ungroup()
-
-  dat2 <- dat2 %>%
-    left_join(CTY_H1, by = c("DateTime", "country") )
-
-  corrected_datasets <- dat2 %>%
+  corrected_datasets <- dat %>%
     filter(summary %in% "invalid") %>%
     group_by_at("country") %>%
     tidyr::nest() %>%
@@ -54,6 +35,30 @@ complete_with_model <- function( dat, models ){
     bind_rows(corrected_datasets) %>%
     arrange(country, DateTime) %>%
     select(country, DateTime, CTY, summary)
+}
+
+
+
+#' @export
+str_data_4_model <- function( dat, hour_decay = -1 ){
+
+  dat2 <- copy_load_attributes(dat)
+  dat2 <- augment_holiday(dat2)
+  dat2 <- augment_seasons_id(dat2)
+  dat2 <- augment_daylight(dat2)
+  dat2 <- augment_daily(dat2, col = "CTY", decay = 1)
+  dat2 <- augment_daily(dat2, col = "CTY", decay = 2)
+
+
+  CTY_H1 <- dat2[c("country", "DateTime", "CTY")]
+  CTY_H1 <- group_by_at(CTY_H1, "country")
+  CTY_H1 <- transmute(CTY_H1, CTY_H1 = CTY,
+                      DateTime = DateTime + (hour_decay * 60*60 ) )
+  CTY_H1 <- ungroup(CTY_H1)
+
+  dat2 <- left_join(dat2, CTY_H1, by = c("DateTime", "country") )
+
+  dat2
 }
 
 
