@@ -1,5 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-antadata
+[![Build Status](https://travis-ci.org/rte-antares-rpackage/antaDraft.svg?branch=master)](https://travis-ci.org/rte-antares-rpackage/antaDraft) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rte-antares-rpackage/antaDraft?branch=master&svg=true)](https://ci.appveyor.com/project/rte-antares-rpackage/antaDraft) [![version](http://www.r-pkg.org/badges/version/antaDraft)](https://CRAN.R-project.org/package=antaDraft) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+
+antaDraft
 ========
 
 Le package contient un ensemble de fonctions pour vérifier et corriger des données entsoe.
@@ -40,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpGkoM9q/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpWJCQTV/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
