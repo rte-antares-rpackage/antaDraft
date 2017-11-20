@@ -4,12 +4,10 @@
 \alias{anta_load_read}
 \title{import load data from an entsoe repository}
 \usage{
-anta_load_read(data_dir = NULL, utf16 = TRUE)
+anta_load_read(data_dir = NULL)
 }
 \arguments{
 \item{data_dir}{datasets directory}
-
-\item{utf16}{whether text file are encoded in UTF16 (if not, UTF8)}
 }
 \description{
 import csv data representing load data

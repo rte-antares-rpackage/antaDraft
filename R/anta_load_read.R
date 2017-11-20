@@ -37,7 +37,6 @@ get_rules <- function(add_complex = FALSE){
 #' @description import csv data representing load data
 #' from an entsoe repository.
 #' @param data_dir datasets directory
-#' @param utf16 whether text file are encoded in UTF16 (if not, UTF8)
 #' @importFrom purrr map_df
 #' @importFrom dplyr left_join
 #' @importFrom lubridate minute
@@ -45,12 +44,11 @@ get_rules <- function(add_complex = FALSE){
 #' @examples
 #' if( dir.exists( Sys.getenv("LOAD_DIR") ) )
 #'   load_data <- anta_load_read( data_dir = Sys.getenv("LOAD_DIR") )
-anta_load_read <- function( data_dir = NULL, utf16 = TRUE ){
+anta_load_read <- function( data_dir = NULL ){
   stopifnot(dir.exists(data_dir))
 
   agg_files <- list.files(data_dir, pattern = "(\\.csv)$", full.names = TRUE)
   data <- map_df(agg_files, function(f){
-    if( utf16 ) f <- ficonv_utf8(f)
     read_load_file(f)
   })
   data <- data[minute( data$DateTime ) < 1, ]
