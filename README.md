@@ -42,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpdzmTvb/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpNSzSEI/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -320,6 +320,13 @@ Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il
   name: CTA_LAG_LT_50
 - expr: ((BZN - lag(BZN)) / BZN)  &lt; .5 &amp; ((lag(BZN) - BZN) / lag(BZN)) &lt; .5
   name: BZN_LAG_LT_50
+
+- expr: abs( (CTY - lag(CTY))/CTY ) &lt; .2
+  name: CTY_LAG_CTY_20
+- expr: abs( (CTA - lag(CTA))/CTA ) &lt; .2
+  name: CTA_LAG_CTA_20
+- expr: abs( (BZN - lag(BZN))/BZN ) &lt; .2
+  name: BZN_LAG_BZN_20
 </pre>
 <!--/html_preserve-->
 ``` r
