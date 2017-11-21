@@ -5,7 +5,6 @@
 #' @param ts_key column name specifying the datetime column
 #' @param loc_id column name specifying the location column (country)
 #' @importFrom suncalc getSunlightTimes
-#' @importFrom dplyr inner_join
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #'
@@ -35,11 +34,12 @@ augment_daylight <- function(x, ts_key = "DateTime", loc_id = "country"){
   data("country_coordinates", envir = environment() )
 
   by_key <- c(loc_id);names(by_key) <- c("country")
-  data <- inner_join(x, country_coordinates, by = by_key)
+  data <- merge(as.data.table(x), country_coordinates, all=FALSE, by = by_key)
+  data <- as.data.frame(data)
   data <- data[, c(ts_key, loc_id, "lon", "lat" ) ]
   data[[ts_key]] <- as.Date(format(data[[ts_key]], "%Y-%m-%d")  )
   names(data) <- c("date", loc_id, "lon", "lat")
-  data <- distinct(data)
+  data <- unique(data)
 
   daylight <- getSunlightTimes(
     data = data, keep = c("sunset", "sunrise"), tz = "CET")
@@ -47,11 +47,9 @@ augment_daylight <- function(x, ts_key = "DateTime", loc_id = "country"){
 
   x$dummy_date <- as.Date(format(x[[ts_key]], "%Y-%m-%d")  )
 
-  by_key <- c(loc_id, "date" )
-  names(by_key) <- c(loc_id, "dummy_date")
 
-  x <- left_join(x, daylight, by = by_key)
-
+  x <- merge(as.data.table(x), daylight, all.x=TRUE, by.x = c(loc_id, "dummy_date"), by.y = c(loc_id, "date" ) )
+  x <- as.data.frame(x)
   x$light_time <- as.integer(difftime(x$sunset, x$sunrise, units = "mins" ))
 
   x$dummy_date <- NULL

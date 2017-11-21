@@ -5,7 +5,7 @@
 #' @param col column name of the measure to be aggregated and lagged
 #' @param country_id column name of the country to be used in aggregations
 #' @param decay lag as a number of days
-#' @importFrom dplyr group_by_at
+#' @importFrom data.table .SD
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #'
@@ -32,14 +32,22 @@ augment_daily <- function(x, col, country_id = "country", decay = 1){
 
   x$day_date <- as.Date(format(x[[ts_key]], "%Y-%m-%d") )
 
-  zz <- group_by_at(x, .vars = c(country_id, "day_date") )
-  zz <- summarise_mean_var(zz, col, paste0("_D", decay))
+  zz <- as.data.table(x)
+  zz <- zz[, list(
+    MIN = min(.SD[[1]], na.rm = TRUE),
+    AVG = mean(.SD[[1]], na.rm = TRUE),
+    MAX = max(.SD[[1]], na.rm = TRUE)
+  ) , by = c(country_id, "day_date"), .SDcols = col ]
+
+  names(zz)[names(zz) %in% "MIN"] <- paste0("MIN_", col)
+  names(zz)[names(zz) %in% "AVG"] <- paste0("AVG_", col)
+  names(zz)[names(zz) %in% "MAX"] <- paste0("MAX_", col)
+
   zz$day_date <- zz$day_date + decay
 
-  x <- left_join(x, zz, by = c(country_id, "day_date") )
+  x <- as.data.table(x)
+  x <- merge(x, zz, all.x=TRUE, by = c(country_id, "day_date"))
   x$day_date <- NULL
-
-
   x <- as.data.frame(x)
   class(x) <- x_class
   attr(x, "validators") <- validators
@@ -49,14 +57,5 @@ augment_daily <- function(x, col, country_id = "country", decay = 1){
   x
 }
 
-#' @importFrom rlang sym syms
-summarise_mean_var <- function(df, colname, suffix) {
-  mean_name <- paste0("AVG_", colname, suffix)
-  max_name <- paste0("MAX_", colname, suffix)
-  min_name <- paste0("MIN_", colname, suffix)
-  summarise(df,
-            !!min_name := min(!!!sym( colname ), na.rm = TRUE) ,
-            !!mean_name := mean(!!!sym( colname ), na.rm = TRUE) ,
-            !!max_name := max(!!!sym( colname ), na.rm = TRUE)  )
-}
+
 

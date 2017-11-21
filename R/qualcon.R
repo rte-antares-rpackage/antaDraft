@@ -20,8 +20,6 @@ qualcon <- function( x ){
 
 
 
-#' @importFrom tibble as_tibble
-#' @importFrom dplyr group_by filter mutate summarise one_of
 #' @importFrom data.table melt.data.table
 #' @rdname qualcon
 #' @export

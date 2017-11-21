@@ -1,5 +1,4 @@
 #' @importFrom validate validator confront values voptions
-#' @importFrom tibble as_tibble
 #' @export
 #' @title evaluate validation rules for each line of a dataset
 #' @description add logical columns to a dataset. Each column is a test to

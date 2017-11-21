@@ -28,13 +28,12 @@ augment_holiday <- function(x, country_id = "country"){
 
   x[["Date_"]] <- as.Date(format(x[[ts_key]], "%Y-%m-%d")  )
   data <- x[, c("Date_", country_id) ]
-  data <- distinct(data)
-  key_ <- c("Date", "country")
-  names(key_) <- c("Date_", country_id)
-  data <- left_join(data, holidays, by = key_)
+  data <- unique(data)
+
+  data <- merge(as.data.table(data), holidays, all.x=TRUE, by.x = c("Date_", country_id), by.y = c("Date", "country") )
   data$is_off[is.na(data$is_off)] <- FALSE
   data$likely_off[is.na(data$likely_off)] <- FALSE
-  x <- left_join(x, data, by = c("Date_", country_id) )
+  x <- merge(as.data.table(x), data, all.x=TRUE, by = c("Date_", country_id))
   x$Date_ <- NULL
 
   x <- as.data.frame(x)

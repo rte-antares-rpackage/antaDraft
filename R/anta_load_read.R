@@ -1,6 +1,5 @@
 #' @importFrom yaml yaml.load_file
 #' @importFrom purrr map_df
-#' @importFrom tibble tibble
 get_rules <- function(add_complex = FALSE){
 
   load_options <- getOption("load_options")
@@ -9,9 +8,9 @@ get_rules <- function(add_complex = FALSE){
 
   ref_mapcode <- map_df(cty_rules, function(x) {
     rbind(
-      tibble(MapCode = x$CTY, AreaTypeCode = "CTY"),
-      tibble(MapCode = x$CTA, AreaTypeCode = "CTA"),
-      tibble(MapCode = x$BZN, AreaTypeCode = "BZN") )
+      data.frame(MapCode = x$CTY, AreaTypeCode = "CTY", stringsAsFactors = FALSE),
+      data.frame(MapCode = x$CTA, AreaTypeCode = "CTA", stringsAsFactors = FALSE),
+      data.frame(MapCode = x$BZN, AreaTypeCode = "BZN", stringsAsFactors = FALSE) )
   }, .id = "country")
 
   data <- within(ref_mapcode, {
@@ -38,7 +37,6 @@ get_rules <- function(add_complex = FALSE){
 #' from an entsoe repository.
 #' @param data_dir datasets directory
 #' @importFrom purrr map_df
-#' @importFrom dplyr left_join
 #' @importFrom lubridate minute
 #' @importFrom anytime anytime
 #' @importFrom data.table fread rbindlist CJ

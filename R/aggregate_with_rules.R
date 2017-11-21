@@ -1,5 +1,4 @@
 #' @export
-#' @importFrom dplyr group_by summarise ungroup distinct
 #' @title Aggregate raw dataset from country rules
 #' @description From a raw dataset and a set of rules, aggregations are performed
 #' to produce for each country and possible date points a set of three measures: CTY, CTA
