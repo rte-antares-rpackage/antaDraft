@@ -42,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpTdfWaJ/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpdzmTvb/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -354,18 +354,18 @@ aggregated_db %>%
   kable()
 ```
 
-| country        |  invalid|  original|
-|:---------------|--------:|---------:|
-| AUSTRIA        |    14010|     11990|
-| BELGIUM        |      277|     25723|
-| FRANCE         |      390|     25610|
-| GERMANY        |    14009|     11991|
-| IRELAND        |     2669|     23331|
-| ITALY          |      783|     25217|
-| LUXEMBOURG     |    14224|     11776|
-| NETHERLANDS    |       28|     25972|
-| NORTH\_IRELAND |    26000|        NA|
-| PORTUGAL       |     1216|     24784|
-| SPAIN          |     1252|     24748|
-| SWITZERLAND    |      865|     25135|
-| UK             |    21972|      4028|
+| country        |  corrected|  invalid|  original|
+|:---------------|----------:|--------:|---------:|
+| AUSTRIA        |      14010|       NA|     11990|
+| BELGIUM        |          9|      268|     25723|
+| FRANCE         |          1|      389|     25610|
+| GERMANY        |      14009|       NA|     11991|
+| IRELAND        |        141|     2528|     23331|
+| ITALY          |         24|      759|     25217|
+| LUXEMBOURG     |      14224|       NA|     11776|
+| NETHERLANDS    |         28|       NA|     25972|
+| NORTH\_IRELAND |      23472|     2528|        NA|
+| PORTUGAL       |       1047|      169|     24784|
+| SPAIN          |        772|      480|     24748|
+| SWITZERLAND    |        288|      577|     25135|
+| UK             |      21308|      664|      4028|

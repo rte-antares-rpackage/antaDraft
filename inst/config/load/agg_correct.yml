@@ -3,6 +3,12 @@
   use: CTY
   when_false:
     - CTA_NA
+    - CTA_BZN_EQUAL
+    - CTA_BZN_DIFF_LT_05
+    - CTA_BZN_DIFF_LT_10
+    - CTY_CTA_EQUAL
+    - CTY_CTA_DIFF_LT_05
+    - CTY_CTA_DIFF_LT_10
   when_true:
     - BZN_NA
     - CTY_NA
@@ -15,6 +21,12 @@
   country:
   when_false:
     - CTY_NA
+    - CTY_CTA_EQUAL
+    - CTY_CTA_DIFF_LT_05
+    - CTY_CTA_DIFF_LT_10
+    - CTY_BZN_EQUAL
+    - CTY_BZN_DIFF_LT_05
+    - CTY_BZN_DIFF_LT_10
   when_true:
     - BZN_NA
     - CTA_NA

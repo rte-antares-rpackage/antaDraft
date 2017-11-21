@@ -32,7 +32,6 @@ augment_process_summary <- function( data, colname = "summary" ){
   coldata <- rep("original", nrow(data))
   coldata[invalid] <- "invalid"
   coldata[corrected] <- "corrected"
-  # coldata <- factor(coldata, levels = c("original", "invalid", "corrected", "rf_predicted") )
   data[[colname]] <- coldata
 
   data

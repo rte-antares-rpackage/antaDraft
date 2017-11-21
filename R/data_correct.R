@@ -30,22 +30,30 @@ data_correct_with_rules <- function( data ){
 }
 
 when_false_str <- function(rules){
-  str1 <- map_chr(rules, function(x) paste0( "(", paste0( "!", x$when_false, collapse = " & " ), ")") )
+  str1 <- sapply(rules, function(x) {
+    if( !is.null( x$when_false ) )
+      paste0( "(", paste0( "!", x$when_false, collapse = " | " ), ")")
+    else "TRUE"
+    } )
   str1
 }
 when_true_str <- function(rules){
-  str1 <- map_chr(rules, function(x) paste0( "(", paste( x$when_true, collapse = " & " ), ")") )
+  str1 <- sapply(rules, function(x) {
+    if( !is.null( x$when_true ) )
+      paste0( "(", paste( x$when_true, collapse = " & " ), ")")
+    else "TRUE"
+  } )
   str1
 }
 countries_str <- function(rules){
-  str1 <- map_chr(rules, function(x) {
-    if( length(x$country) < 1 ) "TRUE"
-    else paste0( "( country %in% c(", paste( shQuote(x$country), collapse = ", " ), ") )" )
+  str1 <- sapply(rules, function(x) {
+    if( !is.null( x$country ) )
+      paste0( "( country %in% c(", paste( shQuote(x$country), collapse = ", " ), ") )" )
+    else "TRUE"
   } )
   str1
 }
 
-#' @importFrom purrr map_chr
 correct_exprs <- function( correct_rules ){
 
   rules <- yaml::yaml.load_file(correct_rules)
@@ -55,8 +63,8 @@ correct_exprs <- function( correct_rules ){
   str3 <- countries_str(rules)
   cond_ <- sprintf( "%s & %s & %s", str1, str2, str3)
 
-  replace_var <- map_chr(rules, function(x) x$replace )
-  with_var <- map_chr(rules, function(x) x$use )
+  replace_var <- sapply(rules, function(x) x$replace )
+  with_var <- sapply(rules, function(x) x$use )
 
   exprs <- sprintf("%s <- ifelse(%s, %s, %s)", replace_var, cond_, with_var, replace_var)
   exprs <- paste0( exprs, collapse = ";\n" )
