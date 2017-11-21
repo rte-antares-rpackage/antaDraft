@@ -35,7 +35,7 @@ qualcon.controled <- function( x ){
 
   measure.vars <- intersect(names(dat), validators)
 
-  x <- data.table::melt.data.table(dat, id.vars = id.vars, measure.vars = measure.vars,
+  x <- data.table::melt.data.table(as.data.table(dat), id.vars = id.vars, measure.vars = measure.vars,
             variable.name = "validator", value.name = "validated")
   x <- x[!x$validated, ]
 
@@ -76,7 +76,7 @@ render_quality <- function( x, dir ){
 
   cties_list <- unique(x$country)
   valid_list <- attr( x, "validators")
-  attributes(x)
+
   x$period = ifelse(x$end - x$start>0, TRUE, FALSE)
   by_data <- split(x, x$country)
   by_data <- lapply( by_data, function(x)  split(x, x$validator) )
