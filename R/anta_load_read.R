@@ -63,6 +63,7 @@ anta_load_read <- function( data_dir = NULL ){
 
   vars <- c("DateTime","country")
   raw_db <- raw_db[do.call(CJ, c(mget(vars), unique=TRUE)), on=vars]
+  raw_db$observed[is.na(raw_db$observed)] <- FALSE
 
   raw_db <- as.data.frame(raw_db)
   class(raw_db) <- c(class(raw_db), "raw_level" )
