@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/rte-antares-rpackage/antaDraft.svg?branch=master)](https://travis-ci.org/rte-antares-rpackage/antaDraft) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rte-antares-rpackage/antaDraft?branch=master&svg=true)](https://ci.appveyor.com/project/rte-antares-rpackage/antaDraft) [![version](http://www.r-pkg.org/badges/version/antaDraft)](https://CRAN.R-project.org/package=antaDraft) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 
 antaDraft
-========
+=========
 
 Le package contient un ensemble de fonctions pour vérifier et corriger des données entsoe.
 
@@ -42,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpWJCQTV/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpqT4rMA/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -121,17 +121,20 @@ Ce fichier décrit les règles de validation de chaque ligne de donnée.
 ``` r
 load_data <- augment_validation(load_data)
 head(load_data)
-#> # A tibble: 6 x 10
-#>     DateTime country AreaTypeCode      AreaName       MapCode
-#>       <dttm>   <chr>        <chr>         <chr>         <chr>
-#> 1 2014-12-01 AUSTRIA          BZN      DE-AT-LU      DE_AT_LU
-#> 2 2014-12-01 BELGIUM          CTA       Elia CA            BE
-#> 3 2014-12-01 BELGIUM          CTY       Belgium            BE
-#> 4 2014-12-01 BELGIUM          BZN       Elia BZ            BE
-#> 5 2014-12-01  FRANCE         <NA>          <NA>          <NA>
-#> 6 2014-12-01 GERMANY          CTA TenneT GER CA DE_TenneT_GER
-#> # ... with 5 more variables: TotalLoadValue <dbl>, observed <lgl>,
-#> #   IS_OBS <lgl>, IS_FINITE <lgl>, IS_POS <lgl>
+#>    MapCode AreaTypeCode   DateTime AreaName TotalLoadValue country
+#> 1 DE_AT_LU          BZN 2014-12-01 DE-AT-LU       11239.13 AUSTRIA
+#> 2       BE          BZN 2014-12-01  Elia BZ        9100.34 BELGIUM
+#> 3       BE          CTA 2014-12-01  Elia CA        9100.34 BELGIUM
+#> 4       BE          CTY 2014-12-01  Belgium        9100.34 BELGIUM
+#> 5     <NA>         <NA> 2014-12-01     <NA>             NA  FRANCE
+#> 6       DE          CTY 2014-12-01  Germany       11239.13 GERMANY
+#>   observed IS_OBS IS_FINITE IS_POS
+#> 1     TRUE   TRUE      TRUE   TRUE
+#> 2     TRUE   TRUE      TRUE   TRUE
+#> 3     TRUE   TRUE      TRUE   TRUE
+#> 4     TRUE   TRUE      TRUE   TRUE
+#> 5       NA  FALSE      TRUE   TRUE
+#> 6     TRUE   TRUE      TRUE   TRUE
 ```
 
 ### Les données agrégées
@@ -353,16 +356,16 @@ aggregated_db %>%
 
 | country        |  corrected|  invalid|  original|
 |:---------------|----------:|--------:|---------:|
-| AUSTRIA        |         NA|    14012|     11991|
-| BELGIUM        |          9|      268|     25726|
-| FRANCE         |          1|      389|     25613|
-| GERMANY        |         25|    13986|     11992|
-| IRELAND        |          8|     2661|     23334|
-| ITALY          |         NA|      783|     25220|
-| LUXEMBOURG     |         NA|    14226|     11777|
-| NETHERLANDS    |          1|       27|     25975|
-| NORTH\_IRELAND |      21310|     4693|        NA|
-| PORTUGAL       |         NA|     1216|     24787|
-| SPAIN          |         NA|     1252|     24751|
-| SWITZERLAND    |         25|      840|     25138|
-| UK             |         NA|    21975|      4028|
+| AUSTRIA        |         NA|    14010|     11990|
+| BELGIUM        |          9|      268|     25723|
+| FRANCE         |          1|      389|     25610|
+| GERMANY        |         25|    13984|     11991|
+| IRELAND        |          8|     2661|     23331|
+| ITALY          |         NA|      783|     25217|
+| LUXEMBOURG     |         NA|    14224|     11776|
+| NETHERLANDS    |          1|       27|     25972|
+| NORTH\_IRELAND |      21307|     4693|        NA|
+| PORTUGAL       |         NA|     1216|     24784|
+| SPAIN          |         NA|     1252|     24748|
+| SWITZERLAND    |         25|      840|     25135|
+| UK             |         NA|    21972|      4028|

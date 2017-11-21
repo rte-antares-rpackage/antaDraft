@@ -17,7 +17,7 @@ Description: Read and transform data from entsoe to make them available in antar
 License: GPL (>= 2) | file LICENSE
 Depends: R (>= 2.10)
 Imports: readr, purrr, tibble, lubridate, validate, tidyr, 
-  suncalc, rlang, R.utils, rmarkdown, dplyr, yaml
+  suncalc, rlang, R.utils, rmarkdown, dplyr, yaml, data.table, anytime
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat, covr, magrittr,

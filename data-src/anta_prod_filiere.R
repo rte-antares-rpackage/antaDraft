@@ -6,7 +6,6 @@
 #' @param utf16 whether text file are encoded in UTF16 (if not, UTF8)
 #' @importFrom purrr map_df
 #' @importFrom dplyr left_join
-#' @importFrom lubridate minute
 #' @importFrom tidyr complete
 #' @examples
 #' if( dir.exists( Sys.getenv("CHANNEL_PROD_DIR") ) )

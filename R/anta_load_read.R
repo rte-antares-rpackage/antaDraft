@@ -40,7 +40,8 @@ get_rules <- function(add_complex = FALSE){
 #' @importFrom purrr map_df
 #' @importFrom dplyr left_join
 #' @importFrom lubridate minute
-#' @importFrom tidyr complete
+#' @importFrom anytime anytime
+#' @importFrom data.table fread rbindlist CJ
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #' load_data <- anta_load_read(data_dir = load_dir )
@@ -48,30 +49,25 @@ anta_load_read <- function( data_dir = NULL ){
   stopifnot(dir.exists(data_dir))
 
   agg_files <- list.files(data_dir, pattern = "(\\.csv)$", full.names = TRUE)
-  data <- map_df(agg_files, function(f){
-    read_load_file(f)
-  })
-  data <- data[minute( data$DateTime ) < 1, ]
+
+  data <- rbindlist( lapply(agg_files, read_load_file ) )
+  data <- data[, DateTime := anytime(DateTime)]
+  data <- subset(data, minute( DateTime ) < 1)
 
   dimensions <- get_rules( add_complex = FALSE )
   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
-  raw_db <- left_join(data, dimensions, by = c("MapCode", "AreaTypeCode"))
-  raw_db <- as.data.frame(raw_db)
 
-  {
-    raw_db$SubmissionTS <- NULL
-    raw_db$year <- NULL
-    raw_db$month <- NULL
-    raw_db$day <- NULL
-  }
+  raw_db <- merge(data, dimensions, by = c("MapCode", "AreaTypeCode"), all = FALSE)
+
   raw_db$observed <- TRUE
 
-  raw_db <- complete(raw_db, DateTime, country, fill = list(observed = FALSE ))
+  vars <- c("DateTime","country")
+  raw_db <- raw_db[do.call(CJ, c(mget(vars), unique=TRUE)), on=vars]
 
+  raw_db <- as.data.frame(raw_db)
   class(raw_db) <- c(class(raw_db), "raw_level" )
   attr( raw_db, "id.vars") <- c("country", "MapCode", "AreaTypeCode", "DateTime", "AreaName")
   attr( raw_db, "timevar") <- "DateTime"
-
 
   raw_db
 }
