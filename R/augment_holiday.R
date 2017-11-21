@@ -3,7 +3,6 @@
 #' @description add holiday column
 #' @param x dataset
 #' @param country_id column name specifying the country column
-#' @importFrom tidyr replace_na
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #'
@@ -33,7 +32,8 @@ augment_holiday <- function(x, country_id = "country"){
   key_ <- c("Date", "country")
   names(key_) <- c("Date_", country_id)
   data <- left_join(data, holidays, by = key_)
-  data <- replace_na(data = data, replace = list(is_off = FALSE, likely_off = FALSE))
+  data$is_off[is.na(data$is_off)] <- FALSE
+  data$likely_off[is.na(data$likely_off)] <- FALSE
   x <- left_join(x, data, by = c("Date_", country_id) )
   x$Date_ <- NULL
 

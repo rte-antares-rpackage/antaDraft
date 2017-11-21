@@ -2,6 +2,18 @@
 #' @title perform quality control
 #' @description perform quality control
 #' @param x data where controls have been evaluated
+#' @examples
+#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- augment_validation(load_data)
+#'
+#' qualcon(load_data)
+#'
+#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- augment_validation(aggregated_db)
+#'
+#' qualcon(aggregated_db)
 qualcon <- function( x ){
   UseMethod("qualcon")
 }
@@ -10,9 +22,7 @@ qualcon <- function( x ){
 
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr group_by filter mutate summarise one_of
-#' @importFrom rlang syms
-#' @importFrom tidyr gather
-#' @importFrom lubridate hours
+#' @importFrom data.table melt
 #' @rdname qualcon
 #' @export
 qualcon.controled <- function( x ){
@@ -24,20 +34,21 @@ qualcon.controled <- function( x ){
   validators <- attr( x, "validators")
 
   measure.vars <- intersect(names(dat), validators)
-  x <- gather(dat[,c(id.vars, measure.vars)], "validator", "validated", -one_of(id.vars) )
+
+  x <- melt(dat, id.vars = id.vars, measure.vars = measure.vars,
+            variable.name = "validator", value.name = "validated")
   x <- x[!x$validated, ]
-  # x <- x[order(x$country, x$DateTime)]
 
   index_vars_1 <- c( setdiff(id.vars, timevar), "validator" )
   index_vars_2 <- c( index_vars_1, "time_frame" )
 
-  out <- group_by(as_tibble(x), !!!syms( index_vars_1 ) )
-  out <- mutate(out, time_frame = cumsum( c( TRUE, diff(DateTime) != 1 ) ) )
-  out <- group_by(out, !!!syms( index_vars_2 ))
-  out <- summarise(out, start = min(!!!syms(timevar)), end = max( !!!syms(timevar)))
-  out <- as.data.frame( out, stringsAsFactors = FALSE )
+  x <- as.data.table(x)
 
-  out$end <- out$end + hours( ifelse( out$end - out$start > 0, 1, 0 ) )
+  out <- x[, time_frame := cumsum( c( TRUE, diff(DateTime) != 1 ) ), by = index_vars_1 ]
+  out <- out[, list(start = min(get(timevar)), end = max(get(timevar)) ), by = index_vars_2 ]
+
+  out$end <- out$end + ifelse( out$end - out$start > 0, 60*60, 0 )
+  out <- as.data.frame(out)
   out$time_frame <- NULL
   class( out ) <- c( old_class, "qualcon" )
 

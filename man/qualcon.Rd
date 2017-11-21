@@ -15,3 +15,16 @@ qualcon(x)
 \description{
 perform quality control
 }
+\examples{
+load_dir <- system.file(package = "antaDraft", "data_sample")
+load_data <- anta_load_read(data_dir = load_dir )
+load_data <- anta_load_read(data_dir = load_dir )
+load_data <- augment_validation(load_data)
+
+qualcon(load_data)
+
+aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- augment_validation(aggregated_db)
+
+qualcon(aggregated_db)
+}
