@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/rte-antares-rpackage/antaDraft.svg?branch=master)](https://travis-ci.org/rte-antares-rpackage/antaDraft) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rte-antares-rpackage/antaDraft?branch=master&svg=true)](https://ci.appveyor.com/project/rte-antares-rpackage/antaDraft) [![version](http://www.r-pkg.org/badges/version/antaDraft)](https://CRAN.R-project.org/package=antaDraft) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+[![Build Status](https://travis-ci.org/rte-antares-rpackage/antaDraft.svg?branch=master)](https://travis-ci.org/rte-antares-rpackage/antaDraft) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rte-antares-rpackage/antaDraft?branch=master&svg=true)](https://ci.appveyor.com/project/rte-antares-rpackage/antaDraft) [![version](http://www.r-pkg.org/badges/version/antaDraft)](https://CRAN.R-project.org/package=antaDraft) [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![codecov](https://codecov.io/gh/rte-antares-rpackage/antaDraft/branch/master/graph/badge.svg)](https://codecov.io/gh/rte-antares-rpackage/antaDraft)
 
 antaDraft
 =========
@@ -42,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpqT4rMA/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpTdfWaJ/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -133,7 +133,7 @@ head(load_data)
 #> 2     TRUE   TRUE      TRUE   TRUE
 #> 3     TRUE   TRUE      TRUE   TRUE
 #> 4     TRUE   TRUE      TRUE   TRUE
-#> 5       NA  FALSE      TRUE   TRUE
+#> 5    FALSE  FALSE      TRUE   TRUE
 #> 6     TRUE   TRUE      TRUE   TRUE
 ```
 
@@ -354,18 +354,18 @@ aggregated_db %>%
   kable()
 ```
 
-| country        |  corrected|  invalid|  original|
-|:---------------|----------:|--------:|---------:|
-| AUSTRIA        |         NA|    14010|     11990|
-| BELGIUM        |          9|      268|     25723|
-| FRANCE         |          1|      389|     25610|
-| GERMANY        |         25|    13984|     11991|
-| IRELAND        |          8|     2661|     23331|
-| ITALY          |         NA|      783|     25217|
-| LUXEMBOURG     |         NA|    14224|     11776|
-| NETHERLANDS    |          1|       27|     25972|
-| NORTH\_IRELAND |      21307|     4693|        NA|
-| PORTUGAL       |         NA|     1216|     24784|
-| SPAIN          |         NA|     1252|     24748|
-| SWITZERLAND    |         25|      840|     25135|
-| UK             |         NA|    21972|      4028|
+| country        |  invalid|  original|
+|:---------------|--------:|---------:|
+| AUSTRIA        |    14010|     11990|
+| BELGIUM        |      277|     25723|
+| FRANCE         |      390|     25610|
+| GERMANY        |    14009|     11991|
+| IRELAND        |     2669|     23331|
+| ITALY          |      783|     25217|
+| LUXEMBOURG     |    14224|     11776|
+| NETHERLANDS    |       28|     25972|
+| NORTH\_IRELAND |    26000|        NA|
+| PORTUGAL       |     1216|     24784|
+| SPAIN          |     1252|     24748|
+| SWITZERLAND    |      865|     25135|
+| UK             |    21972|      4028|
