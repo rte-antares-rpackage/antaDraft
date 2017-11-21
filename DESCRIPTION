@@ -17,10 +17,9 @@ Description: Read and transform data from entsoe to make them available in antar
 License: GPL (>= 2) | file LICENSE
 Depends: R (>= 2.10)
 Imports: purrr, lubridate, validate, 
-  R.utils, rmarkdown, yaml, data.table, anytime
+  yaml, data.table, anytime
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat, covr, magrittr,
-    knitr
+    knitr, rmarkdown
 RoxygenNote: 6.0.1.9000
-Remotes: datastorm-open/suncalc

@@ -5,7 +5,6 @@
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #' load_data <- anta_load_read(data_dir = load_dir )
-#' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
 #' qualcon(load_data)
@@ -59,15 +58,30 @@ qualcon.controled <- function( x ){
 }
 
 
-#' @importFrom rmarkdown render
-#' @importFrom R.utils getAbsolutePath
 #' @export
 #' @title report QC results
 #' @description create reports from results of \code{qualcon} call.
 #' @param x an object of class \code{qualcon}
 #' @param dir directory where reports should be written
+#' @examples
+#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- augment_validation(load_data)
+#'
+#' qc <- qualcon(load_data)
+#' qc_raw_dir <- file.path( tempfile(), "raw_qc" )
+#' dir.create(qc_raw_dir, recursive = TRUE, showWarnings = FALSE)
+#' render_quality(qc, qc_raw_dir)
+#'
+#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- augment_validation(aggregated_db)
+#'
+#' qc <- qualcon(aggregated_db)
+#' qc_agg_dir <- file.path( tempfile(), "agg_qc" )
+#' dir.create(qc_agg_dir, recursive = TRUE, showWarnings = FALSE)
+#' render_quality(qc, qc_agg_dir)
 render_quality <- function( x, dir ){
-  dir <- getAbsolutePath(dir)
+
   if( !dir.exists(dir) ){
     dir.create(dir, recursive = TRUE, showWarnings = FALSE)
   }
@@ -79,27 +93,59 @@ render_quality <- function( x, dir ){
   by_data <- split(x, x$country)
   by_data <- lapply( by_data, function(x)  split(x, x$validator) )
 
-  report_files <- list()
-  rmd_file <- system.file(package = package_name, "template_raw_quality.Rmd" )
   for(country in names(by_data) ){
 
     for( validator in names(by_data[[country]]) ){
       if( nrow( by_data[[country]][[validator]] ) < 1 ) next
-      outfile <- paste0(country, "_[" , validator, "].html" )
+
+      outfile <- paste0(country, "_[" , validator, "].md" )
       outfile <- file.path(dir, outfile)
 
-      par <- list( country = country,
-                   id = validator,
-                   title = validator,
-                   data = by_data[[country]][[validator]] )
-      render(rmd_file, params = par, output_file = outfile, intermediates_dir = getwd() )
-      report_files <- append( report_files, list(outfile) )
+      sink(file = outfile )
+
+      cat( "# Quality report\n", sep = "")
+      cat( "\n", sep = "")
+
+      cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
+      cat( "\n", sep = "")
+
+      cat( "**Item: Actual Total Load [6.1]**", "\n", sep = "")
+      cat( "\n", sep = "")
+
+      cat( sprintf("Area: **%s** | **%s**", validator, country), "\n", sep = "")
+      cat( "\n", sep = "")
+
+      data <- by_data[[country]][[validator]]
+      data <- data[data$period,  ]
+
+      if( nrow( data) > 0 ){
+
+        between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
+                                 " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
+        cat( "### Between", "\n", sep = "")
+        cat( "\n", sep = "")
+        cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
+        cat( "\n", sep = "")
+      }
+      data <- by_data[[country]][[validator]]
+      data <- data[!data$period,  ]
+
+      if( nrow( data) > 0 ){
+
+        at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
+        cat( "### At", "\n", sep = "")
+        cat( "\n", sep = "")
+        cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
+        cat( "\n", sep = "")
+      }
+
+
+      sink()
+
     }
   }
-  unlist(report_files)
 
-
-
+  invisible()
 
 }
 

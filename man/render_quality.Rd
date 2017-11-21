@@ -14,3 +14,21 @@ render_quality(x, dir)
 \description{
 create reports from results of \code{qualcon} call.
 }
+\examples{
+load_dir <- system.file(package = "antaDraft", "data_sample")
+load_data <- anta_load_read(data_dir = load_dir )
+load_data <- augment_validation(load_data)
+
+qc <- qualcon(load_data)
+qc_raw_dir <- file.path( tempfile(), "raw_qc" )
+dir.create(qc_raw_dir, recursive = TRUE, showWarnings = FALSE)
+render_quality(qc, qc_raw_dir)
+
+aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- augment_validation(aggregated_db)
+
+qc <- qualcon(aggregated_db)
+qc_agg_dir <- file.path( tempfile(), "agg_qc" )
+dir.create(qc_agg_dir, recursive = TRUE, showWarnings = FALSE)
+render_quality(qc, qc_agg_dir)
+}
