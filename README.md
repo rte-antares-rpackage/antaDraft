@@ -42,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpNSzSEI/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//Rtmp6k2jve/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -121,20 +121,20 @@ Ce fichier décrit les règles de validation de chaque ligne de donnée.
 ``` r
 load_data <- augment_validation(load_data)
 head(load_data)
-#>    MapCode AreaTypeCode   DateTime AreaName TotalLoadValue country
-#> 1 DE_AT_LU          BZN 2014-12-01 DE-AT-LU       11239.13 AUSTRIA
-#> 2       BE          BZN 2014-12-01  Elia BZ        9100.34 BELGIUM
-#> 3       BE          CTA 2014-12-01  Elia CA        9100.34 BELGIUM
-#> 4       BE          CTY 2014-12-01  Belgium        9100.34 BELGIUM
-#> 5     <NA>         <NA> 2014-12-01     <NA>             NA  FRANCE
-#> 6       DE          CTY 2014-12-01  Germany       11239.13 GERMANY
-#>   observed IS_OBS IS_FINITE IS_POS
-#> 1     TRUE   TRUE      TRUE   TRUE
-#> 2     TRUE   TRUE      TRUE   TRUE
-#> 3     TRUE   TRUE      TRUE   TRUE
-#> 4     TRUE   TRUE      TRUE   TRUE
-#> 5    FALSE  FALSE      TRUE   TRUE
-#> 6     TRUE   TRUE      TRUE   TRUE
+#>     DateTime  MapCode AreaTypeCode country TotalLoadValue observed IS_OBS
+#> 1 2014-12-01       AT          CTA AUSTRIA             NA     TRUE   TRUE
+#> 2 2014-12-01       AT          CTY AUSTRIA             NA     TRUE   TRUE
+#> 3 2014-12-01 DE_AT_LU          BZN AUSTRIA       11239.13     TRUE   TRUE
+#> 4 2014-12-01       BE          BZN BELGIUM        9100.34     TRUE   TRUE
+#> 5 2014-12-01       BE          CTA BELGIUM        9100.34     TRUE   TRUE
+#> 6 2014-12-01       BE          CTY BELGIUM        9100.34     TRUE   TRUE
+#>   IS_FINITE IS_POS
+#> 1     FALSE   TRUE
+#> 2     FALSE   TRUE
+#> 3      TRUE   TRUE
+#> 4      TRUE   TRUE
+#> 5      TRUE   TRUE
+#> 6      TRUE   TRUE
 ```
 
 ### Les données agrégées

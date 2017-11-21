@@ -12,6 +12,7 @@
   when_true:
     - BZN_NA
     - CTY_NA
+    - CTY_IS_POS
     - CTY_BZN_EQUAL
 
 
@@ -30,6 +31,7 @@
   when_true:
     - BZN_NA
     - CTA_NA
+    - CTA_IS_POS
     - CTA_BZN_EQUAL
 
 

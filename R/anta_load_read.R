@@ -38,7 +38,7 @@ get_rules <- function(add_complex = FALSE){
 #' @param data_dir datasets directory
 #' @importFrom lubridate minute
 #' @importFrom anytime anytime
-#' @importFrom data.table fread rbindlist CJ
+#' @importFrom data.table fread rbindlist CJ data.table
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #' load_data <- anta_load_read(data_dir = load_dir )
@@ -54,8 +54,19 @@ anta_load_read <- function( data_dir = NULL ){
   dimensions <- get_rules( add_complex = FALSE )
   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
 
-  raw_db <- merge(data, dimensions, by = c("MapCode", "AreaTypeCode"), all = FALSE)
+  all_datetime <- seq(min( data$DateTime, na.rm = TRUE),
+           max( data$DateTime, na.rm = TRUE), by = "hour")
+  ref_data <- data.table(DateTime = all_datetime)
+  ref_data$dummy_id <- 1
+  dimensions_dummy <- dimensions
+  dimensions_dummy$dummy_id <- 1
+  ref_data <- merge(ref_data, dimensions_dummy, by = c("dummy_id"), all = FALSE, allow.cartesian = TRUE)
+  ref_data$dummy_id <- NULL
 
+  raw_db <- merge(data, dimensions, by = c("MapCode", "AreaTypeCode"), all.x = FALSE, all.y = TRUE)
+  raw_db$AreaName <- NULL
+  raw_db <- merge(ref_data, raw_db, by = c("DateTime", "MapCode", "AreaTypeCode", "country"), all.x = TRUE, all.y = TRUE)
+  raw_db <- subset(raw_db, !is.na(DateTime))
   raw_db$observed <- TRUE
 
   vars <- c("DateTime","country")
@@ -64,7 +75,7 @@ anta_load_read <- function( data_dir = NULL ){
 
   raw_db <- as.data.frame(raw_db)
   class(raw_db) <- c(class(raw_db), "raw_level" )
-  attr( raw_db, "id.vars") <- c("country", "MapCode", "AreaTypeCode", "DateTime", "AreaName")
+  attr( raw_db, "id.vars") <- c("country", "MapCode", "AreaTypeCode", "DateTime")
   attr( raw_db, "timevar") <- "DateTime"
 
   raw_db

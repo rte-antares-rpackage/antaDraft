@@ -4,7 +4,7 @@ test_that("expected columns", {
   load_dir <- system.file(package = "antaDraft", "data_sample")
   load_data <- anta_load_read(data_dir = load_dir )
 
-  expect_true( all( c("MapCode", "AreaTypeCode", "DateTime", "AreaName", "TotalLoadValue",
+  expect_true( all( c("MapCode", "AreaTypeCode", "DateTime", "TotalLoadValue",
     "country", "observed") %in% names(load_data) ) )
 
   expect_is(load_data$DateTime, "POSIXct")
@@ -16,6 +16,6 @@ test_that("missing combinations are added", {
   load_dir <- system.file(package = "antaDraft", "data_sample")
   load_data <- anta_load_read(data_dir = load_dir )
 
-  likely_not_missing <- !is.na( load_data$TotalLoadValue ) & !is.na( load_data$MapCode )
-  expect_equal(nrow(load_data[likely_not_missing,]), sum(load_data$observed, na.rm = TRUE))
+  num_comb_by_dates <- aggregate(load_data$TotalLoadValue, list(load_data$DateTime), length)
+  expect_true(all( diff( num_comb_by_dates$x ) == 0 ))
 })
