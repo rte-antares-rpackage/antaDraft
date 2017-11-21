@@ -32,6 +32,17 @@ NULL
 #' @format A data frame with 3 variables, \code{country}, \code{lat} and \code{lon}.
 NULL
 
+#' countries daylights
+#'
+#' The dataset describes for each country and for 10 years the corresponding sunset and sunrise time
+#'
+#' @name daylight
+#' @docType data
+#' @keywords datasets
+#' @usage data(daylight)
+#' @format A data frame with 4 variables, \code{country}, \code{date}, \code{sunset}, \code{sunrise}.
+NULL
+
 
 #' European holidays
 #'
