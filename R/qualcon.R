@@ -22,7 +22,7 @@ qualcon <- function( x ){
 
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr group_by filter mutate summarise one_of
-#' @importFrom data.table melt
+#' @importFrom data.table melt.data.table
 #' @rdname qualcon
 #' @export
 qualcon.controled <- function( x ){
@@ -35,7 +35,7 @@ qualcon.controled <- function( x ){
 
   measure.vars <- intersect(names(dat), validators)
 
-  x <- melt(dat, id.vars = id.vars, measure.vars = measure.vars,
+  x <- data.table::melt.data.table(dat, id.vars = id.vars, measure.vars = measure.vars,
             variable.name = "validator", value.name = "validated")
   x <- x[!x$validated, ]
 
