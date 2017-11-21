@@ -1,17 +1,17 @@
 #' @importFrom yaml yaml.load_file
-#' @importFrom purrr map_df
 get_rules <- function(add_complex = FALSE){
 
   load_options <- getOption("load_options")
 
   cty_rules <- yaml.load_file(load_options$cty_rules)
 
-  ref_mapcode <- map_df(cty_rules, function(x) {
+  cty_rules <- lapply( cty_rules, function(x) {
     rbind(
       data.frame(MapCode = x$CTY, AreaTypeCode = "CTY", stringsAsFactors = FALSE),
       data.frame(MapCode = x$CTA, AreaTypeCode = "CTA", stringsAsFactors = FALSE),
       data.frame(MapCode = x$BZN, AreaTypeCode = "BZN", stringsAsFactors = FALSE) )
-  }, .id = "country")
+  } )
+  ref_mapcode <- rbindlist(cty_rules, idcol = "country")
 
   data <- within(ref_mapcode, {
     simple_type = !grepl("^[!]{0,1}(CTA|CTY|BZN)\\|", MapCode)
@@ -36,7 +36,6 @@ get_rules <- function(add_complex = FALSE){
 #' @description import csv data representing load data
 #' from an entsoe repository.
 #' @param data_dir datasets directory
-#' @importFrom purrr map_df
 #' @importFrom lubridate minute
 #' @importFrom anytime anytime
 #' @importFrom data.table fread rbindlist CJ
