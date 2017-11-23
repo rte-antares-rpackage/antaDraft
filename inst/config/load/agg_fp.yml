@@ -6,7 +6,7 @@
     - CTY_BZN_DIFF_LT_05
     - CTY_CTA_DIFF_LT_10
     - CTY_BZN_DIFF_LT_10
-    - CTY_LAG_LT_50
+    - CTY_LAG_LT_30
   when_not:
     - CTY_NA
 
@@ -18,7 +18,7 @@
     - CTA_BZN_DIFF_LT_05
     - CTY_CTA_DIFF_LT_10
     - CTA_BZN_DIFF_LT_10
-    - CTA_LAG_LT_50
+    - CTA_LAG_LT_30
   when_not:
     - CTA_NA
 
@@ -30,7 +30,7 @@
     - CTA_BZN_DIFF_LT_05
     - CTY_BZN_DIFF_LT_10
     - CTA_BZN_DIFF_LT_10
-    - BZN_LAG_LT_50
+    - BZN_LAG_LT_30
   when_not:
     - BZN_NA
 
