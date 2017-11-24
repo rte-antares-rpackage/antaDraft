@@ -39,9 +39,9 @@ augment_daily <- function(x, col, country_id = "country", decay = 1){
     MAX = max(.SD[[1]], na.rm = TRUE)
   ) , by = c(country_id, "day_date"), .SDcols = col ]
 
-  names(zz)[names(zz) %in% "MIN"] <- paste0("MIN_", col)
-  names(zz)[names(zz) %in% "AVG"] <- paste0("AVG_", col)
-  names(zz)[names(zz) %in% "MAX"] <- paste0("MAX_", col)
+  names(zz)[names(zz) %in% "MIN"] <- paste0("MIN_", col, "_", decay)
+  names(zz)[names(zz) %in% "AVG"] <- paste0("AVG_", col, "_", decay)
+  names(zz)[names(zz) %in% "MAX"] <- paste0("MAX_", col, "_", decay)
 
   zz$day_date <- zz$day_date + decay
 

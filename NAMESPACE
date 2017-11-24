@@ -3,6 +3,7 @@
 S3method(qualcon,controled)
 export(aggregate_with_rules)
 export(anta_load_read)
+export(as_learning_db)
 export(augment_daily)
 export(augment_daylight)
 export(augment_holiday)
