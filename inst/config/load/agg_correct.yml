@@ -13,6 +13,7 @@
     - BZN_NA
     - CTY_NA
     - CTY_IS_POS
+    - BZN_IS_POS
     - CTY_BZN_EQUAL
 
 
@@ -32,6 +33,7 @@
     - BZN_NA
     - CTA_NA
     - CTA_IS_POS
+    - BZN_IS_POS
     - CTA_BZN_EQUAL
 
 
