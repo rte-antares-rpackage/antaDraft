@@ -4,7 +4,7 @@
 \alias{as_learning_db}
 \title{prepare an aggregated load dataset to be model}
 \usage{
-as_learning_db(dat, hour_decay = -1)
+as_learning_db(dat, hour_decay = -1, keep = "summary")
 }
 \arguments{
 \item{dat}{aggregated load dataset}

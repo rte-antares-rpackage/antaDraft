@@ -5,9 +5,11 @@
 #' @param hour_decay integer specifying to shift data Y from \code{hour_decay}
 #' and add the resulting column as variable
 #' @export
-as_learning_db <- function( dat, hour_decay = -1 ){
+as_learning_db <- function( dat, hour_decay = -1, keep = "summary" ){
 
   dat <- drop_validators(dat)
+
+  existing_vars <- names(dat)
 
   dat2 <- augment_holiday(dat)
   dat2 <- augment_seasons_id(dat2)
@@ -18,12 +20,13 @@ as_learning_db <- function( dat, hour_decay = -1 ){
   CTY_H1 <- dat2[c("country", "DateTime", "CTY")]
   CTY_H1 <- as.data.table(CTY_H1)
   CTY_H1 <- CTY_H1[, DateTime := DateTime + (hour_decay * 60*60 ), by = "country" ]
-  names( CTY_H1 )[3] <- paste0("CTY", "_HOUR_DECAY_", hour_decay)
+  names( CTY_H1 )[3] <- paste0("CTY", "_HOUR_DECAY_", ifelse(sign(hour_decay)<0, "MINUS", "PLUS"), "_", abs(hour_decay) )
 
   dat2 <- as.data.table(dat2)
   dat2 <- merge( dat2, CTY_H1, by = c("DateTime", "country"), all.x = TRUE, all.y = FALSE)
 
-  as.data.frame( dat2 )
+  added_vars <- setdiff(names(dat2), existing_vars)
+  as.data.frame( dat2 )[,c(attr( dat, "id.vars"), "CTY", keep, added_vars )]
 }
 
 drop_validators <- function(x){
