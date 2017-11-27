@@ -1,10 +1,37 @@
 #' @import h2o
 #' @export
+model_save_cty_rf <- function( db ){
+
+  id.vars <- attr( db, "id.vars")
+  ts_key <- attr( db, "timevar")
+
+  learning_db <- as_learning_db( db )
+  learning_db <- split(learning_db, learning_db$country)
+
+  for( ctry in names(learning_db) ){
+    ctry_db <- learning_db[[ctry]]
+
+    frame_id_learn <- paste0(ctry, "_learn")
+    model_id <- paste0(ctry, "_rf")
+
+    learn_db <- ctry_db[ctry_db$summary %in% c("original", "corrected"), c(5:18, 3)]# x -> 1:14
+
+    as.h2o( learn_db, destination_frame = frame_id_learn)
+    model <- h2o.randomForest(x = 1:14, y = 15, training_frame = frame_id_learn, model_id = model_id)
+  }
+
+}
+
+
+#' @import h2o
+#' @export
 impute_cty_rf <- function( db, h2o_port = 54321, h2o_ip = "localhost", loop = 3 ){
 
   h2o.init(ip = h2o_ip, port = h2o_port, startH2O = TRUE)
   id.vars <- attr( db, "id.vars")
   ts_key <- attr( db, "timevar")
+
+  model_save_cty_rf(db)
 
   for(i in seq_len(loop)){
     learning_db <- as_learning_db( db )
@@ -15,16 +42,12 @@ impute_cty_rf <- function( db, h2o_port = 54321, h2o_ip = "localhost", loop = 3 
     for( ctry in names(learning_db) ){
       ctry_db <- learning_db[[ctry]]
 
-      frame_id_learn <- paste0(ctry, "_learn")
       frame_id_prev <- paste0(ctry, "_prev")
       model_id <- paste0(ctry, "_rf")
 
-      learn_db <- ctry_db[ctry_db$summary %in% c("original", "corrected"), c(5:18, 3)]# x -> 1:14
       prev_db <- na.omit(ctry_db[!ctry_db$summary %in% c("original", "corrected"), ])
       prev_frame <- prev_db[, 5:18]
-
-      as.h2o( learn_db, destination_frame = frame_id_learn)
-      model <- h2o.randomForest(x = 1:14, y = 15, training_frame = frame_id_learn, model_id = model_id)
+      model <- h2o.getModel(model_id)
 
       prev_data <- as.h2o( prev_frame, destination_frame = frame_id_prev)
 
