@@ -1,90 +1,111 @@
-#' @import h2o
-#' @export
-model_save_cty_rf <- function( db ){
+#' @importFrom h2o as.h2o h2o.randomForest
+model_save_cty_rf <- function( data, ctry_col, x_vars, y_var ){
 
-  id.vars <- attr( db, "id.vars")
-  ts_key <- attr( db, "timevar")
-
-  learning_db <- as_learning_db( db )
-  learning_db <- split(learning_db, learning_db$country)
+  learning_db <- split(data, data[[ctry_col]])
 
   for( ctry in names(learning_db) ){
-    ctry_db <- learning_db[[ctry]]
-
     frame_id_learn <- paste0(ctry, "_learn")
     model_id <- paste0(ctry, "_rf")
-
-    learn_db <- ctry_db[ctry_db$summary %in% c("original", "corrected"), c(5:18, 3)]# x -> 1:14
-
-    as.h2o( learn_db, destination_frame = frame_id_learn)
-    model <- h2o.randomForest(x = 1:14, y = 15, training_frame = frame_id_learn, model_id = model_id)
+    as.h2o( learning_db[[ctry]], destination_frame = frame_id_learn)
+    h2o.randomForest(x = x_vars, y = y_var, training_frame = frame_id_learn, model_id = model_id)
   }
 
 }
 
-
-#' @import h2o
+#' @importFrom stats na.omit
+#' @title CTY imputation with random forests
+#' @description CTY imputation with random forests
+#' @param db aggregated load dataset
+#' @param hour_decay integer specifying to shift data Y from \code{hour_decay}
+#' and add the resulting column as variable
+#' @param loop specify how many correction loops have to be run
+#' @param h2o_ip IP address of the server where H2O is running
+#' @param h2o_port port number of the H2O server
 #' @export
-impute_cty_rf <- function( db, h2o_port = 54321, h2o_ip = "localhost", loop = 3 ){
+#' @examples
+#' \dontrun{
+#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#'
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- augment_validation(data = load_data)
+#' head(load_data)
+#'
+#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- augment_validation(aggregated_db)
+#' aggregated_db <- data_correct_with_rules(aggregated_db)
+#' aggregated_db <- augment_process_summary(aggregated_db)
+#'
+#' corrected_by_rf <- impute_cty_rf(aggregated_db, hour_decay = -1, loop = 4)
+#' corrected_by_rf <- impute_cty_rf(corrected_by_rf, hour_decay = 1, loop = 3)
+#' }
+#' @importFrom h2o h2o.init h2o.shutdown h2o.getModel h2o.predict
+impute_cty_rf <- function( db, hour_decay = -1, loop = 3, h2o_port = 54321, h2o_ip = "localhost" ){
 
   h2o.init(ip = h2o_ip, port = h2o_port, startH2O = TRUE)
   id.vars <- attr( db, "id.vars")
   ts_key <- attr( db, "timevar")
+  validators <- attr( db, "validators")
 
-  model_save_cty_rf(db)
 
-  for(i in seq_len(loop)){
-    learning_db <- as_learning_db( db )
-    learning_db <- split(learning_db, learning_db$country)
+  first <- TRUE
+  datamart <- as_learning_db( db, hour_decay = hour_decay )
 
+
+  x_vars <- c("is_off", "likely_off", "year.iso", "week.iso", "hour.iso", "day.iso", "light_time",
+              "MIN_CTY_1", "AVG_CTY_1", "MAX_CTY_1", "MIN_CTY_2", "AVG_CTY_2", "MAX_CTY_2")
+  decay_var <- names(datamart)[grepl( "^CTY_HOUR_DECAY", names(datamart) )]
+  x_vars <- c(x_vars, decay_var)
+
+  learning_db <- datamart[ !datamart$summary %in% "invalid", c(x_vars, "country", "CTY") ]
+  model_save_cty_rf(learning_db, ctry_col = "country", x_vars = x_vars, y_var = "CTY")
+
+  whole_db <- datamart[ , c(x_vars, "country", "CTY", "summary", "DateTime") ]
+  whole_db_l <- split(whole_db, whole_db$country)
+
+  for( iter in seq_len(loop)){
+
+    if( !first ){
+      datamart <- as_learning_db( db, hour_decay = hour_decay )
+      whole_db <- datamart[ , c(x_vars, "country", "CTY", "summary", "DateTime") ]
+      whole_db_l <- split(whole_db, whole_db$country)
+    }
     corrections <- list()
 
-    for( ctry in names(learning_db) ){
-      ctry_db <- learning_db[[ctry]]
+    for( ctry in names(whole_db_l) ){
+
+      ctry_db <- whole_db_l[[ctry]]
 
       frame_id_prev <- paste0(ctry, "_prev")
       model_id <- paste0(ctry, "_rf")
 
-      prev_db <- na.omit(ctry_db[!ctry_db$summary %in% c("original", "corrected"), ])
-      prev_frame <- prev_db[, 5:18]
+      prev_db <- na.omit(ctry_db[ctry_db$summary %in% "invalid", c("DateTime", x_vars)])
       model <- h2o.getModel(model_id)
 
-      prev_data <- as.h2o( prev_frame, destination_frame = frame_id_prev)
+      prev_data <- as.h2o( prev_db[, setdiff(names(prev_db), "DateTime")], destination_frame = frame_id_prev)
 
       prev_env <- h2o.predict(model, newdata = prev_data)
       prev_values <- as.data.frame(prev_env)
-      prev_db$CTY <- prev_values$predict
-      prev_db$summary <- rep("rf", nrow(prev_db))
+      prev_db$predict <- prev_values$predict
+
       corrections[[ctry]] <- prev_db
     }
 
+    corrections2 <- rbindlist(corrections, use.names = TRUE, idcol = "country")
+    corrections2 <- corrections2[, c(id.vars, "predict"), with = FALSE]
+    db <- merge(as.data.table(db), corrections2, by = c("country", "DateTime"), all.x = TRUE, all.y = TRUE )
+    db$CTY <- ifelse( is.finite(db$predict), db$predict, db$CTY )
+    db$summary <- ifelse( is.finite(db$predict), "rf_model", db$summary )
+    db$predict <- NULL
+    db <- as.data.frame(db)
 
-    corrections <- do.call(rbind, corrections)
-    corrections$BZN <- corrections$CTY
-    corrections$CTA <- corrections$CTY
-    corrections <- corrections[, c(attr(db, "id.vars"), "CTY", "CTA", "BZN") ]
+    first <- FALSE
 
-    new_data <- as.data.table(db)
-    new_data_old <- new_data[!corrections, on = attr(db, "id.vars")]
-
-    w = unique(new_data[corrections,which=TRUE, on = attr(db, "id.vars")])  # the row numbers in x which have a match from y
-    new_data_new <- new_data[w]
-    new_data_new$CTY <- NULL
-    new_data_new$BZN <- NULL
-    new_data_new$CTA <- NULL
-
-    new_data_new <- new_data_new[corrections, on = attr(db, "id.vars")]
-    new_data_new$summary <- "impute_model"
-    new_data <- rbind( new_data_new, new_data_old)
-    new_data <- setorderv(new_data, c("country", "DateTime"))
-
-    db <- as.data.frame(new_data)
     attr( db, "id.vars") <- id.vars
     attr( db, "timevar") <- ts_key
+    attr( db, "validators") <- validators
   }
-  h2o.shutdown(prompt = FALSE)
 
+  h2o.shutdown(prompt = FALSE)
   db
 }
-
 

@@ -1,11 +1,10 @@
 #' @export
-#' @title add daily average value
-#' @description add daily average values to an existing dataset
+#' @title add a shifted value
+#' @description add a shifted value to an existing dataset.
 #' @param x dataset
 #' @param col column name of the measure to be aggregated and lagged
-#' @param country_id column name of the country to be used in aggregations
-#' @param decay lag as a number of days
-#' @importFrom data.table .SD
+#' @param hour_decay lag as a number of hours
+#' @param summary_colname column name containing results from \code{\link{augment_process_summary}}
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #'
@@ -21,33 +20,25 @@
 #' aggregated_db <- augment_seasons_id(aggregated_db)
 #' aggregated_db <- augment_daylight(aggregated_db)
 #' aggregated_db <- augment_daily(aggregated_db, col = "CTY", decay = 1)
-#' aggregated_db <- augment_daily(aggregated_db, col = "CTY", decay = 2)
+#' aggregated_db <- augment_shifted(aggregated_db, col = "CTY", hour_decay = -1)
 #' head(aggregated_db)
-augment_daily <- function(x, col, country_id = "country", decay = 1){
+augment_shifted <- function(x, col, hour_decay = -1, summary_colname = "summary"){
 
   id.vars <- attr(x, "id.vars")
   ts_key <- attr( x, "timevar")
   validators <- attr( x, "validators")
   x_class <- class(x)
 
-  x$day_date <- as.Date(format(x[[ts_key]], "%Y-%m-%d") )
-
-  zz <- as.data.table(x)
-  zz <- zz[, list(
-    MIN = min(.SD[[1]], na.rm = TRUE),
-    AVG = mean(.SD[[1]], na.rm = TRUE),
-    MAX = max(.SD[[1]], na.rm = TRUE)
-  ) , by = c(country_id, "day_date"), .SDcols = col ]
-
-  names(zz)[names(zz) %in% "MIN"] <- paste0("MIN_", col, "_", decay)
-  names(zz)[names(zz) %in% "AVG"] <- paste0("AVG_", col, "_", decay)
-  names(zz)[names(zz) %in% "MAX"] <- paste0("MAX_", col, "_", decay)
-
-  zz$day_date <- zz$day_date + decay
-
   x <- as.data.table(x)
-  x <- merge(x, zz, all.x=TRUE, by = c(country_id, "day_date"))
-  x$day_date <- NULL
+  x <- setorderv(x, id.vars )
+
+  CTY_H1 <- x[, c(id.vars, col, summary_colname), with=FALSE]
+  CTY_H1[[col]] <- ifelse( CTY_H1[[summary_colname]] %in% "invalid", NA_real_ , CTY_H1[[col]])
+  CTY_H1[[summary_colname]] <- NULL
+  CTY_H1 <- CTY_H1[, DateTime := DateTime + (hour_decay * 60*60 ), by = "country" ]
+  names( CTY_H1 )[3] <- paste0(col, "_HOUR_DECAY_", ifelse(sign(hour_decay)<0, "MINUS", "PLUS"), "_", abs(hour_decay) )
+
+  x <- merge(x, CTY_H1, all.x = TRUE, all.y = FALSE, by = id.vars)
   x <- as.data.frame(x)
   class(x) <- x_class
   attr(x, "validators") <- validators

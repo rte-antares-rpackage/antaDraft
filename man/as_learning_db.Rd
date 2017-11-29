@@ -11,8 +11,23 @@ as_learning_db(dat, hour_decay = -1, keep = "summary")
 
 \item{hour_decay}{integer specifying to shift data Y from \code{hour_decay}
 and add the resulting column as variable}
+
+\item{keep}{columns to keep from input dataset}
 }
 \description{
 add columns to an aggregated load dataset
 so that a model can be run.
+}
+\examples{
+load_dir <- system.file(package = "antaDraft", "data_sample")
+
+load_data <- anta_load_read(data_dir = load_dir )
+load_data <- augment_validation(data = load_data)
+head(load_data)
+
+aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- augment_validation(aggregated_db)
+aggregated_db <- data_correct_with_rules(aggregated_db)
+aggregated_db <- augment_process_summary(aggregated_db)
+as_learning_db(aggregated_db)
 }
