@@ -11,7 +11,7 @@ aggregated_db <- augment_validation(aggregated_db)
 aggregated_db <- data_correct_with_rules(aggregated_db)
 aggregated_db <- augment_process_summary(aggregated_db)
 
-corrected_by_rf <- impute_cty_rf(aggregated_db, hour_decay = -1, loop = 10)
+corrected_by_rf <- impute_cty_rf(aggregated_db, hour_decay = -1, loop = 1, save_model = TRUE)
 corrected_by_rf <- impute_cty_rf(corrected_by_rf, hour_decay = 1, loop = 10)
 corrected_by_rf <- impute_cty_rf(corrected_by_rf, hour_decay = 1, loop = 20)
 corrected_by_rf <- impute_cty_rf(corrected_by_rf, hour_decay = 1, loop = 5)

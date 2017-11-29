@@ -5,7 +5,7 @@
 \title{CTY imputation with random forests}
 \usage{
 impute_cty_rf(db, hour_decay = -1, loop = 3, h2o_port = 54321,
-  h2o_ip = "localhost")
+  h2o_ip = "localhost", save_model = FALSE, save_model_dir = getwd())
 }
 \arguments{
 \item{db}{aggregated load dataset}
@@ -18,6 +18,10 @@ and add the resulting column as variable}
 \item{h2o_port}{port number of the H2O server}
 
 \item{h2o_ip}{IP address of the server where H2O is running}
+
+\item{save_model}{should the models be saved on disk}
+
+\item{save_model_dir}{where models should be saved}
 }
 \description{
 CTY imputation with random forests

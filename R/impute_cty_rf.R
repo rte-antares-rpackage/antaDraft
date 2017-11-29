@@ -1,5 +1,5 @@
-#' @importFrom h2o as.h2o h2o.randomForest
-model_save_cty_rf <- function( data, ctry_col, x_vars, y_var ){
+#' @importFrom h2o as.h2o h2o.randomForest h2o.saveModel
+model_save_cty_rf <- function( data, ctry_col, x_vars, y_var, save_model = FALSE, save_model_dir = getwd() ){
 
   learning_db <- split(data, data[[ctry_col]])
 
@@ -7,7 +7,10 @@ model_save_cty_rf <- function( data, ctry_col, x_vars, y_var ){
     frame_id_learn <- paste0(ctry, "_learn")
     model_id <- paste0(ctry, "_rf")
     as.h2o( learning_db[[ctry]], destination_frame = frame_id_learn)
-    h2o.randomForest(x = x_vars, y = y_var, training_frame = frame_id_learn, model_id = model_id)
+    current_model <- h2o.randomForest(x = x_vars, y = y_var, training_frame = frame_id_learn, model_id = model_id)
+    if( save_model ){
+      h2o.saveModel(current_model, save_model_dir)
+    }
   }
 
 }
@@ -21,6 +24,8 @@ model_save_cty_rf <- function( data, ctry_col, x_vars, y_var ){
 #' @param loop specify how many correction loops have to be run
 #' @param h2o_ip IP address of the server where H2O is running
 #' @param h2o_port port number of the H2O server
+#' @param save_model should the models be saved on disk
+#' @param save_model_dir where models should be saved
 #' @export
 #' @examples
 #' \dontrun{
@@ -39,7 +44,8 @@ model_save_cty_rf <- function( data, ctry_col, x_vars, y_var ){
 #' corrected_by_rf <- impute_cty_rf(corrected_by_rf, hour_decay = 1, loop = 3)
 #' }
 #' @importFrom h2o h2o.init h2o.shutdown h2o.getModel h2o.predict
-impute_cty_rf <- function( db, hour_decay = -1, loop = 3, h2o_port = 54321, h2o_ip = "localhost" ){
+impute_cty_rf <- function( db, hour_decay = -1, loop = 3, h2o_port = 54321, h2o_ip = "localhost",
+                           save_model = FALSE, save_model_dir = getwd()){
 
   h2o.init(ip = h2o_ip, port = h2o_port, startH2O = TRUE)
   id.vars <- attr( db, "id.vars")
@@ -57,7 +63,9 @@ impute_cty_rf <- function( db, hour_decay = -1, loop = 3, h2o_port = 54321, h2o_
   x_vars <- c(x_vars, decay_var)
 
   learning_db <- datamart[ !datamart$summary %in% "invalid", c(x_vars, "country", "CTY") ]
-  model_save_cty_rf(learning_db, ctry_col = "country", x_vars = x_vars, y_var = "CTY")
+  model_save_cty_rf(learning_db, ctry_col = "country",
+                    x_vars = x_vars, y_var = "CTY",
+                    save_model = save_model, save_model_dir = save_model_dir )
 
   whole_db <- datamart[ , c(x_vars, "country", "CTY", "summary", "DateTime") ]
   whole_db_l <- split(whole_db, whole_db$country)
