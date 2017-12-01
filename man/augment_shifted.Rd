@@ -4,14 +4,14 @@
 \alias{augment_shifted}
 \title{add a shifted value}
 \usage{
-augment_shifted(x, col, hour_decay = -1, summary_colname = "summary")
+augment_shifted(x, col, hour_shift = -1, summary_colname = "summary")
 }
 \arguments{
 \item{x}{dataset}
 
 \item{col}{column name of the measure to be aggregated and lagged}
 
-\item{hour_decay}{lag as a number of hours}
+\item{hour_shift}{lag as a number of hours}
 
 \item{summary_colname}{column name containing results from \code{\link{augment_process_summary}}}
 }
@@ -33,6 +33,6 @@ aggregated_db <- augment_holiday(aggregated_db)
 aggregated_db <- augment_seasons_id(aggregated_db)
 aggregated_db <- augment_daylight(aggregated_db)
 aggregated_db <- augment_daily(aggregated_db, col = "CTY", decay = 1)
-aggregated_db <- augment_shifted(aggregated_db, col = "CTY", hour_decay = -1)
+aggregated_db <- augment_shifted(aggregated_db, col = "CTY", hour_shift = -1)
 head(aggregated_db)
 }

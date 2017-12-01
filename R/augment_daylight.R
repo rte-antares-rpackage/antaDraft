@@ -2,7 +2,6 @@
 #' @title add day light columns
 #' @description add day light columns
 #' @param x dataset
-#' @param ts_key column name specifying the datetime column
 #' @param loc_id column name specifying the location column (country)
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
@@ -20,19 +19,16 @@
 #' aggregated_db <- augment_daylight(aggregated_db)
 #' head(aggregated_db)
 #' @importFrom utils data
-augment_daylight <- function(x, ts_key = "DateTime", loc_id = "country"){
+augment_daylight <- function(x, loc_id = "country"){
 
-  id.vars <- attr(x, "id.vars")
-  timevar <- attr( x, "timevar")
-  validators <- attr( x, "validators")
-  x_class <- class(x)
+  meta <- capture_df_meta(x)
 
-  stopifnot( inherits(x[[ts_key]], "POSIXct") )
+  stopifnot( inherits(x[[meta$timevar]], "POSIXct") )
 
   daylight <- NULL
   data("daylight", envir = environment() )
 
-  x$dummy_date <- as.Date(format(x[[ts_key]], "%Y-%m-%d")  )
+  x$dummy_date <- as.Date(format(x[[meta$timevar]], "%Y-%m-%d")  )
 
   x <- merge(as.data.table(x), daylight, all.x=TRUE, by.x = c(loc_id, "dummy_date"), by.y = c("country", "date" ) )
   x <- as.data.frame(x)
@@ -42,11 +38,8 @@ augment_daylight <- function(x, ts_key = "DateTime", loc_id = "country"){
   x$sunset <- NULL
   x$sunrise <- NULL
 
-  class(x) <- x_class
-  attr(x, "validators") <- validators
-  attr( x, "id.vars") <- id.vars
-  attr( x, "timevar") <- timevar
+  meta <- add_df_meta(meta, "daylight_columns", c("light_time" ) )
 
-  x
+  restore_df_meta(x, meta = meta )
 }
 

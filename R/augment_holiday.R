@@ -20,27 +20,22 @@ augment_holiday <- function(x, country_id = "country"){
 
   holidays <- NULL
   data("holidays", envir = environment() )
+  new_names <- c("is_off", "likely_off" )
+  meta <- capture_df_meta(x)
 
-  id.vars <- attr(x, "id.vars")
-  ts_key <- attr( x, "timevar")
-  validators <- attr( x, "validators")
-  x_class <- class(x)
-
-  x[["Date_"]] <- as.Date(format(x[[ts_key]], "%Y-%m-%d")  )
+  x[["Date_"]] <- as.Date(format(x[[meta$timevar]], "%Y-%m-%d")  )
   data <- x[, c("Date_", country_id) ]
   data <- unique(data)
 
   data <- merge(as.data.table(data), holidays, all.x=TRUE, by.x = c("Date_", country_id), by.y = c("Date", "country") )
   data$is_off[is.na(data$is_off)] <- FALSE
   data$likely_off[is.na(data$likely_off)] <- FALSE
-  x <- merge(as.data.table(x), data, all.x=TRUE, by = c("Date_", country_id))
+
+  x <- as.data.table(x[, setdiff(names(x), new_names ) ])
+  x <- merge(x, data, all.x=TRUE, by = c("Date_", country_id))
   x$Date_ <- NULL
 
-  x <- as.data.frame(x)
-  class(x) <- x_class
-  attr(x, "validators") <- validators
-  attr( x, "id.vars") <- id.vars
-  attr( x, "timevar") <- ts_key
+  meta <- add_df_meta(meta, "holiday_columns", unique( c(meta$holiday_columns, new_names ) ) )
 
-  x
+  restore_df_meta(x, meta = meta )
 }

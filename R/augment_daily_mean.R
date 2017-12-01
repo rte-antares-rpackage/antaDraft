@@ -25,36 +25,34 @@
 #' head(aggregated_db)
 augment_daily <- function(x, col, country_id = "country", decay = 1){
 
-  id.vars <- attr(x, "id.vars")
-  ts_key <- attr( x, "timevar")
-  validators <- attr( x, "validators")
-  x_class <- class(x)
+  meta <- capture_df_meta(x)
 
-  x$day_date <- as.Date(format(x[[ts_key]], "%Y-%m-%d") )
+  x$day_date <- as.Date(format(x[[meta$timevar]], "%Y-%m-%d") )
 
-  zz <- as.data.table(x)
+  zz <- as.data.table(x[ is.finite(x[[col]]),])
   zz <- zz[, list(
     MIN = min(.SD[[1]], na.rm = TRUE),
     AVG = mean(.SD[[1]], na.rm = TRUE),
     MAX = max(.SD[[1]], na.rm = TRUE)
   ) , by = c(country_id, "day_date"), .SDcols = col ]
 
-  names(zz)[names(zz) %in% "MIN"] <- paste0("MIN_", col, "_", decay)
-  names(zz)[names(zz) %in% "AVG"] <- paste0("AVG_", col, "_", decay)
-  names(zz)[names(zz) %in% "MAX"] <- paste0("MAX_", col, "_", decay)
+  new_names <- paste0("DAILY_", c("MIN_", "AVG_", "MAX_"), col, "_",
+         ifelse(sign(decay)<0, "PLUS", "MINUS"), "_", abs(decay) )
 
-  zz$day_date <- zz$day_date + decay
+  names(zz)[names(zz) %in% "MIN"] <- new_names[1]
+  names(zz)[names(zz) %in% "AVG"] <- new_names[2]
+  names(zz)[names(zz) %in% "MAX"] <- new_names[3]
 
-  x <- as.data.table(x)
+  zz$day_date <- zz$day_date + -decay
+
+
+  x <- as.data.table(x[, setdiff(names(x), new_names ) ])
   x <- merge(x, zz, all.x=TRUE, by = c(country_id, "day_date"))
   x$day_date <- NULL
-  x <- as.data.frame(x)
-  class(x) <- x_class
-  attr(x, "validators") <- validators
-  attr( x, "id.vars") <- id.vars
-  attr( x, "timevar") <- ts_key
 
-  x
+  meta <- add_df_meta(meta, "daily_summary", unique( c(meta$daily_summary, new_names ) ) )
+
+  restore_df_meta(x, meta = meta )
 }
 
 

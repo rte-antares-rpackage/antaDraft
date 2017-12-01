@@ -26,10 +26,7 @@ augment_validation <- function( data ){
     fp_rules <- load_options$validate$agg$false_pos
   }
 
-
-  init_classes <- class(data)
-  id.vars <- attr( data, "id.vars")
-  timevar <- attr( data, "timevar")
+  meta <- capture_df_meta(data)
 
 
   v <- validator(.file = val_rules )
@@ -41,13 +38,7 @@ augment_validation <- function( data ){
 
   data <- within(data, eval(fp_expr_))
 
-  attr(data, "validators") <- names(v)
-  class(data) <- c(init_classes, "controled" )
-
-  attr( data, "id.vars") <- id.vars
-  attr( data, "timevar") <- timevar
-
-  data
-
+  meta <- add_df_meta(meta, "validators", names(v))
+  restore_df_meta(data, meta = meta, new_class = "controled" )
 }
 

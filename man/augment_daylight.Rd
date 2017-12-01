@@ -4,12 +4,10 @@
 \alias{augment_daylight}
 \title{add day light columns}
 \usage{
-augment_daylight(x, ts_key = "DateTime", loc_id = "country")
+augment_daylight(x, loc_id = "country")
 }
 \arguments{
 \item{x}{dataset}
-
-\item{ts_key}{column name specifying the datetime column}
 
 \item{loc_id}{column name specifying the location column (country)}
 }

@@ -19,12 +19,13 @@
 augment_process_summary <- function( data, colname = "summary" ){
 
   load_options <- getOption("load_options")
+  meta <- capture_df_meta(data)
 
   rules <- yaml.load_file(load_options$correct)
 
   replace_var <- rule_names(rules)
 
-  invalid <- data[, attr(data, "validators"), drop = FALSE]
+  invalid <- data[, meta$validators, drop = FALSE]
   invalid <- !apply(invalid, 1, all)
   corrected <- data[, replace_var, drop = FALSE]
   corrected <- apply(corrected, 1, any)
@@ -34,6 +35,6 @@ augment_process_summary <- function( data, colname = "summary" ){
   coldata[corrected] <- "corrected"
   data[[colname]] <- coldata
 
-  data
-
+  meta <- add_df_meta(meta, "colname_process_summary", colname )
+  restore_df_meta(data, meta = meta, new_class = "summarized" )
 }

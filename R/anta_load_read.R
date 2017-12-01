@@ -77,6 +77,7 @@ anta_load_read <- function( data_dir = NULL ){
   class(raw_db) <- c(class(raw_db), "raw_level" )
   attr( raw_db, "id.vars") <- c("country", "MapCode", "AreaTypeCode", "DateTime")
   attr( raw_db, "timevar") <- "DateTime"
+  attr( raw_db, "countryvar") <- "country"
 
   raw_db
 }

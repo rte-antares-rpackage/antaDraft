@@ -19,11 +19,15 @@
 #' aggregated_db <- augment_seasons_id(aggregated_db)
 #' head(aggregated_db)
 augment_seasons_id <- function(x, ts_key = "DateTime"){
+  meta <- capture_df_meta(x)
 
   x$year.iso <- isoyear(x[[ts_key]])
   x$week.iso <- isoweek(x[[ts_key]])
   x$hour.iso <- hour(x[[ts_key]])
   x$day.iso <- wday(x[[ts_key]])
 
-  x
+  meta <- add_df_meta(meta, "season_columns", c("year.iso", "week.iso", "hour.iso", "day.iso" ) )
+
+  restore_df_meta(x, meta = meta )
 }
+

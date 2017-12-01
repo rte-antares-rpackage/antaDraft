@@ -1,10 +1,15 @@
 #' @title prepare an aggregated load dataset to be model
 #' @description add columns to an aggregated load dataset
 #' so that a model can be run.
-#' @param dat aggregated load dataset
-#' @param hour_decay integer specifying to shift data Y from \code{hour_decay}
-#' and add the resulting column as variable
-#' @param keep columns to keep from input dataset
+#' @param data aggregated load dataset
+#' @param target column to manipulate when shifting or summarizing
+#' @param hour_shift vector of integer, each specifies to hourly shift
+#' data \code{target} from its value and add the resulting column
+#' as a new variable.
+#' @param daily_summary vector of integer, each specifies to add as
+#' a new column the previous daily summary (min, avg and max) of
+#' data \code{target}. \code{-1} mean add the summary columns of the
+#' preceding week .
 #' @export
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
@@ -18,33 +23,25 @@
 #' aggregated_db <- data_correct_with_rules(aggregated_db)
 #' aggregated_db <- augment_process_summary(aggregated_db)
 #' as_learning_db(aggregated_db)
-as_learning_db <- function( dat, hour_decay = -1, keep = "summary" ){
+as_learning_db <- function( data, target = "CTY" ){
 
-  dat <- drop_validators(dat)
+  hour_shift <- c(-1, 1)
+  daily_summary <- c(-1, 1)
 
-  existing_vars <- names(dat)
+  data <- augment_holiday(data)
+  data <- augment_seasons_id(data)
+  data <- augment_daylight(data)
+  for( hs in hour_shift)
+    data <- augment_shifted(data, col = target, hour_shift = hs)
+  for( ds in daily_summary)
+    data <- augment_daily(data, col = target, decay = ds)
 
-  dat2 <- augment_holiday(dat)
-  dat2 <- augment_seasons_id(dat2)
-  dat2 <- augment_daylight(dat2)
-  dat2 <- augment_daily(dat2, col = "CTY", decay = 1)
-  dat2 <- augment_daily(dat2, col = "CTY", decay = 2)
-  dat2 <- augment_shifted(dat2, col = "CTY", hour_decay = hour_decay)
+  meta <- capture_df_meta(data)
+  meta <- add_df_meta(meta, "target", target )
+  meta <- add_df_meta(meta, "hour_shift", hour_shift )
+  meta <- add_df_meta(meta, "daily_shift", daily_summary )
+  meta <- add_df_meta(meta, "models", list() )
 
-  added_vars <- setdiff(names(dat2), existing_vars)
-  as.data.frame( dat2 )[,c(attr( dat, "id.vars"), "CTY", keep, added_vars )]
-}
-
-drop_validators <- function(x){
-  id.vars <- attr( x, "id.vars")
-  ts_key <- attr( x, "timevar")
-
-  x <- x[, !names(x) %in% attr(x, "validators")]
-  x <- as.data.frame(x)
-
-  attr(x, "validators") <- character(0)
-  attr( x, "id.vars") <- id.vars
-  attr( x, "timevar") <- ts_key
-  x
+  restore_df_meta(data, meta = meta, new_class = "learning_data" )
 }
 

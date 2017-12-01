@@ -16,17 +16,16 @@
 data_correct_with_rules <- function( data ){
 
   load_options <- getOption("load_options")
-
-  init_classes <- class(data)
+  meta <- capture_df_meta(data)
+  old_names <- names(data)
   markers_exprs_ <- mark_correct_exprs(load_options$correct)
   correct_exprs_ <- correct_exprs(load_options$correct)
   data <- within(data, eval(markers_exprs_))
   data <- within(data, eval(correct_exprs_))
+  new_names <- setdiff( names(data), old_names )
 
-  class(data) <- c(init_classes, "corrected" )
-
-  data
-
+  meta <- add_df_meta(meta, "corrected_markers", new_names )
+  restore_df_meta(data, meta = meta, new_class = "corrected" )
 }
 
 when_false_str <- function(rules){
