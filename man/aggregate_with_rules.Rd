@@ -4,12 +4,10 @@
 \alias{aggregate_with_rules}
 \title{Aggregate raw dataset from country rules}
 \usage{
-aggregate_with_rules(x, file_rules = NULL)
+aggregate_with_rules(x)
 }
 \arguments{
 \item{x}{raw dataset (an object of class \code{raw_level})}
-
-\item{file_rules}{yaml file containing for each country aggregation rules}
 }
 \description{
 From a raw dataset and a set of rules, aggregations are performed
