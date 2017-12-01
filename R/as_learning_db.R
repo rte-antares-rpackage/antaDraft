@@ -3,13 +3,6 @@
 #' so that a model can be run.
 #' @param data aggregated load dataset
 #' @param target column to manipulate when shifting or summarizing
-#' @param hour_shift vector of integer, each specifies to hourly shift
-#' data \code{target} from its value and add the resulting column
-#' as a new variable.
-#' @param daily_summary vector of integer, each specifies to add as
-#' a new column the previous daily summary (min, avg and max) of
-#' data \code{target}. \code{-1} mean add the summary columns of the
-#' preceding week .
 #' @export
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")

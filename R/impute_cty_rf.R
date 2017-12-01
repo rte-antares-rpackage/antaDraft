@@ -9,6 +9,7 @@
 #' @param h2o_ip IP address of the server where H2O is running
 #' @param h2o_port port number of the H2O server
 #' @importFrom h2o as.h2o h2o.randomForest h2o.saveModel h2o.loadModel
+#' @importFrom h2o h2o.shutdown h2o.predict h2o.init
 #' @importFrom stats na.omit
 #' @export
 define_model_rf <- function( data, x_vars, y_var, save_model_dir = getwd(), id = "",
@@ -59,6 +60,52 @@ define_model_rf <- function( data, x_vars, y_var, save_model_dir = getwd(), id =
 
 #' @export
 #' @importFrom h2o h2o.rm h2o.ls
+#' @title impute invalid data with defined model
+#' @description impute invalid data with models created by \code{\link{define_model_rf}}
+#' @param db aggregated load dataset
+#' @param id model id
+#' @param rmsle_max error max of a model, if less, model will be used to replace
+#' invalid data.
+#' @param h2o_ip IP address of the server where H2O is running
+#' @param h2o_port port number of the H2O server
+#' @examples
+#' \dontrun{
+#' load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_files"
+#'
+#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- augment_validation(load_data)
+#'
+#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- augment_validation(aggregated_db)
+#' aggregated_db <- data_correct_with_rules(aggregated_db)
+#' aggregated_db <- augment_process_summary(aggregated_db)
+#'
+#' dat <- as_learning_db(aggregated_db )
+#'
+#' x_vars <- c(
+#'   "year.iso", "week.iso", "hour.iso",
+#'   "day.iso", "light_time", "is_off", "likely_off",
+#'   "DAILY_MIN_CTY_MINUS_1", "DAILY_AVG_CTY_MINUS_1", "DAILY_MAX_CTY_MINUS_1",
+#'   "HOUR_SHIFT_CTY_MINUS_1")
+#'
+#' dat <- define_model_rf( data = dat, x_vars = x_vars, y_var = "CTY",
+#'                         save_model_dir = file.path( getwd(), "ttt"),
+#'                         id = "BACKWARD" )
+#'
+#' x_vars <- c(
+#'   "year.iso", "week.iso", "hour.iso", "day.iso", "light_time",
+#'   "is_off", "likely_off", "DAILY_MIN_CTY_PLUS_1",
+#'   "DAILY_AVG_CTY_PLUS_1", "DAILY_MAX_CTY_PLUS_1", "HOUR_SHIFT_CTY_PLUS_1")
+#'
+#' dat <- define_model_rf( data = dat, x_vars = x_vars, y_var = "CTY",
+#'                         save_model_dir = file.path( getwd(), "ttt"),
+#'                         id = "FORWARD" )
+#' for(i in 1:10 ){
+#'   dat <- impute_with_model(dat, id = "FORWARD")
+#'   dat <- impute_with_model(dat, id = "BACKWARD")
+#'   dat <- update_learning_db(dat)
+#' }
+#' }
 impute_with_model <- function( db, id, rmsle_max = .03,
                                h2o_port = 54321, h2o_ip = "localhost" ){
   meta <- capture_df_meta(db)
@@ -115,18 +162,20 @@ impute_with_model <- function( db, id, rmsle_max = .03,
 }
 
 #' @export
-update_learning_db <- function( data, target = "CTY" ){
+#' @rdname impute_with_model
+#' @param target to be removed, model target
+update_learning_db <- function( db, target = "CTY" ){
 
-  meta <- capture_df_meta(data)
+  meta <- capture_df_meta(db)
 
   hour_shift <- meta$hour_shift
   daily_summary <- meta$daily_shift
 
   for( hs in hour_shift)
-    data <- augment_shifted(data, col = target, hour_shift = hs)
+    db <- augment_shifted(db, col = target, hour_shift = hs)
   for( ds in daily_summary)
-    data <- augment_daily(data, col = target, decay = ds)
+    db <- augment_daily(db, col = target, decay = ds)
 
-  restore_df_meta(data, meta = meta )
+  restore_df_meta(db, meta = meta )
 }
 

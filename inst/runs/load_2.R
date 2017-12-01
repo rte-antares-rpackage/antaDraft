@@ -14,17 +14,6 @@ aggregated_db <- augment_process_summary(aggregated_db)
 
 dat <- as_learning_db(aggregated_db )
 
-
-
-
-attrs <- attributes(dat)
-vars <- c( attrs$id.vars, "CTY",
-   attrs$season_columns,
-   attrs$daylight_columns,
-   attrs$daily_summary,
-   attrs$shift_columns,
-   attrs$holiday_columns)
-
 x_vars <- c("year.iso", "week.iso", "hour.iso",
             "day.iso", "light_time",
             "is_off", "likely_off",

@@ -10,15 +10,6 @@ as_learning_db(data, target = "CTY")
 \item{data}{aggregated load dataset}
 
 \item{target}{column to manipulate when shifting or summarizing}
-
-\item{hour_shift}{vector of integer, each specifies to hourly shift
-data \code{target} from its value and add the resulting column
-as a new variable.}
-
-\item{daily_summary}{vector of integer, each specifies to add as
-a new column the previous daily summary (min, avg and max) of
-data \code{target}. \code{-1} mean add the summary columns of the
-preceding week .}
 }
 \description{
 add columns to an aggregated load dataset
