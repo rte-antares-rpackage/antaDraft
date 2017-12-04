@@ -85,7 +85,7 @@ AUSTRIA:
 UK:
   CTY:
     - GB
-    - "CTA|NORTH_IRELAND"
+    - "!CTA|NORTH_IRELAND"
   CTA:
     - GB
   BZN:
