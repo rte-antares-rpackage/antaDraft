@@ -37,11 +37,11 @@ rules:
   name: CTA_BZN_DIFF_LT_10
 
 
-- expr: (abs(CTY - data.table::shift(CTY)) / CTY) < .3 & (abs(data.table::shift(CTY) - CTY) / data.table::shift(CTY)) < .3
+- expr: is.na(data.table::shift(CTY)) | (abs(CTY - data.table::shift(CTY)) / CTY) < .3 & (abs(data.table::shift(CTY) - CTY) / data.table::shift(CTY)) < .3
   name: CTY_LAG_LT_30
-- expr: (abs(CTA - data.table::shift(CTA)) / CTA) < .3 & (abs(data.table::shift(CTA) - CTA) / data.table::shift(CTA)) < .3
+- expr: is.na(data.table::shift(CTA)) | (abs(CTA - data.table::shift(CTA)) / CTA) < .3 & (abs(data.table::shift(CTA) - CTA) / data.table::shift(CTA)) < .3
   name: CTA_LAG_LT_30
-- expr: (abs(BZN - data.table::shift(BZN)) / BZN)  < .3 & (abs(data.table::shift(BZN) - BZN) / data.table::shift(BZN)) < .3
+- expr: is.na(data.table::shift(BZN)) | (abs(BZN - data.table::shift(BZN)) / BZN)  < .3 & (abs(data.table::shift(BZN) - BZN) / data.table::shift(BZN)) < .3
   name: BZN_LAG_LT_30
 
 
