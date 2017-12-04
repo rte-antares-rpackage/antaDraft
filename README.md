@@ -42,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//Rtmp6k2jve/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//Rtmpi3YAxr/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -229,7 +229,7 @@ AUSTRIA:
 UK:
   CTY:
     - GB
-    - "CTA|NORTH_IRELAND"
+    - "!CTA|NORTH_IRELAND"
   CTA:
     - GB
   BZN:
@@ -314,19 +314,13 @@ Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il
   name: CTA_BZN_DIFF_LT_10
 
 
-- expr: ((CTY - lag(CTY)) / CTY) &lt; .5 &amp; ((lag(CTY) - CTY) / lag(CTY)) &lt; .5
-  name: CTY_LAG_LT_50
-- expr: ((CTA - lag(CTA)) / CTA) &lt; .5 &amp; ((lag(CTA) - CTA) / lag(CTA)) &lt; .5
-  name: CTA_LAG_LT_50
-- expr: ((BZN - lag(BZN)) / BZN)  &lt; .5 &amp; ((lag(BZN) - BZN) / lag(BZN)) &lt; .5
-  name: BZN_LAG_LT_50
+- expr: (is.na(data.table::shift(CTY)) | sign(CTY) &lt; 1 | (abs(CTY - data.table::shift(CTY)) / CTY) &lt; .3 ) &amp; ( is.na(data.table::shift(CTY)) | sign(CTY) &lt; 1 | (abs(data.table::shift(CTY) - CTY) / data.table::shift(CTY)) &lt; .3 )
+  name: CTY_LAG_LT_30
+- expr: ( is.na(data.table::shift(CTA)) | sign(CTA) &lt; 1 | (abs(CTA - data.table::shift(CTA)) / CTA) &lt; .3 ) &amp; ( is.na(data.table::shift(CTA)) | sign(CTA) &lt; 1 | (abs(data.table::shift(CTA) - CTA) / data.table::shift(CTA)) &lt; .3 )
+  name: CTA_LAG_LT_30
+- expr: ( is.na(data.table::shift(BZN)) | sign(BZN) &lt; 1 | (abs(BZN - data.table::shift(BZN)) / BZN)  &lt; .3 ) &amp; (is.na(data.table::shift(BZN)) | sign(BZN) &lt; 1 | (abs(data.table::shift(BZN) - BZN) / data.table::shift(BZN)) &lt; .3 )
+  name: BZN_LAG_LT_30
 
-- expr: abs( (CTY - lag(CTY))/CTY ) &lt; .2
-  name: CTY_LAG_CTY_20
-- expr: abs( (CTA - lag(CTA))/CTA ) &lt; .2
-  name: CTA_LAG_CTA_20
-- expr: abs( (BZN - lag(BZN))/BZN ) &lt; .2
-  name: BZN_LAG_BZN_20
 </pre>
 <!--/html_preserve-->
 ``` r
@@ -363,16 +357,146 @@ aggregated_db %>%
 
 | country        |  corrected|  invalid|  original|
 |:---------------|----------:|--------:|---------:|
-| AUSTRIA        |      14010|       NA|     11990|
-| BELGIUM        |          9|      268|     25723|
-| FRANCE         |          1|      389|     25610|
-| GERMANY        |      14009|       NA|     11991|
-| IRELAND        |        141|     2528|     23331|
-| ITALY          |         24|      759|     25217|
-| LUXEMBOURG     |      14224|       NA|     11776|
-| NETHERLANDS    |         28|       NA|     25972|
-| NORTH\_IRELAND |      23472|     2528|        NA|
-| PORTUGAL       |       1047|      169|     24784|
-| SPAIN          |        772|      480|     24748|
-| SWITZERLAND    |        288|      577|     25135|
-| UK             |      21308|      664|      4028|
+| AUSTRIA        |      13983|       35|     11982|
+| BELGIUM        |          9|      285|     25706|
+| FRANCE         |          1|      396|     25603|
+| GERMANY        |      14006|       11|     11983|
+| IRELAND        |          9|     2729|     23262|
+| ITALY          |         NA|      790|     25210|
+| LUXEMBOURG     |      13848|      390|     11762|
+| NETHERLANDS    |         28|       29|     25943|
+| NORTH\_IRELAND |      21307|     4693|        NA|
+| PORTUGAL       |       1047|      176|     24777|
+| SPAIN          |        767|      502|     24731|
+| SWITZERLAND    |         25|      877|     25098|
+| UK             |          1|      767|     25232|
+
+Correction des données par modèles de prévisions
+------------------------------------------------
+
+Il faut dans un premier temps enrichir la base de données avec des variables potentiellement explicatives. On utilise la fonction `as_learning_db`.
+
+``` r
+dat <- as_learning_db(aggregated_db )
+head(dat)
+#>   country            DateTime BZN CTA CTY CTY_NA CTA_NA BZN_NA CTY_IS_POS
+#> 1 AUSTRIA 2014-12-01 00:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
+#> 2 AUSTRIA 2014-12-01 01:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
+#> 3 AUSTRIA 2014-12-01 02:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
+#> 4 AUSTRIA 2014-12-01 03:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
+#> 5 AUSTRIA 2014-12-01 04:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
+#> 6 AUSTRIA 2014-12-01 05:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
+#>   CTA_IS_POS BZN_IS_POS CTY_CTA_EQUAL CTY_BZN_EQUAL CTA_BZN_EQUAL
+#> 1      FALSE      FALSE          TRUE          TRUE          TRUE
+#> 2      FALSE      FALSE          TRUE          TRUE          TRUE
+#> 3      FALSE      FALSE          TRUE          TRUE          TRUE
+#> 4      FALSE      FALSE          TRUE          TRUE          TRUE
+#> 5      FALSE      FALSE          TRUE          TRUE          TRUE
+#> 6      FALSE      FALSE          TRUE          TRUE          TRUE
+#>   CTY_CTA_DIFF_LT_05 CTY_BZN_DIFF_LT_05 CTA_BZN_DIFF_LT_05
+#> 1               TRUE               TRUE               TRUE
+#> 2               TRUE               TRUE               TRUE
+#> 3               TRUE               TRUE               TRUE
+#> 4               TRUE               TRUE               TRUE
+#> 5               TRUE               TRUE               TRUE
+#> 6               TRUE               TRUE               TRUE
+#>   CTY_CTA_DIFF_LT_10 CTY_BZN_DIFF_LT_10 CTA_BZN_DIFF_LT_10 CTY_LAG_LT_30
+#> 1              FALSE              FALSE              FALSE          TRUE
+#> 2              FALSE              FALSE              FALSE          TRUE
+#> 3              FALSE              FALSE              FALSE          TRUE
+#> 4              FALSE              FALSE              FALSE          TRUE
+#> 5              FALSE              FALSE              FALSE          TRUE
+#> 6              FALSE              FALSE              FALSE          TRUE
+#>   CTA_LAG_LT_30 BZN_LAG_LT_30 rule_0002_CTY rule_0001_CTA summary is_off
+#> 1          TRUE          TRUE         FALSE         FALSE invalid  FALSE
+#> 2          TRUE          TRUE         FALSE         FALSE invalid  FALSE
+#> 3          TRUE          TRUE         FALSE         FALSE invalid  FALSE
+#> 4          TRUE          TRUE         FALSE         FALSE invalid  FALSE
+#> 5          TRUE          TRUE         FALSE         FALSE invalid  FALSE
+#> 6          TRUE          TRUE         FALSE         FALSE invalid  FALSE
+#>   likely_off year.iso week.iso hour.iso day.iso light_time
+#> 1      FALSE     2014       49        0       2        524
+#> 2      FALSE     2014       49        1       2        524
+#> 3      FALSE     2014       49        2       2        524
+#> 4      FALSE     2014       49        3       2        524
+#> 5      FALSE     2014       49        4       2        524
+#> 6      FALSE     2014       49        5       2        524
+#>   HOUR_SHIFT_CTY_PLUS_1 HOUR_SHIFT_CTY_MINUS_1 DAILY_MIN_CTY_PLUS_1
+#> 1                    NA                     NA                   NA
+#> 2                    NA                     NA                   NA
+#> 3                    NA                     NA                   NA
+#> 4                    NA                     NA                   NA
+#> 5                    NA                     NA                   NA
+#> 6                    NA                     NA                   NA
+#>   DAILY_AVG_CTY_PLUS_1 DAILY_MAX_CTY_PLUS_1 DAILY_MIN_CTY_MINUS_1
+#> 1                   NA                   NA                  6306
+#> 2                   NA                   NA                  6306
+#> 3                   NA                   NA                  6306
+#> 4                   NA                   NA                  6306
+#> 5                   NA                   NA                  6306
+#> 6                   NA                   NA                  6306
+#>   DAILY_AVG_CTY_MINUS_1 DAILY_MAX_CTY_MINUS_1
+#> 1              7581.317                8661.2
+#> 2              7581.317                8661.2
+#> 3              7581.317                8661.2
+#> 4              7581.317                8661.2
+#> 5              7581.317                8661.2
+#> 6              7581.317                8661.2
+```
+
+On peut alors créer deux modèles, un dépandant des mesures suivantes et un dépendant des mesures précédentes.
+
+On utilisera pour cela la fonction `define_model_rf`. Celle-ci sauvegarde les modèles dans un répertoire local à la machine.
+
+``` r
+repertoire_model <- tempfile()
+dir.create(repertoire_model, showWarnings = FALSE, recursive = TRUE)
+```
+
+Création du modèle *backward*:
+
+``` r
+x_vars <- c(
+  "year.iso", "week.iso", "hour.iso", "day.iso", "light_time",
+  "is_off", "likely_off",
+  "DAILY_MIN_CTY_MINUS_1", "DAILY_AVG_CTY_MINUS_1", "DAILY_MAX_CTY_MINUS_1",
+  "HOUR_SHIFT_CTY_MINUS_1")
+
+dat <- define_model_rf( 
+  data = dat, x_vars = x_vars, y_var = "CTY",
+  save_model_dir = repertoire_model, id = "BACKWARD" )
+```
+
+Création du modèle *forward*:
+
+``` r
+x_vars <- c(
+  "year.iso", "week.iso", "hour.iso", "day.iso", "light_time",
+  "is_off", "likely_off",
+  "DAILY_MIN_CTY_PLUS_1", "DAILY_AVG_CTY_PLUS_1", "DAILY_MAX_CTY_PLUS_1",
+  "HOUR_SHIFT_CTY_PLUS_1")
+
+dat <- define_model_rf( 
+  data = dat, x_vars = x_vars, y_var = "CTY",
+  save_model_dir = repertoire_model, id = "FORWARD" )
+```
+
+Maintenant qu'on a deux modèles, on peut les utiliser en boucle pour remplacer les valeurs invalides par des valeurs prévues par les modèles.
+
+``` r
+for(i in 1:12 ){
+  dat <- impute_with_model(dat, id = "FORWARD")
+  dat <- impute_with_model(dat, id = "BACKWARD")
+  dat <- update_learning_db(dat)
+}
+```
+
+``` r
+library(dplyr)
+library(tidyr)
+dat %>% 
+  group_by_at(c( "country", "summary") ) %>% 
+  tally() %>% 
+  spread(summary, n) %>% 
+  kable()
+```

@@ -154,3 +154,78 @@ aggregated_db %>%
   kable()
 ```
 
+## Correction des données par modèles de prévisions
+
+Il faut dans un premier temps enrichir la base de données avec des 
+variables potentiellement explicatives. On utilise la fonction `as_learning_db`.
+
+```{r}
+dat <- as_learning_db(aggregated_db )
+head(dat)
+```
+
+On peut alors créer deux modèles, un dépandant des mesures suivantes et un dépendant 
+des mesures précédentes.
+
+On utilisera pour cela la fonction `define_model_rf`. Celle-ci sauvegarde les modèles dans un répertoire 
+local à la machine.
+
+```{r eval=FALSE}
+repertoire_model <- tempfile()
+dir.create(repertoire_model, showWarnings = FALSE, recursive = TRUE)
+```
+
+Création du modèle *backward*:
+
+```{r eval=FALSE}
+x_vars <- c(
+  "year.iso", "week.iso", "hour.iso", "day.iso", "light_time",
+  "is_off", "likely_off",
+  "DAILY_MIN_CTY_MINUS_1", "DAILY_AVG_CTY_MINUS_1", "DAILY_MAX_CTY_MINUS_1",
+  "HOUR_SHIFT_CTY_MINUS_1")
+
+dat <- define_model_rf( 
+  data = dat, x_vars = x_vars, y_var = "CTY",
+  save_model_dir = repertoire_model, id = "BACKWARD" )
+```
+
+Création du modèle *forward*:
+
+```{r eval=FALSE}
+x_vars <- c(
+  "year.iso", "week.iso", "hour.iso", "day.iso", "light_time",
+  "is_off", "likely_off",
+  "DAILY_MIN_CTY_PLUS_1", "DAILY_AVG_CTY_PLUS_1", "DAILY_MAX_CTY_PLUS_1",
+  "HOUR_SHIFT_CTY_PLUS_1")
+
+dat <- define_model_rf( 
+  data = dat, x_vars = x_vars, y_var = "CTY",
+  save_model_dir = repertoire_model, id = "FORWARD" )
+```
+
+Maintenant qu'on a deux modèles, on peut les utiliser en boucle pour 
+remplacer les valeurs invalides par des valeurs prévues par les modèles.
+
+```{r eval=FALSE}
+for(i in 1:12 ){
+  dat <- impute_with_model(dat, id = "FORWARD")
+  dat <- impute_with_model(dat, id = "BACKWARD")
+  dat <- update_learning_db(dat)
+}
+```
+
+
+```{r eval=FALSE}
+library(dplyr)
+library(tidyr)
+dat %>% 
+  group_by_at(c( "country", "summary") ) %>% 
+  tally() %>% 
+  spread(summary, n) %>% 
+  kable()
+```
+
+```{r echo=FALSE, eval=FALSE}
+unlink(repertoire_model, recursive = TRUE, force = TRUE)
+```
+
