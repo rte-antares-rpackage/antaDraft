@@ -30,9 +30,11 @@ test_that("reporting files", {
   dir.create(qc_raw_dir, recursive = TRUE, showWarnings = FALSE)
   render_quality(qc_raw, qc_raw_dir)
   combs <- aggregate(qc_raw$start,
-            by = list( country = qc_raw$country, validator = qc_raw$validator),
+            by = list( country = qc_raw$country,
+                       AreaTypeCode = qc_raw$AreaTypeCode,
+                       MapCode = qc_raw$MapCode, validator = qc_raw$validator),
             FUN = length )
-  expected_file_names <- paste0(combs$country, "_[", combs$validator, "].md")
+  expected_file_names <- paste0(combs$country, "_", combs$AreaTypeCode, "_", combs$MapCode, "_", combs$validator, ".md")
   expect_identical( sort( list.files(qc_raw_dir) ), sort(expected_file_names) )
 
   aggregated_db <- aggregate_with_rules(load_data)
@@ -45,7 +47,7 @@ test_that("reporting files", {
   combs <- aggregate(qc_agg$start,
                      by = list( country = qc_agg$country, validator = qc_agg$validator),
                      FUN = length )
-  expected_file_names <- paste0(combs$country, "_[", combs$validator, "].md")
+  expected_file_names <- paste0(combs$country, "_", combs$validator, ".md")
   expect_identical( sort( list.files(qc_agg_dir) ), sort(expected_file_names) )
 
 })
