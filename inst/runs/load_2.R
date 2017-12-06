@@ -4,6 +4,8 @@ load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_files"
 
 load_data <- anta_load_read(data_dir = load_dir )
 load_data <- augment_validation(load_data)
+qc <- qualcon(load_data)
+render_quality(qc, dir = "qcraw")
 # head(load_data)
 # str(load_data)
 

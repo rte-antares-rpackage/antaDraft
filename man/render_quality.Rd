@@ -2,9 +2,12 @@
 % Please edit documentation in R/qualcon.R
 \name{render_quality}
 \alias{render_quality}
+\alias{render_quality.raw_level}
 \title{report QC results}
 \usage{
 render_quality(x, dir)
+
+\method{render_quality}{raw_level}(x, dir)
 }
 \arguments{
 \item{x}{an object of class \code{qualcon}}

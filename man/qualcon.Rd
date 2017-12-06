@@ -2,12 +2,15 @@
 % Please edit documentation in R/qualcon.R
 \name{qualcon}
 \alias{qualcon}
-\alias{qualcon.controled}
+\alias{qualcon.aggregated}
+\alias{qualcon.raw_level}
 \title{perform quality control}
 \usage{
 qualcon(x)
 
-\method{qualcon}{controled}(x)
+\method{qualcon}{aggregated}(x)
+
+\method{qualcon}{raw_level}(x)
 }
 \arguments{
 \item{x}{data where controls have been evaluated}
