@@ -57,4 +57,14 @@
 
 
 
+- drop:
+    - CTY_CTA_EQUAL
+    - CTY_BZN_EQUAL
+    - CTY_CTA_DIFF_LT_05
+    - CTY_BZN_DIFF_LT_05
+    - CTY_CTA_DIFF_LT_10
+    - CTY_BZN_DIFF_LT_10
+    - CTY_LAG_LT_30
+  when_not:
+    - CTY_IS_POS
 
