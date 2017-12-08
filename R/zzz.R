@@ -47,6 +47,6 @@ restore_df_meta <- function( x, meta, new_class = character(0) ){
   meta$class <- NULL
   for( att_ in names(meta) )
     attr(x, att_) <- meta[[att_]]
-  class(x) <- unique(c("data.frame", class_, new_class))
+  class(x) <- unique(c(new_class, class_, "data.frame"))
   x
 }

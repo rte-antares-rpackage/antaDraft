@@ -31,7 +31,7 @@ augment_validation <- function( data ){
 
   v <- validator(.file = val_rules )
   voptions(v, raise='all', na.value = FALSE)
-  confront_ <- values( confront(data, v) )
+  confront_ <- values( confront(as.data.frame(data), v) )
   data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
 
   fp_expr_ <- fp_expr(fp_rules)

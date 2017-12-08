@@ -40,41 +40,6 @@ render_quality <- function( x, dir ){
   UseMethod("render_quality")
 }
 
-
-#' @importFrom data.table melt.data.table
-#' @rdname qualcon
-#' @export
-qualcon.aggregated <- function( x ){
-
-  if( !inherits(x, "controled") )
-    stop("x has not been validated by function augment_validation(), please run it before.")
-
-  meta <- capture_df_meta(x)
-
-  dat <- isolate_invalid(x)
-
-  measure.vars <- intersect(names(dat), meta$validators)
-
-  x <- data.table::melt.data.table(
-    as.data.table(dat), id.vars = meta$id.vars,
-    measure.vars = measure.vars,
-    variable.name = "validator", value.name = "validated")
-
-  x <- x[!x$validated, ]
-
-  index_vars_1 <- c( setdiff(meta$id.vars, meta$timevar), "validator" )
-  index_vars_2 <- c( index_vars_1, "time_frame" )
-
-  out <- x[, time_frame := cumsum( c( TRUE, diff(DateTime) != 1 ) ), by = index_vars_1 ]
-  out <- out[, list(start = min(get(meta$timevar)), end = max(get(meta$timevar)) ), by = index_vars_2 ]
-
-  out$end <- out$end + ifelse( out$end - out$start > 0, 60*60, 0 )
-  out$time_frame <- NULL
-  out <- as.data.frame(out)
-
-  restore_df_meta(out, meta = meta, new_class = "qualcon_agg" )
-}
-
 #' @rdname qualcon
 #' @export
 qualcon.raw_level <- function( x ){
@@ -107,6 +72,41 @@ qualcon.raw_level <- function( x ){
 
   restore_df_meta(out, meta = meta, new_class = "qualcon_raw" )
 }
+
+#' @importFrom data.table melt.data.table
+#' @rdname qualcon
+#' @export
+qualcon.aggregated <- function( x ){
+
+  if( !inherits(x, "controled") )
+    stop("x has not been validated by function augment_validation(), please run it before.")
+
+  meta <- capture_df_meta(x)
+
+  dat <- isolate_invalid(x)
+
+  measure.vars <- intersect(names(dat), meta$validators)
+
+  x <- data.table::melt.data.table(
+    as.data.table(dat), id.vars = meta$id.vars,
+    measure.vars = measure.vars,
+    variable.name = "validator", value.name = "validated")
+
+  x <- x[!x$validated, ]
+
+  index_vars_1 <- c( setdiff(meta$id.vars, meta$timevar), "validator" )
+  index_vars_2 <- c( index_vars_1, "time_frame" )
+
+  out <- x[, time_frame := cumsum( c( TRUE, diff(DateTime) != 1 ) ), by = index_vars_1 ]
+  out <- out[, list(start = min(get(meta$timevar)), end = max(get(meta$timevar)) ), by = index_vars_2 ]
+
+  out$end <- out$end + ifelse( out$end - out$start > 0, 60*60, 0 )
+  out$time_frame <- NULL
+  out <- as.data.frame(out)
+  restore_df_meta(out, meta = meta, new_class = "qualcon_agg" )
+}
+
+
 
 
 #' @rdname render_quality

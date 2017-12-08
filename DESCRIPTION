@@ -1,7 +1,7 @@
 Package: antaDraft
 Type: Package
 Title: clean and validate entsoe datasets
-Version: 0.1.6.9003
+Version: 0.1.6.9004
 Authors@R: c(
     person(given = "David", family = "Gohel", 
       email = "david.gohel@rte-france.com", role = c("aut", "cre")),
@@ -16,7 +16,7 @@ Description: Read and transform data from entsoe to make them available in antar
   missing data imputation and data corrections.
 License: GPL (>= 2) | file LICENSE
 Depends: R (>= 2.10)
-Imports: lubridate, validate, yaml, data.table, anytime, h2o, stats
+Imports: lubridate, validate, yaml, data.table, anytime, h2o, stats, ggplot2, UpSetR
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat, covr, magrittr,
