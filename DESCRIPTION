@@ -22,3 +22,4 @@ LazyData: true
 Suggests: testthat, covr, magrittr,
     knitr, rmarkdown
 RoxygenNote: 6.0.1.9000
+Remotes: hadley/ggplot2
