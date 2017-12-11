@@ -14,10 +14,13 @@ output:
 
 ```{r, echo = FALSE}
 library(knitr)
-opts_chunk$set(
+knitr::opts_chunk$set(
+  echo = TRUE,
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "tools/README/",
+  message = FALSE,
+  warning = FALSE
 )
 ```
 
@@ -100,6 +103,7 @@ load_data <- augment_validation(load_data)
 head(load_data)
 ```
 
+
 ### Les données agrégées
 
 On va produire les données agrégées avec la fonction 
@@ -118,6 +122,14 @@ La fonction prend des données de *load* comme argument, c'est à dire obtenue a
 aggregated_db <- aggregate_with_rules(load_data)
 ```
 
+Ces données peuvent être représentées graphiquement avec la 
+fonction `plot` (voire `?plot.aggregated`).
+
+```{r}
+plot(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
+```
+
+
 ### Validation des données agrégées
 
 Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `agg_validate.yml`.
@@ -131,6 +143,13 @@ htmltools::tags$pre(raw_validate)
 
 ```{r}
 aggregated_db <- augment_validation(aggregated_db)
+```
+
+Ces données peuvent être représentées graphiquement avec la 
+fonction `plot` (voire `?plot.controled`).
+
+```{r}
+plot(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
 ```
 
 

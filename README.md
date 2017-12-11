@@ -42,7 +42,7 @@ if( dir.exists(load_dir) )
 utils::unzip(load_zip, exdir = load_dir )
 ```
 
-Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//Rtmpi3YAxr/load\_files. Celui ci contient les fichiers suivants :
+Les données sont disponibles dans le répertoire /var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//Rtmplu1jVV/load\_files. Celui ci contient les fichiers suivants :
 
 ``` r
 csv_files <- list.files(load_dir, full.names = TRUE, pattern = "\\.csv$")
@@ -270,6 +270,14 @@ La fonction prend des données de *load* comme argument, c'est à dire obtenue a
 aggregated_db <- aggregate_with_rules(load_data)
 ```
 
+Ces données peuvent être représentées graphiquement avec la fonction `plot` (voire `?plot.aggregated`).
+
+``` r
+plot(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
+```
+
+![](tools/README/unnamed-chunk-9-1.png)
+
 ### Validation des données agrégées
 
 Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il y a de tests exprimés dans le fichier `agg_validate.yml`.
@@ -327,6 +335,19 @@ Comme pour les données brutes, l'opération va ajouter autant de colonnes qu'il
 aggregated_db <- augment_validation(aggregated_db)
 ```
 
+Ces données peuvent être représentées graphiquement avec la fonction `plot` (voire `?plot.controled`).
+
+``` r
+plot(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
+#> Called from: plot.controled(aggregated_db, subset = aggregated_db$country %in% 
+#>     "SWITZERLAND")
+#> debug à /Users/davidgohel/Github/antaDraft/R/plot_functions.R#114 :upset(as.data.frame(data), ...)
+```
+
+![](tools/README/unnamed-chunk-12-1.png)
+
+    #> debug à /Users/davidgohel/Github/antaDraft/R/plot_functions.R#115 :invisible()
+
 ### Correction mécanique des données agrégées
 
 ``` r
@@ -339,14 +360,6 @@ aggregated_db <- data_correct_with_rules(aggregated_db)
 aggregated_db <- augment_process_summary(aggregated_db)
 
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(tidyr)
 aggregated_db %>% 
   group_by_at(c( "country", "summary") ) %>% 
