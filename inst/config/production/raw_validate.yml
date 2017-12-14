@@ -6,4 +6,5 @@ rules:
   name: IS_FINITE_OUTPUT
 - expr: sign(generation_output) > 0
   name: IS_POS_OUTPUT
-
+- expr: (generation_output + consumption) > installed_capacity
+  name: OUTPUT_LT_CAPACITY

@@ -1,4 +1,17 @@
 - drop:
+    - IS_FINITE_OUTPUT
+  when_not:
+    - IS_OBS
+
+- drop:
     - IS_POS_OUTPUT
   when_not:
     - IS_FINITE_OUTPUT
+
+- drop:
+    - OUTPUT_LT_CAPACITY
+  when_not:
+    - IS_FINITE_OUTPUT
+    - IS_POS_OUTPUT
+    - IS_OBS
+
