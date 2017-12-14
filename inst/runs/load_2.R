@@ -6,24 +6,26 @@ load_data <- anta_load_read(data_dir = load_dir )
 load_data <- augment_validation(load_data)
 plot( load_data, subset = load_data$country %in% "FRANCE" )
 qc <- qualcon(load_data)
+render_quality(qc, dir = "test")
 plot(qc)
 # head(load_data)
 # str(load_data)
 
 aggregated_db <- aggregate_with_rules(load_data)
-plot(aggregated_db)
+plot(aggregated_db, subset = aggregated_db$country %in% "FRANCE")
 aggregated_db <- augment_validation(aggregated_db)
 plot( aggregated_db, subset = aggregated_db$country %in% "FRANCE", nsets = 7 )
+plot( aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND", nsets = 7 )
 aggregated_db <- data_correct_with_rules(aggregated_db)
 aggregated_db <- augment_process_summary(aggregated_db)
+class(aggregated_db)
 
-zz <- plot(aggregated_db,
-           subset = aggregated_db$country %in% "FRANCE" )
+plot(aggregated_db, subset = aggregated_db$country %in% "FRANCE" )
+aggregated_db <- augment_validation(aggregated_db)
 
 
 qc <- qualcon(aggregated_db)
 plot(qc, subset = qc$country %in% c("FRANCE") )
-plot(qc)
 render_quality(qc, dir = "qcagg")
 
 
