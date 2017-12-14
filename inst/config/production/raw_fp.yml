@@ -1,0 +1,4 @@
+- drop:
+    - IS_POS_OUTPUT
+  when_not:
+    - IS_FINITE_OUTPUT

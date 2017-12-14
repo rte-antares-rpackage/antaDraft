@@ -15,6 +15,18 @@
 
   options("load_options" = load_options)
 
+  yml_file <- function( f )
+    system.file(package = package_name, "config", "production", f)
+
+  prod_options <- list(
+    cty_rules = yml_file("cty_rules.yml"),
+    validate = list(
+      raw = list( validate = yml_file("raw_validate.yml"), false_pos = yml_file("raw_fp.yml") )
+      )
+    )
+
+  options("prod_options" = prod_options)
+
   invisible()
 }
 

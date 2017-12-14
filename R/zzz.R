@@ -1,4 +1,4 @@
-globalVariables(c("AreaTypeCode", "DateTime", "TotalLoadValue", "country", ":=", "time_frame"))
+globalVariables(c("AreaTypeCode", "DateTime", "TotalLoadValue", "country", ":=", "time_frame", "SubmissionTS"))
 
 package_name <- "antaDraft"
 
@@ -9,6 +9,43 @@ read_load_file <- function( f ){
                           character = c("AreaTypeCode", "AreaName", "MapCode"),
                           integer = "TotalLoadValue" ),
         drop = c("SubmissionTS", "year", "month", "day") )
+}
+
+read_prod_file <- function( f ){
+  data <- fread(input = f, sep = "\t",
+        header = TRUE,
+        colClasses = list(POSIXct = c("DateTime", "SubmissionTS"),
+                          character = c("AreaTypeCode", "AreaName", "MapCode", "ProductionType_Name"),
+                          double = c("ActualConsumption", "ActualGenerationOutput" )
+        ),
+        drop = c("year", "month", "day") )
+
+  data$production_type <- gsub("^\\s+|\\s+$", "", data$ProductionType_Name)
+  data$ProductionType_Name <- NULL
+  filter_ <- data$production_type %in% prod_type
+  data <- data[ filter_, ]
+  data <- data[, `:=`(DateTime = anytime(DateTime), SubmissionTS = anytime(SubmissionTS))]
+
+  data
+
+}
+
+read_capacity_file <- function( f ){
+  data <- fread(input = f, sep = "\t",
+        header = TRUE,
+        colClasses = list(POSIXct = c("DateTime", "SubmissionTS"),
+                          character = c("AreaTypeCode", "AreaName", "MapCode", "ProductionType_Name"),
+                          double = c("year", "AggregatedInstalledCapacity" )
+        ),
+        drop = c("month", "day") )
+  data$production_type <- gsub("^\\s+|\\s+$", "", data$ProductionType_Name)
+  data$ProductionType_Name <- NULL
+  filter_ <- data$production_type %in% prod_type
+  data <- data[ filter_, ]
+  data <- data[, `:=`(DateTime = anytime(DateTime), SubmissionTS = anytime(SubmissionTS))]
+
+  data
+
 }
 
 

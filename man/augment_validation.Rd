@@ -2,9 +2,18 @@
 % Please edit documentation in R/validate.R
 \name{augment_validation}
 \alias{augment_validation}
+\alias{augment_validation.raw_level}
+\alias{augment_validation.aggregated}
+\alias{augment_validation.raw_channel_prod}
 \title{evaluate validation rules for each line of a dataset}
 \usage{
 augment_validation(data)
+
+\method{augment_validation}{raw_level}(data)
+
+\method{augment_validation}{aggregated}(data)
+
+\method{augment_validation}{raw_channel_prod}(data)
 }
 \arguments{
 \item{data}{dataset}
