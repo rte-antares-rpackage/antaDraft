@@ -4,14 +4,15 @@
     - IS_OBS
 
 - drop:
-    - IS_POS_OUTPUT
+    - IS_NOT_NEG_OUTPUT
   when_not:
     - IS_FINITE_OUTPUT
+    - IS_OBS
 
 - drop:
     - OUTPUT_LT_CAPACITY
   when_not:
     - IS_FINITE_OUTPUT
-    - IS_POS_OUTPUT
+    - IS_NOT_NEG_OUTPUT
     - IS_OBS
 
