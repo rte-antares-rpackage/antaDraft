@@ -68,3 +68,20 @@ test_that("null values are not valid and not corrected", {
 
 })
 
+
+
+test_that("CTY is corrected", {
+  aggregated_db <- structure(
+    list(country = "SWITZERLAND",
+         DateTime = structure(1461614400, class = c("POSIXct", "POSIXt")),
+         BZN = 6296.81, CTA = 6296.81, CTY = 0),
+    .Names = c("country", "DateTime", "BZN", "CTA", "CTY"),
+    id.vars = c("country", "DateTime"),
+    timevar = "DateTime", measures = c("CTY", "CTA", "BZN"),
+    countryvar = "country", row.names = 298285L,
+    class = c("aggregated", "data.frame"))
+
+  aggregated_db <- augment_validation(aggregated_db)
+  aggregated_db <- data_correct_with_rules(aggregated_db)
+  expect_equivalent(aggregated_db[,c("CTY")], aggregated_db[,c("CTA")])
+})
