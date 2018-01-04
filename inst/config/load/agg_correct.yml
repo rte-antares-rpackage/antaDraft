@@ -3,6 +3,7 @@
   use: CTY
   when_false:
     - CTA_NA
+    - CTA_IS_POS
     - CTA_BZN_EQUAL
     - CTA_BZN_DIFF_LT_05
     - CTA_BZN_DIFF_LT_10
@@ -23,6 +24,7 @@
   country:
   when_false:
     - CTY_NA
+    - CTY_IS_POS
     - CTY_CTA_EQUAL
     - CTY_CTA_DIFF_LT_05
     - CTY_CTA_DIFF_LT_10
