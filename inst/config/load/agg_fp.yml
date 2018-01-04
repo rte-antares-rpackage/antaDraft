@@ -68,3 +68,25 @@
   when_not:
     - CTY_IS_POS
 
+
+- drop:
+    - CTY_CTA_EQUAL
+    - CTA_BZN_EQUAL
+    - CTY_CTA_DIFF_LT_05
+    - CTA_BZN_DIFF_LT_05
+    - CTY_CTA_DIFF_LT_10
+    - CTA_BZN_DIFF_LT_10
+    - CTA_LAG_LT_30
+  when_not:
+    - CTA_IS_POS
+    
+- drop:
+    - CTA_BZN_EQUAL
+    - CTY_BZN_EQUAL
+    - CTY_BZN_DIFF_LT_05
+    - CTA_BZN_DIFF_LT_05
+    - CTY_BZN_DIFF_LT_10
+    - CTA_BZN_DIFF_LT_10
+    - BZN_LAG_LT_30
+  when_not:
+    - BZN_IS_POS
