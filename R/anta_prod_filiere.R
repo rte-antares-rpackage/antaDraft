@@ -3,7 +3,38 @@ prod_type <- c(charbon="Fossil Hard coal", charbonpdtpargaz = "Fossil Coal-deriv
                gaz = "Fossil Gas", tourbe = "Fossil Peat", kerogene = "Fossil Oil shale" )
 
 
+# get_ref_prod_full <- function( min_dt, max_dt ){
+#   dimensions <- get_rules( add_complex = FALSE )
+#   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
+#   dimensions$dummy_id <- 1
+#
+#   all_datetime <- seq(min_dt, max_dt, by = "hour")
+#   ref_data <- data.table(DateTime = all_datetime)
+#   ref_data$dummy_id <- 1
+#
+#   ref_data <- merge(ref_data, dimensions, by = c("dummy_id"), all = FALSE)
+#   browser()
+#
+#   existing_prod <- yaml.load_file(system.file(package = "antaDraft", "config/production/production_types.yml"))
+#   existing_prod <- mapply( function(ctry, prod) {
+#     data.frame(production_type = prod, country = ctry, stringsAsFactors = FALSE)
+#   }, names(existing_prod), existing_prod, SIMPLIFY = FALSE )
+#   existing_prod <- do.call(rbind, existing_prod)
+#   production_ref <- data.table(production_type = prod_type)
+#   production_ref$dummy_id <- 1
+#   ref_data <- merge(ref_data, production_ref, by = c("dummy_id"), all = FALSE, allow.cartesian = TRUE)
+#   ref_data$dummy_id <- NULL
+#
+#   head(ref_data)
+#   class(ref_data)
+#   w = unique(ref_data[existing_prod,which=TRUE,allow.cartesian=TRUE, on = c("production_type", "country" ) ])
+#   ref_data2 <- ref_data[w]
+#
+#   ref_data
+# }
+
 get_ref_prod_full <- function( min_dt, max_dt ){
+
   dimensions <- get_rules( add_complex = FALSE )
   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
   dimensions$dummy_id <- 1
@@ -12,13 +43,17 @@ get_ref_prod_full <- function( min_dt, max_dt ){
   ref_data <- data.table(DateTime = all_datetime)
   ref_data$dummy_id <- 1
 
-  ref_data <- merge(ref_data, dimensions, by = c("dummy_id"), all = FALSE, allow.cartesian = TRUE)
-
-  production_ref <- data.table(production_type = prod_type)
-  production_ref$dummy_id <- 1
-  ref_data <- merge(ref_data, production_ref, by = c("dummy_id"), all = FALSE, allow.cartesian = TRUE)
+  ref_data <- merge(ref_data, dimensions, by = c("dummy_id"), all = FALSE, allow.cartesian=TRUE)
   ref_data$dummy_id <- NULL
-  ref_data
+
+  existing_prod <- yaml.load_file(system.file(package = "antaDraft", "config/production/production_types.yml"))
+  existing_prod <- rbindlist(
+    lapply( existing_prod,
+            function(x)
+              data.frame(production_type = x, stringsAsFactors = FALSE)
+    ), idcol = "country" )
+
+  merge(ref_data, existing_prod, by = c("country"), all = FALSE, allow.cartesian=TRUE)
 }
 
 
@@ -46,12 +81,20 @@ anta_prod_channel <- function(production_dir = NULL, capacity_dir = NULL){
 
   min_dt <- min( data$DateTime, na.rm = TRUE)
   max_dt <- max( data$DateTime, na.rm = TRUE)
-  ref_data <- get_ref_prod_full(min_dt = min_dt, max_dt = max_dt)
 
 
-  data <- merge(ref_data, data,
-                by = c("DateTime", "MapCode", "AreaTypeCode", "production_type"),
-                all.x = TRUE, all.y = FALSE)
+  # dimensions <- get_rules( add_complex = FALSE )
+  # dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
+  # data <- merge( data, dimensions, by = c("MapCode", "AreaTypeCode"), all.x = FALSE, all.y = FALSE )
+  browser()
+  zzz <- get_ref_prod_full( min_dt, max_dt )
+
+  # ref_data <- get_ref_prod_full(min_dt = min_dt, max_dt = max_dt)
+
+
+  # data <- merge(ref_data, data,
+  #               by = c("DateTime", "MapCode", "AreaTypeCode", "production_type"),
+  #               all.x = TRUE, all.y = FALSE)
   data$observed[is.na(data$observed)] <- FALSE
 
   capacity_channel <- anta_capacity_channel(
@@ -81,6 +124,11 @@ anta_capacity_channel <- function( data_dir = NULL, min_dt, max_dt ){
   data$DateTime <- NULL
 
   setnames(data, "AggregatedInstalledCapacity","installed_capacity")
+
+  dimensions <- get_rules( add_complex = FALSE )
+  dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
+  browser()
+  merge( data, dimensions, by = c("MapCode", "AreaTypeCode"), all.x = TRUE, all.y = FALSE )
 
   ref_data <- get_ref_prod_full(min_dt = min_dt, max_dt = max_dt)
   ref_data$year <- year(ref_data$DateTime)
