@@ -37,8 +37,8 @@
     - CTA_IS_POS
     - BZN_IS_POS
     - CTA_BZN_EQUAL
-    
-  -
+
+-
   replace: BZN
   use: CTA
   country:
