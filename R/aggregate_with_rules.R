@@ -48,7 +48,8 @@ aggregate_with_rules <- function(x){
            by=c("country", "AreaTypeCode", "DateTime")]
 
   out <- dcast(out, country + DateTime ~ AreaTypeCode,
-                    value.var = "TotalLoadValue", fun.aggregate = sum, na.rm = FALSE)
+               value.var = "TotalLoadValue",
+               fun.aggregate = sum, na.rm = FALSE)
 
   vars <- c("DateTime","country")
   out <- out[do.call(CJ, c(mget(vars), unique=TRUE)), on=vars]

@@ -21,7 +21,10 @@
   prod_options <- list(
     cty_rules = yml_file("cty_rules.yml"),
     validate = list(
-      raw = list( validate = yml_file("raw_validate.yml"), false_pos = yml_file("raw_fp.yml") )
+      raw = list( validate = yml_file("raw_validate.yml"),
+                  false_pos = yml_file("raw_fp.yml") ),
+      agg = list( validate = yml_file("agg_validate.yml"),
+                  false_pos = yml_file("agg_fp.yml") )
       )
     )
 

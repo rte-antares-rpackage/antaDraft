@@ -1,0 +1,40 @@
+rules:
+
+- expr: is.finite(CTY)
+  name: CTY_NA
+- expr: is.finite(CTA)
+  name: CTA_NA
+- expr: is.finite(BZN)
+  name: BZN_NA
+
+- expr: CTY > 0
+  name: CTY_IS_POS
+- expr: CTA > 0
+  name: CTA_IS_POS
+- expr: BZN > 0
+  name: BZN_IS_POS
+
+- expr: abs(CTY-CTA) < 1
+  name: CTY_CTA_EQUAL
+- expr: abs(CTY-BZN) < 1
+  name: CTY_BZN_EQUAL
+- expr: abs(CTA-BZN) < 1
+  name: CTA_BZN_EQUAL
+
+
+- expr: abs(1 - (CTY / CTA) ) < .05
+  name: CTY_CTA_DIFF_LT_05
+- expr: abs(1 - (CTY / BZN) ) < .05
+  name: CTY_BZN_DIFF_LT_05
+- expr: abs(1 - (CTA / BZN) ) < .05
+  name: CTA_BZN_DIFF_LT_05
+
+- expr: abs(1 - (CTY / CTA) ) < .1
+  name: CTY_CTA_DIFF_LT_10
+- expr: abs(1 - (CTY / BZN) ) < .1
+  name: CTY_BZN_DIFF_LT_10
+- expr: abs(1 - (CTA / BZN) ) < .1
+  name: CTA_BZN_DIFF_LT_10
+
+
+

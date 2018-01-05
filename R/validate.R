@@ -42,31 +42,6 @@
 #'
 augment_validation <- function( data ){
   UseMethod("augment_validation")
-
-  load_options <- getOption("load_options")
-
-  if( inherits(data, "raw_level") ){
-    val_rules <- load_options$validate$raw$validate
-    fp_rules <- load_options$validate$raw$false_pos
-  } else if( inherits(data, "aggregated") ){
-    val_rules <- load_options$validate$agg$validate
-    fp_rules <- load_options$validate$agg$false_pos
-  }
-
-  meta <- capture_df_meta(data)
-
-
-  v <- validator(.file = val_rules )
-  voptions(v, raise='all', na.value = FALSE)
-  confront_ <- values( confront(as.data.frame(data), v) )
-  data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
-
-  fp_expr_ <- fp_expr(fp_rules)
-
-  data <- within(data, eval(fp_expr_))
-
-  meta <- add_df_meta(meta, "validators", names(v))
-  restore_df_meta(data, meta = meta, new_class = "controled" )
 }
 
 #' @export
@@ -119,6 +94,30 @@ augment_validation.aggregated <- function( data ){
 
 #' @export
 #' @rdname augment_validation
+augment_validation.aggregated_prod <- function( data ){
+
+  load_options <- getOption("prod_options")
+
+  val_rules <- load_options$validate$agg$validate
+  fp_rules <- load_options$validate$agg$false_pos
+
+  meta <- capture_df_meta(data)
+
+  v <- validator(.file = val_rules )
+  voptions(v, raise='all', na.value = FALSE)
+  confront_ <- values( confront(as.data.frame(data), v) )
+  data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
+
+  fp_expr_ <- fp_expr(fp_rules)
+
+  data <- within(data, eval(fp_expr_))
+
+  meta <- add_df_meta(meta, "validators", names(v))
+  restore_df_meta(data, meta = meta, new_class = "controled" )
+}
+
+#' @export
+#' @rdname augment_validation
 augment_validation.raw_channel_prod <- function( data ){
 
   load_options <- getOption("prod_options")
@@ -127,7 +126,6 @@ augment_validation.raw_channel_prod <- function( data ){
   fp_rules <- load_options$validate$raw$false_pos
 
   meta <- capture_df_meta(data)
-
 
   v <- validator(.file = val_rules )
   voptions(v, raise='all', na.value = FALSE)
