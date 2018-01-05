@@ -33,7 +33,7 @@ plot.aggregated <- function( x, y = "CTY", subset = NULL, ...){
 
 #' @export
 #' @importFrom ggplot2 geom_segment arrow unit facet_wrap scale_x_datetime geom_jitter
-#' @importFrom ggplot2 scale_fill_viridis_c scale_color_gradient facet_wrap
+#' @importFrom ggplot2 scale_color_gradient facet_wrap
 #' @importFrom lubridate seconds_to_period
 #' @title plot qualcon object
 #' @description display on a new plot qualcon informations
@@ -77,8 +77,7 @@ plot.qualcon_agg <- function( x, subset = NULL, ...){
       mapping = aes_string(x = "happen_at", y = "validator", fill = "happen_at_h"),
       width = 0, shape = 21, color = "transparent", alpha = .5 ) +
     theme_minimal() + scale_x_datetime() +
-    scale_color_gradient(name = "Duration", low = "#E50008", high = "#5C5C5C", labels = seconds_to_period) +
-    scale_fill_viridis_c(name = "hour of issue")
+    scale_color_gradient(name = "Duration", low = "#E50008", high = "#5C5C5C", labels = seconds_to_period)
 }
 
 #' @export
