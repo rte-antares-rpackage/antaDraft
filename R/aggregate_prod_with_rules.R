@@ -1,3 +1,23 @@
+get_ref_prod_aggregated <- function( min_dt, max_dt ){
+
+  all_datetime <- seq(min_dt, max_dt, by = "hour")
+  ref_data <- data.table(DateTime = all_datetime)
+  ref_data$dummy_id <- 1
+
+  existing_prod <- yaml.load_file(system.file(package = "antaDraft", "config/production/production_types.yml"))
+  existing_prod <- rbindlist(
+    lapply( existing_prod,
+            function(x)
+              data.frame(production_type = x, stringsAsFactors = FALSE)
+    ), idcol = "country" )
+  existing_prod$dummy_id <- 1
+
+  x <- merge(ref_data, existing_prod, by = c("dummy_id"), all = FALSE, allow.cartesian=TRUE)
+  x$dummy_id <- 1
+  x
+}
+
+
 #' @export
 aggregate_prod_with_rules <- function(x){
 
@@ -13,59 +33,40 @@ aggregate_prod_with_rules <- function(x){
 
   x <- as.data.table(x)
   x$y <- x$generation_output + x$consumption
-  out <- x[, list(y = sum(y, na.rm = FALSE) ),
-                               by=c("country", "AreaTypeCode", "production_type", "DateTime")]
 
-  add_db <- merge( out, pivot_data,
-               by.x = c("country", "AreaTypeCode"),
-               by.y = c("rel_ctry", "rel"),
+  # aggregation en faisant fi de MapCode
+  x <- x[, list(y = sum(y, na.rm = FALSE) ), by=c("country", "AreaTypeCode", "production_type", "DateTime")]
+
+  # recuperer les data a tricotter
+  add_x <- merge( x, pivot_data,
+               by.x = c("country", "AreaTypeCode"), by.y = c("rel_ctry", "rel"),
                all = FALSE)
-  add_db$y <- add_db$y * add_db$prod
-  add_db <- add_db[, list(y = sum(y, na.rm = FALSE) ),
+  add_x$y <- add_x$y * add_x$prod
+  add_x <- add_x[, list(y = sum(y, na.rm = FALSE) ),
            by=c("id", "DateTime", "production_type")]
 
-  add_db <- merge( add_db, cyclic_computations[, c("country", "AreaTypeCode", "id") ],
+  add_x <- merge( add_x, cyclic_computations[, c("country", "AreaTypeCode", "id") ],
                by = "id", all = FALSE)
-  add_db$id <- NULL
+  add_x$id <- NULL
 
-  out <- rbind(out, add_db)
+  x <- rbind(x, add_x)
 
-  out <- out[, list(y = sum(y, na.rm = FALSE) ),
+  x <- x[, list(y = sum(y, na.rm = FALSE) ),
            by=c("country", "AreaTypeCode", "production_type", "DateTime")]
 
-  out <- dcast(out, country + DateTime + production_type ~ AreaTypeCode,
+  x <- dcast(x, country + DateTime + production_type ~ AreaTypeCode,
                     value.var = "y", fun.aggregate = sum, na.rm = FALSE)
+  x$observed <- TRUE
 
   vars <- c("DateTime","country", "production_type")
-  out <- out[do.call(CJ, c(mget(vars), unique=TRUE)), on=vars]
-  out <- setorderv(out, c("country", "production_type", "DateTime"))
-  out$observed <- TRUE
-
-  min_dt <- min( out$DateTime, na.rm = TRUE)
-  max_dt <- max( out$DateTime, na.rm = TRUE)
-
-  all_datetime <- seq(min_dt, max_dt, by = "hour")
-  ref_data <- data.table(DateTime = all_datetime)
-  ref_data$dummy_id <- 1
-
-  existing_prod <- yaml.load_file(system.file(package = "antaDraft", "config/production/production_types.yml"))
-  existing_prod <- rbindlist(
-    lapply( existing_prod,
-            function(x)
-              data.frame(production_type = x, stringsAsFactors = FALSE)
-    ), idcol = "country" )
-  existing_prod$dummy_id <- 1
-
-  ref_data <- merge(ref_data, existing_prod, by = c("dummy_id"), all = FALSE, allow.cartesian=TRUE)
-  ref_data$dummy_id <- NULL
-
-  out <- merge( ref_data, out, by = c("DateTime", "country", "production_type"), all.x = TRUE, all.y = FALSE)
-  out$observed[!out$observed %in% TRUE] <- FALSE
+  ref_prod <- get_ref_prod_aggregated(min_dt = min(x$DateTime, na.rm = TRUE), max_dt = max(x$DateTime, na.rm = TRUE) )
+  x <- merge( ref_prod, x, by = c("DateTime", "country", "production_type"), all.x = TRUE)
+  x$observed[!x$observed %in% TRUE] <- FALSE
 
   meta <- add_df_meta(meta, "id.vars", c("country", "production_type", "DateTime"))
   meta <- add_df_meta(meta, "timevar", c("DateTime"))
   meta <- add_df_meta(meta, "measures", measures )
   meta <- add_df_meta(meta, "countryvar", "country" )
-  restore_df_meta(out, meta = meta, new_class = "aggregated_prod" )
+  restore_df_meta(x, meta = meta, new_class = "aggregated_prod" )
 }
 

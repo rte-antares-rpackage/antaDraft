@@ -1,6 +1,6 @@
 prod_type <- c(charbon="Fossil Hard coal", charbonpdtpargaz = "Fossil Coal-derived gas",
                lignite = "Fossil Brown coal/Lignite", nucleaire = "Nuclear", diesel = "Fossil Oil",
-               gaz = "Fossil Gas", tourbe = "Fossil Peat", kerogene = "Fossil Oil shale" )
+               gaz = "Fossil Gas", tourbe = "Fossil Peat", kerogene = "Fossil Oil shale", autre = "Other" )
 
 
 get_ref_prod_full <- function( min_dt, max_dt ){
@@ -55,7 +55,8 @@ anta_prod_channel <- function(production_dir = NULL, capacity_dir = NULL){
 
   data <- merge(get_ref_prod_full( min_dt, max_dt ), data,
                 by = c("DateTime", "MapCode", "AreaTypeCode", "production_type"),
-                all.x = TRUE, all.y = FALSE)
+                all.x = FALSE, all.y = FALSE)
+
   data$observed[is.na(data$observed)] <- FALSE
 
   capacity_channel <- anta_capacity_channel(

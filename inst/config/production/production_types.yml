@@ -7,18 +7,21 @@ AUSTRIA:
 - Fossil Oil shale
 - Fossil Peat
 - Nuclear
+- Other
 
 BELGIUM:
 - Fossil Gas
 - Fossil Hard coal
 - Fossil Oil
 - Nuclear
+- Other
 
 FRANCE:
 - Fossil Gas
 - Fossil Hard coal
 - Fossil Oil
 - Nuclear
+- Other
 
 GERMANY:
 - Fossil Brown coal/Lignite
@@ -29,12 +32,14 @@ GERMANY:
 - Fossil Oil shale
 - Fossil Peat
 - Nuclear
+- Other
 
 IRELAND:
 - Fossil Gas
 - Fossil Hard coal
 - Fossil Oil
 - Fossil Peat
+- Other
 
 ITALY:
 - Fossil Brown coal/Lignite
@@ -43,6 +48,7 @@ ITALY:
 - Fossil Hard coal
 - Fossil Oil
 - Fossil Peat
+- Other
 
 LUXEMBOURG:
 - Fossil Brown coal/Lignite
@@ -53,6 +59,7 @@ LUXEMBOURG:
 - Fossil Oil shale
 - Fossil Peat
 - Nuclear
+- Other
 
 NETHERLANDS:
 - Fossil Brown coal/Lignite
@@ -63,12 +70,14 @@ NETHERLANDS:
 - Fossil Oil shale
 - Fossil Peat
 - Nuclear
+- Other
 
 NORTH_IRELAND:
 - Fossil Gas
 - Fossil Hard coal
 - Fossil Oil
 - Fossil Peat
+- Other
 
 PORTUGAL:
 - Fossil Brown coal/Lignite
@@ -79,6 +88,7 @@ PORTUGAL:
 - Fossil Oil shale
 - Fossil Peat
 - Nuclear
+- Other
 
 SPAIN:
 - Fossil Brown coal/Lignite
@@ -89,12 +99,15 @@ SPAIN:
 - Fossil Oil shale
 - Fossil Peat
 - Nuclear
+- Other
 
 SWITZERLAND:
 - Nuclear
+- Other
 
 UK:
 - Fossil Gas
 - Fossil Hard coal
 - Fossil Oil
 - Nuclear
+- Other
