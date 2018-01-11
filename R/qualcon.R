@@ -352,3 +352,80 @@ qualcon.aggregated_prod <- qualcon.aggregated
 
 
 
+
+
+
+#' @rdname render_quality
+#' @export
+render_quality.aggregated_prod <- function( x, dir ){
+
+  if( !dir.exists(dir) ){
+    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  }
+
+  meta <- capture_df_meta(x)
+
+  x$period = ifelse(x$end - x$start>0, TRUE, FALSE)
+  by_vars <- c(meta$countryvar, "validator", "production_type" )
+  by_data <- split(as.data.table(x), flatten = FALSE, by = by_vars )
+
+  for(country in names(by_data) ){
+    for( validator in names(by_data[[country]]) ){
+      for( ptype in names(by_data[[country]][[validator]]) ){
+
+        dat <- by_data[[country]][[validator]][[ptype]]
+        if( nrow( dat ) < 1 ) next
+
+        outfile <- paste0(country,
+                          "_" , validator,
+                          "_" , make.names(ptype),
+                          ".md" )
+        outfile <- file.path(dir, outfile)
+
+        sink(file = outfile )
+
+        cat( "# Quality report\n", sep = "")
+        cat( "\n", sep = "")
+
+        cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
+        cat( "\n", sep = "")
+
+        cat( "**Item: Actual Total Prod [6.1]**", "\n", sep = "")
+        cat( "\n", sep = "")
+
+        cat( sprintf("Country: **%s** | validator: **%s** | Production type: **%s**", country, validator, ptype), "\n", sep = "")
+        cat( "\n", sep = "")
+
+        data <- dat[dat$period,  ]
+
+        if( nrow( data) > 0 ){
+
+          between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
+                                   " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
+          cat( "### Between", "\n", sep = "")
+          cat( "\n", sep = "")
+          cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
+          cat( "\n", sep = "")
+        }
+
+        data <- dat[!dat$period,  ]
+        if( nrow( data) > 0 ){
+
+          at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
+          cat( "### At", "\n", sep = "")
+          cat( "\n", sep = "")
+          cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
+          cat( "\n", sep = "")
+        }
+
+        sink()
+      }
+
+    }
+  }
+
+
+  invisible()
+
+}
+

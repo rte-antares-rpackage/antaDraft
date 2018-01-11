@@ -15,9 +15,3 @@ prod_agg <- augment_validation(prod_agg)
 ddd <- qualcon(prod_agg)
 render_quality(ddd, "tutu" )
 
-
-#
-# prop.table(table(production_channel$IS_OBS))
-# prop.table(table(production_channel$IS_FINITE_OUTPUT))
-# prop.table(table(production_channel$IS_NOT_NEG_OUTPUT))
-# prop.table(table(production_channel$OUTPUT_LT_CAPACITY))

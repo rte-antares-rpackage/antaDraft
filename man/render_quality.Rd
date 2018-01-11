@@ -5,6 +5,7 @@
 \alias{render_quality.raw_level}
 \alias{render_quality.aggregated}
 \alias{render_quality.raw_channel_prod}
+\alias{render_quality.aggregated_prod}
 \title{report QC results}
 \usage{
 render_quality(x, dir)
@@ -14,6 +15,8 @@ render_quality(x, dir)
 \method{render_quality}{aggregated}(x, dir)
 
 \method{render_quality}{raw_channel_prod}(x, dir)
+
+\method{render_quality}{aggregated_prod}(x, dir)
 }
 \arguments{
 \item{x}{an object of class \code{qualcon}}
