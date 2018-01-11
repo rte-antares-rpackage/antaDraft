@@ -26,3 +26,7 @@ prod_agg <- augment_validation(prod_agg)
 ddd <- qualcon(prod_agg)
 render_quality(ddd, "tutu" )
 
+
+
+
+prod_group_data <- anta_prod_group(production_dir = "/Users/davidgohel/Documents/consulting/RTE/PROD/B02-Production_réalisée_par_groupe")
