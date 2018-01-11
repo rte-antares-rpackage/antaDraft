@@ -6,11 +6,16 @@ production_channel <- anta_prod_channel(
   )
 production_channel <- augment_validation(production_channel)
 
+ccc <- qualcon(production_channel)
+render_quality(ccc, "coco" )
+
 prod_agg <- aggregate_prod_with_rules(production_channel)
 prod_agg <- augment_validation(prod_agg)
-# ccc <- qualcon(production_channel)
-# render_quality(ccc, "coco" )
-#
+
+ddd <- qualcon(prod_agg)
+render_quality(ddd, "tutu" )
+
+
 #
 # prop.table(table(production_channel$IS_OBS))
 # prop.table(table(production_channel$IS_FINITE_OUTPUT))

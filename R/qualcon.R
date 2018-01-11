@@ -347,4 +347,8 @@ render_quality.raw_channel_prod <- function( x, dir ){
 }
 
 
+#' @export
+qualcon.aggregated_prod <- qualcon.aggregated
+
+
 
