@@ -1,4 +1,4 @@
-globalVariables(c("AreaTypeCode", "DateTime", "TotalLoadValue", "country", ":=", "time_frame", "SubmissionTS"))
+globalVariables(c("AreaTypeCode", "DateTime", "TotalLoadValue", "country", ":=", "time_frame", "SubmissionTS", "y"))
 
 package_name <- "antaDraft"
 

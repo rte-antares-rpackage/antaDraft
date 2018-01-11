@@ -19,6 +19,11 @@ get_ref_prod_aggregated <- function( min_dt, max_dt ){
 
 
 #' @export
+#' @title Aggregate production raw dataset from country rules
+#' @description From a raw dataset and a set of rules, aggregations are performed
+#' to produce for each country and possible date points a set of three measures: CTY, CTA
+#' and BZN.
+#' @param x raw dataset (an object of class \code{raw_channel_prod})
 aggregate_prod_with_rules <- function(x){
 
   meta <- new_df_meta()
