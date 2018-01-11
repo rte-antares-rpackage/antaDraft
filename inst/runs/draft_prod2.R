@@ -6,6 +6,17 @@ production_channel <- anta_prod_channel(
   )
 production_channel <- augment_validation(production_channel)
 
+# library(dplyr)
+# library(tidyr)
+# production_channel %>%
+#   as_tibble() %>%
+#   filter( is.na(generation_output) ) %>%
+#   group_by(country, production_type) %>%
+#   tally() %>%
+#   spread(production_type, n) %>%
+#   View
+
+
 ccc <- qualcon(production_channel)
 render_quality(ccc, "coco" )
 
