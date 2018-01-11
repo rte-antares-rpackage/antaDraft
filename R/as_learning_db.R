@@ -15,7 +15,8 @@
 #' aggregated_db <- augment_validation(aggregated_db)
 #' aggregated_db <- data_correct_with_rules(aggregated_db)
 #' aggregated_db <- augment_process_summary(aggregated_db)
-#' as_learning_db(aggregated_db)
+#' newdb <- as_learning_db(aggregated_db)
+#' head(newdb)
 as_learning_db <- function( data, target = "CTY" ){
 
   hour_shift <- c(-1, 1)
