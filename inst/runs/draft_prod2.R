@@ -30,3 +30,9 @@ render_quality(ddd, "tutu" )
 
 
 prod_group_data <- anta_prod_group(production_dir = "/Users/davidgohel/Documents/consulting/RTE/PROD/B02-Production_réalisée_par_groupe")
+prod_group_data <- augment_validation(prod_group_data)
+eee <- qualcon(prod_group_data)
+render_quality(eee, "aaaa" )
+
+
+
