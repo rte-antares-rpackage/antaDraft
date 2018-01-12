@@ -37,7 +37,6 @@ get_rules <- function(add_complex = FALSE){
 #' from an entsoe repository.
 #' @param data_dir datasets directory
 #' @importFrom lubridate minute
-#' @importFrom anytime anytime
 #' @importFrom data.table fread rbindlist CJ data.table
 #' @examples
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
@@ -48,7 +47,7 @@ anta_load_read <- function( data_dir = NULL ){
   agg_files <- list.files(data_dir, pattern = "(\\.csv)$", full.names = TRUE)
 
   data <- rbindlist( lapply(agg_files, read_load_file ) )
-  data <- data[, DateTime := anytime(DateTime)]
+  data <- data[, DateTime := as.POSIXct(DateTime)]
   data <- subset(data, minute( DateTime ) < 1)
 
   dimensions <- get_rules( add_complex = FALSE )

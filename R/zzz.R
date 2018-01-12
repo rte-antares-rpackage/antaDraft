@@ -24,7 +24,7 @@ read_prod_file <- function( f ){
   data$ProductionType_Name <- NULL
   filter_ <- data$production_type %in% prod_type
   data <- data[ filter_, ]
-  data <- data[, `:=`(DateTime = anytime(DateTime), SubmissionTS = anytime(SubmissionTS))]
+  data <- data[, `:=`(DateTime = as.POSIXct(DateTime), SubmissionTS = as.POSIXct(SubmissionTS))]
 
   data
 
@@ -42,7 +42,7 @@ read_capacity_file <- function( f ){
   data$ProductionType_Name <- NULL
   filter_ <- data$production_type %in% prod_type
   data <- data[ filter_, ]
-  data <- data[, `:=`(DateTime = anytime(DateTime), SubmissionTS = anytime(SubmissionTS))]
+  data <- data[, `:=`(DateTime = as.POSIXct(DateTime), SubmissionTS = as.POSIXct(SubmissionTS))]
 
   data
 

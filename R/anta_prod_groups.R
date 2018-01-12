@@ -12,7 +12,7 @@ read_prod_group_file <- function( f ){
   data$ProductionTypeName <- NULL
   filter_ <- data$production_type %in% prod_type
   data <- data[ filter_, ]
-  data <- data[, `:=`(DateTime = anytime(DateTime), SubmissionTS = anytime(SubmissionTS))]
+  data <- data[, `:=`(DateTime = as.POSIXct(DateTime), SubmissionTS = as.POSIXct(SubmissionTS))]
   data <- subset(data, minute( DateTime ) < 1)
   data
 
