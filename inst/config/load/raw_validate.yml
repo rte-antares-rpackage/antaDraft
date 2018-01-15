@@ -4,6 +4,6 @@ rules:
   name: IS_OBS
 - expr: is.finite(TotalLoadValue)
   name: IS_FINITE
-- expr: sign(TotalLoadValue)>0
+- expr: sign(TotalLoadValue)>0.001
   name: IS_POS
 

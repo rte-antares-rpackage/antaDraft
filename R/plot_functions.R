@@ -2,7 +2,7 @@
 #' @importFrom ggplot2 ggplot aes_string geom_line scale_y_continuous theme_minimal
 #' @title plot an aggregated dataset
 #' @description display on a new plot aggregated time serie
-#' @param x aggregated dataset (returned by \code{aggregate_with_rules()})
+#' @param x aggregated dataset (returned by \code{agg_data()})
 #' @param y one of the available measure (.i.e CTY, CTA, BZN)
 #' @param subset a logical vector used to subset x before plotting
 #' @param ... unused parameter
@@ -10,7 +10,7 @@
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
-#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- agg_data(load_data)
 #' plot(aggregated_db)
 plot.aggregated <- function( x, y = "CTY", subset = NULL, ...){
   x <- augment_seasons_id(x)
@@ -48,7 +48,7 @@ plot.aggregated <- function( x, y = "CTY", subset = NULL, ...){
 #' raw_qualcon <- qualcon(load_data)
 #' plot(raw_qualcon)
 #'
-#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- agg_data(load_data)
 #' aggregated_db <- augment_validation(aggregated_db)
 #'
 #' add_qualcon <- qualcon(aggregated_db)
@@ -96,7 +96,7 @@ plot.qualcon_raw <- plot.qualcon_agg
 #' load_dir <- system.file(package = "antaDraft", "data_sample")
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
-#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- agg_data(load_data)
 #' aggregated_db <- augment_validation(aggregated_db)
 #' plot( aggregated_db, nsets = 7 )
 plot.controled <- function(x, subset = NULL, ...){

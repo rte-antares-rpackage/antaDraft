@@ -7,11 +7,11 @@ rules:
 - expr: is.finite(BZN)
   name: BZN_NA
 
-- expr: CTY > 0
+- expr: CTY > 0.001
   name: CTY_IS_POS
-- expr: CTA > 0
+- expr: CTA > 0.001
   name: CTA_IS_POS
-- expr: BZN > 0
+- expr: BZN > 0.001
   name: BZN_IS_POS
 
 - expr: abs(CTY-CTA) < 1

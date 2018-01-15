@@ -27,7 +27,7 @@ load_data <- augment_validation(load_data)
 raw_qualcon <- qualcon(load_data)
 plot(raw_qualcon)
 
-aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- agg_data(load_data)
 aggregated_db <- augment_validation(aggregated_db)
 
 add_qualcon <- qualcon(aggregated_db)

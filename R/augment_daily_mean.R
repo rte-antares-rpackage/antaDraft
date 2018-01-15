@@ -13,7 +13,7 @@
 #' load_data <- augment_validation(data = load_data)
 #' head(load_data)
 #'
-#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- agg_data(load_data)
 #' aggregated_db <- augment_validation(aggregated_db)
 #' aggregated_db <- data_correct_with_rules(aggregated_db)
 #' aggregated_db <- augment_process_summary(aggregated_db)

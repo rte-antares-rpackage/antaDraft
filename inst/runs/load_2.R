@@ -3,15 +3,21 @@ library(antaDraft)
 load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_files/"
 
 load_data <- anta_load_read(data_dir = load_dir )
+# > dim(load_data)
+# [1] 1221671       6
+# > dim(load_data)
+# [1] 1222141       6
 load_data <- augment_validation(load_data)
 plot( load_data, subset = load_data$country %in% "FRANCE" )
+plot( load_data)
 qc <- qualcon(load_data)
 render_quality(qc, dir = "test")
 plot(qc)
+plot(qc, subset = qc$country %in% "FRANCE")
 # head(load_data)
 # str(load_data)
 
-aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- agg_data(load_data)
 plot(aggregated_db, subset = aggregated_db$country %in% "FRANCE")
 aggregated_db <- augment_validation(aggregated_db)
 plot( aggregated_db, subset = aggregated_db$country %in% "FRANCE", nsets = 7 )
@@ -20,7 +26,7 @@ aggregated_db <- data_correct_with_rules(aggregated_db)
 aggregated_db <- augment_process_summary(aggregated_db)
 class(aggregated_db)
 
-plot(aggregated_db, subset = aggregated_db$country %in% "FRANCE" )
+plot(aggregated_db, subset = aggregated_db$country %in% "FRANCE", nsets = 7 )
 aggregated_db <- augment_validation(aggregated_db)
 
 

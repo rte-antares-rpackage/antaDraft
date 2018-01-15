@@ -1,46 +1,33 @@
-read_prod_group_file <- function( f ){
-  data <- fread(input = f, sep = "\t",
-                header = TRUE,
-                colClasses = list(POSIXct = c("DateTime", "SubmissionTS"),
-                                  character = c("AreaTypeCode", "AreaName", "MapCode", "PowerSystemResourceName",
-                                                "ProductionTypeName"),
-                                  double = c("ActualConsumption", "ActualGenerationOutput", "InstalledGenCapacity" )
-                ),
-                drop = c("year", "month", "day") )
-
-  data$production_type <- gsub("^\\s+|\\s+$", "", data$ProductionTypeName)
-  data$ProductionTypeName <- NULL
-  filter_ <- data$production_type %in% prod_type
-  data <- data[ filter_, ]
-  data <- data[, `:=`(DateTime = as.POSIXct(DateTime), SubmissionTS = as.POSIXct(SubmissionTS))]
-  data <- subset(data, minute( DateTime ) < 1)
-  data
-
-}
-
-
 #' @export
+#' @title import production data per groups from an entsoe repository
+#' @description import csv data representing production per groups data
+#' from an entsoe repository.
+#' @param production_dir datasets directory of production by type files
+#' @examples
+#' \dontrun{
+#' data_path <- file.path("/Users/davidgohel/Documents/consulting/RTE",
+#'   "PROD2016/B02-production_realisee_par_groupe")
+#' data <- anta_prod_group(production_dir = data_path)
+#' }
 anta_prod_group <- function(production_dir = NULL){
+
   stopifnot(dir.exists(production_dir))
 
-  agg_files <- list.files(production_dir, pattern = "(\\.csv)$", full.names = TRUE)
-  data <- rbindlist( lapply(agg_files, read_prod_group_file ) )
+  id_vars <- c("DateTime", "AreaTypeCode", "AreaName", "MapCode", "PowerSystemResourceName")
+  time_vars <- "DateTime"
+  submission_time_var <- "SubmissionTS"
+  data <- entsoe_dir_reader(dir = production_dir, datetime_col = time_vars,
+                            submissin_col = submission_time_var,
+                            drops = c("year", "month", "day"),
+                            id_vars = id_vars,
+                            ct_format = "%Y-%m-%d %H:%M:%S")
   setnames(data, "ActualConsumption","consumption")
   setnames(data, "ActualGenerationOutput","generation_output")
   setnames(data, "InstalledGenCapacity","installed_capacity")
-
-  # dedup of data, choose latest SubmissionTS ---
-  data <- setorderv(data, cols = c("DateTime", "AreaTypeCode", "AreaName", "MapCode", "PowerSystemResourceName", "SubmissionTS"))
-  data <- unique(data, by = c("DateTime", "AreaTypeCode", "AreaName", "MapCode", "production_type"), fromLast = TRUE )
-  data$SubmissionTS <- NULL
+  setnames(data, "ProductionTypeName", "production_type")
   data$observed <- TRUE
 
-  min_dt <- min( data$DateTime, na.rm = TRUE)
-  max_dt <- max( data$DateTime, na.rm = TRUE)
-
-  data <- merge(get_ref_prod_full( min_dt, max_dt ), data,
-                by = c("DateTime", "MapCode", "AreaTypeCode", "production_type"),
-                all.x = FALSE, all.y = FALSE)
+  data <- ref_join_class(x = data, classobj= "channel_prod", date_time = time_vars)
 
   data$observed[is.na(data$observed)] <- FALSE
 

@@ -11,7 +11,7 @@ test_that("expected columns", {
   expect_is(qc_raw$end, "POSIXct")
 
 
-  aggregated_db <- aggregate_with_rules(load_data)
+  aggregated_db <- agg_data(load_data)
   aggregated_db <- augment_validation(aggregated_db)
 
   qc_agg <- qualcon(aggregated_db)
@@ -37,7 +37,7 @@ test_that("reporting files", {
   expected_file_names <- paste0(combs$country, "_", combs$AreaTypeCode, "_", combs$MapCode, "_", combs$validator, ".md")
   expect_identical( sort( list.files(qc_raw_dir) ), sort(expected_file_names) )
 
-  aggregated_db <- aggregate_with_rules(load_data)
+  aggregated_db <- agg_data(load_data)
   aggregated_db <- augment_validation(aggregated_db)
 
   qc_agg <- qualcon(aggregated_db)

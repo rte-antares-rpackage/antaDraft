@@ -34,7 +34,7 @@ load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_files"
 load_data <- anta_load_read(data_dir = load_dir )
 load_data <- augment_validation(load_data)
 
-aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- agg_data(load_data)
 aggregated_db <- augment_validation(aggregated_db)
 aggregated_db <- data_correct_with_rules(aggregated_db)
 aggregated_db <- augment_process_summary(aggregated_db)

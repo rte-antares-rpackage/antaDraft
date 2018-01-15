@@ -11,7 +11,7 @@
 #' load_data <- augment_validation(data = load_data)
 #' head(load_data)
 #'
-#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- agg_data(load_data)
 #' aggregated_db <- augment_validation(aggregated_db)
 #' head(aggregated_db)
 #'

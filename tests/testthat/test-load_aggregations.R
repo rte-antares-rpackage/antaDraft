@@ -2,7 +2,9 @@ context("aggregations")
 
 test_that("aggregation with reference", {
   data(load_gerluxaus_20150115)
-  agg_db <- aggregate_with_rules(load_gerluxaus_20150115)
+  class(load_gerluxaus_20150115) <- c("data.frame", "raw_level")
+  attributes(load_gerluxaus_20150115)
+  agg_db <- agg_data(load_gerluxaus_20150115)
   expect_equal(agg_db$BZN, agg_db$CTA)
   expect_equal(agg_db$CTA, agg_db$CTY)
 })
@@ -48,7 +50,8 @@ test_that("walk through #25", {
     991476L, 991491L, 991492L, 991493L, 991503L, 991504L, 991505L
   ), class = c("data.frame", "raw_level", "controled"))
 
-  agg_db <- aggregate_with_rules(UK_NIE_20170427210000)
+  agg_db <- agg_data(UK_NIE_20170427210000)
+  agg_db <- agg_db[agg_db$country %in% c("IRELAND", "NORTH_IRELAND", "UK"),]
   expect_equal(agg_db$BZN, agg_db$CTA)
   expect_equal(agg_db$CTY, c(3445.83, NA, 36250.00))
 

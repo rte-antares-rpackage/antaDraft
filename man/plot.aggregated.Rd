@@ -7,7 +7,7 @@
 \method{plot}{aggregated}(x, y = "CTY", subset = NULL, ...)
 }
 \arguments{
-\item{x}{aggregated dataset (returned by \code{aggregate_with_rules()})}
+\item{x}{aggregated dataset (returned by \code{agg_data()})}
 
 \item{y}{one of the available measure (.i.e CTY, CTA, BZN)}
 
@@ -22,6 +22,6 @@ display on a new plot aggregated time serie
 load_dir <- system.file(package = "antaDraft", "data_sample")
 load_data <- anta_load_read(data_dir = load_dir )
 load_data <- augment_validation(data = load_data)
-aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- agg_data(load_data)
 plot(aggregated_db)
 }

@@ -41,7 +41,9 @@ test_that("issue 18 with LAG", {
   931681L, 931682L, 931683L), class = c("data.frame", "raw_level",
   "controled"))
 
-  aggregated_db <- aggregate_with_rules(raw_belgium)
+  aggregated_db <- agg_data(raw_belgium)
+  aggregated_db <- aggregated_db[aggregated_db$country %in% c("BELGIUM"),]
+
   aggregated_db <- augment_validation(aggregated_db)
 
   expect_equal( aggregated_db$CTY_NA, c(TRUE, FALSE, TRUE, TRUE) )

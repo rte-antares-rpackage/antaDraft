@@ -9,7 +9,7 @@
 #'
 #' qualcon(load_data)
 #'
-#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- agg_data(load_data)
 #' aggregated_db <- augment_validation(aggregated_db)
 #'
 #' qualcon(aggregated_db)
@@ -31,7 +31,7 @@ qualcon <- function( x ){
 #' qc <- qualcon(load_data)
 #' render_quality(qc, "raw_qc")
 #'
-#' aggregated_db <- aggregate_with_rules(load_data)
+#' aggregated_db <- agg_data(load_data)
 #' aggregated_db <- augment_validation(aggregated_db)
 #'
 #' qc <- qualcon(aggregated_db)

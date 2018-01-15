@@ -37,7 +37,7 @@ load_data <- augment_validation(load_data)
 qc <- qualcon(load_data)
 render_quality(qc, "raw_qc")
 
-aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- agg_data(load_data)
 aggregated_db <- augment_validation(aggregated_db)
 
 qc <- qualcon(aggregated_db)

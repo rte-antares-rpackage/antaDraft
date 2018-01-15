@@ -1,9 +1,10 @@
 library(antaDraft)
-
+system.time({
 production_channel <- anta_prod_channel(
   production_dir = "/Users/davidgohel/Documents/consulting/RTE/PROD/B01-Production_réalisée_par_filière",
   capacity_dir = "/Users/davidgohel/Documents/consulting/RTE/PROD/B06-Capacité_installée_par_filière"
   )
+})
 production_channel <- augment_validation(production_channel)
 
 # library(dplyr)
