@@ -14,17 +14,17 @@ fp_expr <- function( fp_rules ){
 
 get_ctry_rules <- function(add_complex = FALSE){
 
-  load_options <- getOption("load_options")
+  global_options <- getOption("global_options")
 
-  cty_rules <- yaml.load_file(load_options$cty_rules)
+  atc_per_country <- yaml.load_file(global_options$atc_per_country)
 
-  cty_rules <- lapply( cty_rules, function(x) {
+  atc_per_country <- lapply( atc_per_country, function(x) {
     rbind(
       data.frame(MapCode = x$CTY, AreaTypeCode = "CTY", stringsAsFactors = FALSE),
       data.frame(MapCode = x$CTA, AreaTypeCode = "CTA", stringsAsFactors = FALSE),
       data.frame(MapCode = x$BZN, AreaTypeCode = "BZN", stringsAsFactors = FALSE) )
   } )
-  ref_mapcode <- rbindlist(cty_rules, idcol = "country")
+  ref_mapcode <- rbindlist(atc_per_country, idcol = "country")
 
   data <- within(ref_mapcode, {
     simple_type = !grepl("^[!]{0,1}(CTA|CTY|BZN)\\|", MapCode)

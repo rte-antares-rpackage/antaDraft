@@ -4,12 +4,12 @@
 \alias{set_antadraft_load_option}
 \title{set options for load data processing}
 \usage{
-set_antadraft_load_option(cty_rules = NULL, raw_val = NULL,
+set_antadraft_load_option(atc_per_country = NULL, raw_val = NULL,
   raw_val_fp = NULL, agg_val = NULL, agg_val_fp = NULL,
   correct_rules = NULL)
 }
 \arguments{
-\item{cty_rules}{rules used when aggregating data}
+\item{atc_per_country}{rules used when aggregating data}
 
 \item{raw_val}{rules to validate raw data}
 

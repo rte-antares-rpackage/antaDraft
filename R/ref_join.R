@@ -61,7 +61,9 @@ ref_join.channel_prod <- function(x, date_time){
   dimensions <- get_ctry_rules( add_complex = FALSE )
   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
   dimensions$dummy_id <- 1
-  existing_prod <- yaml.load_file(system.file(package = "antaDraft", "config/production/production_types.yml"))
+
+  global_options <- getOption("global_options")
+  existing_prod <- yaml.load_file(global_options$production_per_country)
   existing_prod <- rbindlist(
     lapply( existing_prod,
             function(x)
@@ -90,7 +92,8 @@ ref_join.channel_capacity <- function(x, date_time){
   dimensions <- get_ctry_rules( add_complex = FALSE )
   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
   dimensions$dummy_id <- 1
-  existing_prod <- yaml.load_file(system.file(package = "antaDraft", "config/production/production_types.yml"))
+  global_options <- getOption("global_options")
+  existing_prod <- yaml.load_file(global_options$production_per_country)
   existing_prod <- rbindlist(
     lapply( existing_prod,
             function(x)
@@ -132,7 +135,8 @@ ref_join.channel_prod_agg <- function(x, date_time){
                    by = "hour"))
   ref_data$dummy_id <- 1
 
-  existing_prod <- yaml.load_file(system.file(package = "antaDraft", "config/production/production_types.yml"))
+  global_options <- getOption("global_options")
+  existing_prod <- yaml.load_file(global_options$production_per_country)
   existing_prod <- rbindlist(
     lapply( existing_prod,
             function(x)
