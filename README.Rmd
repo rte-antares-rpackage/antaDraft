@@ -49,7 +49,7 @@ Le zip à charger est le suivant: https://archive.org/download/RTE_load/load.zip
 load_dir <- file.path(tempdir(), "load_files" )
 load_zip <- file.path(tempdir(), "load.zip" )
 
-local_zip <- "/Users/davidgohel/Documents/consulting/RTE/load.zip"
+local_zip <- "/Users/davidgohel/Documents/consulting/RTE/load_20180115.zip"
 if( file.exists(local_zip))
   file.copy(local_zip, load_zip, overwrite = TRUE )
 
@@ -108,18 +108,18 @@ head(load_data)
 
 On va produire les données agrégées avec la fonction 
 `aggregate_with_rules`. Les règles sont 
-exprimées dans le fichier `config/load/cty_rules.yml`.
+exprimées dans le fichier `config/global/atc_per_country.yml`.
 
 ```{r echo=FALSE}
-cty_rules <- system.file(package = "antaDraft", "config", "load", "cty_rules.yml")
-cty_rules <- paste0(readLines(cty_rules), collapse = "\n" )
-htmltools::tags$pre(cty_rules)
+atc_per_country <- system.file(package = "antaDraft", "config", "global", "atc_per_country.yml")
+atc_per_country <- paste0(readLines(atc_per_country), collapse = "\n" )
+htmltools::tags$pre(atc_per_country)
 ```
 
 La fonction prend des données de *load* comme argument, c'est à dire obtenue avec la fonction `anta_load_read()`.
 
 ```{r}
-aggregated_db <- aggregate_with_rules(load_data)
+aggregated_db <- agg_data(load_data)
 ```
 
 Ces données peuvent être représentées graphiquement avec la 
