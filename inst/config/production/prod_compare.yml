@@ -1,0 +1,10 @@
+rules:
+
+- expr: (!is.na(observed) & observed==TRUE)
+  name: IS_OBS
+- expr: is.finite(generation_output)
+  name: IS_FINITE_OUTPUT
+- expr: sign(generation_output) >= 0
+  name: IS_NOT_NEG_OUTPUT
+- expr: (generation_output + consumption) < installed_capacity
+  name: OUTPUT_LT_CAPACITY

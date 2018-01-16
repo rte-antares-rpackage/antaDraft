@@ -30,7 +30,9 @@
       groupes_raw = list( validate = yml_file("raw_validate.yml"),
                           false_pos = yml_file("raw_fp.yml") ),
       agg = list( validate = yml_file("agg_validate.yml"),
-                  false_pos = yml_file("agg_fp.yml") )
+                  false_pos = yml_file("agg_fp.yml") ),
+      cmp_chn_grp = list(validate = yml_file("compare_validate.yml"),
+                         false_pos = yml_file("compare_fp.yml") )
       )
     )
 

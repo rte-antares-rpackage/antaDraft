@@ -1,0 +1,17 @@
+rules:
+
+- expr: is.finite(group_generation)
+  name: IS_FINITE_GRP_GENERATION
+- expr: is.finite(channel_generation)
+  name: IS_FINITE_CHN_GENERATION
+- expr: abs(group_generation-channel_generation) < 1
+  name: GRP_CHN_GENERATION_EQUAL
+
+- expr: is.finite(group_capacity)
+  name: IS_FINITE_GRP_CAPACITY
+- expr: is.finite(channel_capacity)
+  name: IS_FINITE_CHN_CAPACITY
+- expr: abs(group_capacity-channel_capacity) < 1
+  name: GRP_CHN_CAPACITY_EQUAL
+
+
