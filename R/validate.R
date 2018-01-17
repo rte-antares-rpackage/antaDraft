@@ -44,27 +44,32 @@ augment_validation <- function( data ){
   UseMethod("augment_validation")
 }
 
-#' @export
-#' @rdname augment_validation
-augment_validation.raw_level <- function( data ){
-
-  load_options <- getOption("load_options")
-  val_rules <- load_options$validate$raw$validate
-  fp_rules <- load_options$validate$raw$false_pos
-
+add_validation_columns <- function( val_rules_file, falsepos_rules_file, data ){
   meta <- capture_df_meta(data)
 
-  v <- validator(.file = val_rules )
+  v <- validator(.file = val_rules_file )
   voptions(v, raise='all', na.value = FALSE)
   confront_ <- values( confront(as.data.frame(data), v) )
   data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
 
-  fp_expr_ <- fp_expr(fp_rules)
+  fp_expr_ <- fp_expr(falsepos_rules_file)
 
   data <- within(data, eval(fp_expr_))
 
   meta <- add_df_meta(meta, "validators", names(v))
   restore_df_meta(data, meta = meta, new_class = "controled" )
+}
+
+
+#' @export
+#' @rdname augment_validation
+augment_validation.raw_level <- function( data ){
+  load_options <- getOption("load_options")
+  val_rules <- load_options$validate$raw$validate
+  fp_rules <- load_options$validate$raw$false_pos
+  add_validation_columns( val_rules_file = val_rules,
+                          falsepos_rules_file = fp_rules,
+                          data = data )
 }
 
 #' @export
@@ -76,20 +81,9 @@ augment_validation.aggregated <- function( data ){
   val_rules <- load_options$validate$agg$validate
   fp_rules <- load_options$validate$agg$false_pos
 
-  meta <- capture_df_meta(data)
-
-
-  v <- validator(.file = val_rules )
-  voptions(v, raise='all', na.value = FALSE)
-  confront_ <- values( confront(as.data.frame(data), v) )
-  data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
-
-  fp_expr_ <- fp_expr(fp_rules)
-
-  data <- within(data, eval(fp_expr_))
-
-  meta <- add_df_meta(meta, "validators", names(v))
-  restore_df_meta(data, meta = meta, new_class = "controled" )
+  add_validation_columns( val_rules_file = val_rules,
+                          falsepos_rules_file = fp_rules,
+                          data = data )
 }
 
 #' @export
@@ -101,19 +95,9 @@ augment_validation.aggregated_prod <- function( data ){
   val_rules <- load_options$validate$agg$validate
   fp_rules <- load_options$validate$agg$false_pos
 
-  meta <- capture_df_meta(data)
-
-  v <- validator(.file = val_rules )
-  voptions(v, raise='all', na.value = FALSE)
-  confront_ <- values( confront(as.data.frame(data), v) )
-  data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
-
-  fp_expr_ <- fp_expr(fp_rules)
-
-  data <- within(data, eval(fp_expr_))
-
-  meta <- add_df_meta(meta, "validators", names(v))
-  restore_df_meta(data, meta = meta, new_class = "controled" )
+  add_validation_columns( val_rules_file = val_rules,
+                          falsepos_rules_file = fp_rules,
+                          data = data )
 }
 
 #' @export
@@ -125,19 +109,9 @@ augment_validation.raw_channel_prod <- function( data ){
   val_rules <- load_options$validate$raw$validate
   fp_rules <- load_options$validate$raw$false_pos
 
-  meta <- capture_df_meta(data)
-
-  v <- validator(.file = val_rules )
-  voptions(v, raise='all', na.value = FALSE)
-  confront_ <- values( confront(as.data.frame(data), v) )
-  data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
-
-  fp_expr_ <- fp_expr(fp_rules)
-
-  data <- within(data, eval(fp_expr_))
-
-  meta <- add_df_meta(meta, "validators", names(v))
-  restore_df_meta(data, meta = meta, new_class = "controled" )
+  add_validation_columns( val_rules_file = val_rules,
+                          falsepos_rules_file = fp_rules,
+                          data = data )
 }
 
 
@@ -150,19 +124,9 @@ augment_validation.raw_group_prod <- function( data ){
   val_rules <- load_options$validate$groupes_raw$validate
   fp_rules <- load_options$validate$groupes_raw$false_pos
 
-  meta <- capture_df_meta(data)
-
-  v <- validator(.file = val_rules )
-  voptions(v, raise='all', na.value = FALSE)
-  confront_ <- values( confront(as.data.frame(data), v) )
-  data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
-
-  fp_expr_ <- fp_expr(fp_rules)
-
-  data <- within(data, eval(fp_expr_))
-
-  meta <- add_df_meta(meta, "validators", names(v))
-  restore_df_meta(data, meta = meta, new_class = "controled" )
+  add_validation_columns( val_rules_file = val_rules,
+                          falsepos_rules_file = fp_rules,
+                          data = data )
 }
 
 #' @export
@@ -174,18 +138,8 @@ augment_validation.channel_group_prod <- function( data ){
   val_rules <- load_options$validate$cmp_chn_grp$validate
   fp_rules <- load_options$validate$cmp_chn_grp$false_pos
 
-  meta <- capture_df_meta(data)
-
-  v <- validator(.file = val_rules )
-  voptions(v, raise='all', na.value = FALSE)
-  confront_ <- values( confront(as.data.frame(data), v) )
-  data <- cbind(data[, setdiff(names(data), colnames(confront_))], confront_ )
-
-  fp_expr_ <- fp_expr(fp_rules)
-
-  data <- within(data, eval(fp_expr_))
-
-  meta <- add_df_meta(meta, "validators", names(v))
-  restore_df_meta(data, meta = meta, new_class = "controled" )
+  add_validation_columns( val_rules_file = val_rules,
+                          falsepos_rules_file = fp_rules,
+                          data = data )
 }
 
