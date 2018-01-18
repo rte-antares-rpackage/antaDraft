@@ -4,11 +4,9 @@
 #' from an entsoe repository.
 #' @param production_dir datasets directory of production by type files
 #' @examples
-#' \dontrun{
-#' data_path <- file.path("/Users/davidgohel/Documents/consulting/RTE",
-#'   "PROD2016/B02-production_realisee_par_groupe")
-#' data <- anta_prod_group(production_dir = data_path)
-#' }
+#' production_dir <- system.file(package = "antaDraft", "data_sample",
+#'   "prod_sample_20160129/B02")
+#' raw_groups <- anta_prod_group(production_dir)
 anta_prod_group <- function(production_dir = NULL){
 
   stopifnot(dir.exists(production_dir))

@@ -1,3 +1,4 @@
+year	month	day	DateTime	AreaTypeCode	AreaName	MapCode	ProductionType_Name	ActualConsumption	ActualGenerationOutput	SubmissionTS
 2016	1	29	2016-01-29 14:00:00.000	BZN	RTE BZ	FR	Waste 	0.000000	82.000000	2016-01-30 00:29:24.000
 2016	1	29	2016-01-29 11:00:00.000	BZN	RTE BZ	FR	Fossil Oil 	0.000000	279.000000	2016-01-30 00:29:25.000
 2016	1	29	2016-01-29 13:00:00.000	BZN	RTE BZ	FR	Hydro Run-of-river and poundage 	0.000000	4878.000000	2016-01-30 00:29:24.000

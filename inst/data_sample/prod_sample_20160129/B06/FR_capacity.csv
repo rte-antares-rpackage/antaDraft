@@ -1,3 +1,4 @@
+year	month	day	DateTime	AreaTypeCode	AreaName	MapCode	ProductionType_Name	AggregatedInstalledCapacity	SubmissionTS
 2016	1	1	2016-01-01 00:00:00.000	CTY	France	FR	Hydro Run-of-river and poundage 	10325.50	2016-11-22 10:27:14.000
 2016	1	1	2016-01-01 00:00:00.000	CTY	France	FR	Wind Onshore 	1426.00	2016-11-22 10:27:14.000
 2016	1	1	2016-01-01 00:00:00.000	BZN	RTE BZ	FR	Wind Onshore 	1426.00	2016-11-22 10:27:14.000

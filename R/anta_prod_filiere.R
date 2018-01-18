@@ -10,11 +10,12 @@ prod_type <- c(charbon="Fossil Hard coal", charbonpdtpargaz = "Fossil Coal-deriv
 #' from an entsoe repository.
 #' @param production_dir datasets directory of production by type files
 #' @param capacity_dir datasets directory for capacities by type files
+#' @examples
 #' production_dir <- system.file(package = "antaDraft", "data_sample",
 #'   "prod_sample_20160129/B01")
 #' capacity_dir <- system.file(package = "antaDraft", "data_sample",
 #'   "prod_sample_20160129/B06")
-#' anta_prod_channel(production_dir, capacity_dir)
+#' raw_channel <- anta_prod_channel(production_dir, capacity_dir)
 anta_prod_channel <- function(production_dir = NULL,
                               capacity_dir = NULL){
   stopifnot(dir.exists(production_dir))

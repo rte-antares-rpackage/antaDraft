@@ -1,3 +1,4 @@
+year	month	day	DateTime	AreaTypeCode	AreaName	MapCode	PowerSystemResourceName	ProductionTypeName	ActualGenerationOutput	ActualConsumption	InstalledGenCapacity	SubmissionTS
 2016	1	29	2016-01-29 17:00:00.000	CTA	RTE CA	FR	Croix-de-Metz	Fossil Gas 	412.000000	0.000000	413.00	2016-01-29 18:50:08.000
 2016	1	29	2016-01-29 17:00:00.000	CTA	RTE CA	FR	GRAND MAISON 1	Hydro Pumped Storage 	60.000000	0.000000	152.00	2016-01-29 18:50:08.000
 2016	1	29	2016-01-29 17:00:00.000	CTA	RTE CA	FR	BUGEY 2	Nuclear 	828.000000	0.000000	910.00	2016-01-29 18:50:08.000
