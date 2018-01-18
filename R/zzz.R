@@ -1,4 +1,6 @@
-globalVariables(c(":=", "DateTime", "SubmissionTS", "TotalLoadValue", "installed_capacity", "time_frame", "y"))
+globalVariables(c(":=", "DateTime", "SubmissionTS", "TotalLoadValue", "installed_capacity",
+                  "time_frame", "y",
+                  "generation_output", "consumption"))
 
 package_name <- "antaDraft"
 
