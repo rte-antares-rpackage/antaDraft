@@ -9,7 +9,12 @@ anta_prod_channel(production_dir = NULL, capacity_dir = NULL)
 \arguments{
 \item{production_dir}{datasets directory of production by type files}
 
-\item{capacity_dir}{datasets directory for capacities by type files}
+\item{capacity_dir}{datasets directory for capacities by type files
+production_dir <- system.file(package = "antaDraft", "data_sample",
+  "prod_sample_20160129/B01")
+capacity_dir <- system.file(package = "antaDraft", "data_sample",
+  "prod_sample_20160129/B06")
+anta_prod_channel(production_dir, capacity_dir)}
 }
 \description{
 import csv data representing production per channels data
