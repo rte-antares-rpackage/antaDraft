@@ -4,7 +4,7 @@
 \alias{agg_data}
 \alias{aggregate_with_rules}
 \alias{agg_data.raw_level}
-\alias{agg_data.raw_channel_prod}
+\alias{agg_data.raw_prod_type}
 \title{Aggregate raw dataset from country rules}
 \usage{
 agg_data(x, ...)
@@ -13,7 +13,7 @@ aggregate_with_rules(x, ...)
 
 \method{agg_data}{raw_level}(x, ...)
 
-\method{agg_data}{raw_channel_prod}(x, ...)
+\method{agg_data}{raw_prod_type}(x, ...)
 }
 \arguments{
 \item{x}{raw dataset.}
@@ -26,7 +26,8 @@ to produce for each country, possible date points (and
 eventually other dimensions) a set of measure(s).
 }
 \examples{
-load_dir <- system.file(package = "antaDraft", "data_sample")
+load_dir <- system.file(package = "antaDraft",
+  "data_sample/load_sample_2017")
 
 load_data <- anta_load_read(data_dir = load_dir )
 load_data <- augment_validation(data = load_data)

@@ -2,15 +2,15 @@
 % Please edit documentation in R/prod_compare.R
 \name{prod_compare}
 \alias{prod_compare}
-\title{compare channel and group production data}
+\title{compare production by types and production by groups}
 \usage{
-prod_compare(channel_prod, group_prod)
+prod_compare(prod_type, group_prod)
 }
 \arguments{
-\item{channel_prod}{data produced by \code{anta_prod_channel}}
+\item{prod_type}{data produced by \code{anta_prod_type}}
 
 \item{group_prod}{data produced by \code{anta_prod_group}}
 }
 \description{
-compare channel and group production data.
+compare by types and by groups production data.
 }

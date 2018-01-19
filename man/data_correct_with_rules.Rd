@@ -13,7 +13,8 @@ data_correct_with_rules(data)
 correct data based on condition expressed in a yaml file.
 }
 \examples{
-load_dir <- system.file(package = "antaDraft", "data_sample")
+load_dir <- system.file(package = "antaDraft",
+  "data_sample/load_sample_2017")
 
 load_data <- anta_load_read(data_dir = load_dir )
 load_data <- augment_validation(data = load_data)

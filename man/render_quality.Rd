@@ -4,7 +4,7 @@
 \alias{render_quality}
 \alias{render_quality.raw_level}
 \alias{render_quality.aggregated}
-\alias{render_quality.raw_channel_prod}
+\alias{render_quality.raw_prod_type}
 \alias{render_quality.aggregated_prod}
 \alias{render_quality.raw_group_prod}
 \title{report QC results}
@@ -15,7 +15,7 @@ render_quality(x, dir)
 
 \method{render_quality}{aggregated}(x, dir)
 
-\method{render_quality}{raw_channel_prod}(x, dir)
+\method{render_quality}{raw_prod_type}(x, dir)
 
 \method{render_quality}{aggregated_prod}(x, dir)
 
@@ -30,7 +30,8 @@ render_quality(x, dir)
 create reports from results of \code{qualcon} call.
 }
 \examples{
-load_dir <- system.file(package = "antaDraft", "data_sample")
+load_dir <- system.file(package = "antaDraft",
+  "data_sample/load_sample_2017")
 load_data <- anta_load_read(data_dir = load_dir )
 load_data <- augment_validation(load_data)
 

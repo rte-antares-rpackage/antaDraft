@@ -1,23 +1,20 @@
-prod_type <- c(charbon="Fossil Hard coal", charbonpdtpargaz = "Fossil Coal-derived gas",
-               lignite = "Fossil Brown coal/Lignite", nucleaire = "Nuclear", diesel = "Fossil Oil",
-               gaz = "Fossil Gas", tourbe = "Fossil Peat", kerogene = "Fossil Oil shale", autre = "Other" )
-
-
 #' @importFrom data.table year setnames
 #' @export
-#' @title import production data per channels from an entsoe repository
-#' @description import csv data representing production per channels data
-#' from an entsoe repository.
-#' @param production_dir datasets directory of production by type files
-#' @param capacity_dir datasets directory for capacities by type files
+#' @title production data per types of production
+#' @description import csv data representing production per types. The data
+#' is read from an entsoe repository.
+#' @param production_dir datasets directory of data energy productions
+#' by types.
+#' @param capacity_dir datasets directory of data energy capacities
+#' by types.
 #' @examples
 #' production_dir <- system.file(package = "antaDraft", "data_sample",
 #'   "prod_sample_20160129/B01")
 #' capacity_dir <- system.file(package = "antaDraft", "data_sample",
 #'   "prod_sample_20160129/B06")
-#' raw_channel <- anta_prod_channel(production_dir, capacity_dir)
-anta_prod_channel <- function(production_dir = NULL,
-                              capacity_dir = NULL){
+#' prod_by_types <- anta_prod_type(production_dir, capacity_dir)
+anta_prod_type <- function(production_dir = NULL, capacity_dir = NULL){
+
   stopifnot(dir.exists(production_dir))
 
   id_vars <- c("DateTime", "AreaTypeCode", "AreaName", "MapCode", "ProductionType_Name")
@@ -34,7 +31,7 @@ anta_prod_channel <- function(production_dir = NULL,
   setnames(data, "ActualGenerationOutput","generation_output")
   data$observed <- TRUE
 
-  data <- ref_join_class(x = data, classobj= "channel_prod", date_time = time_vars)
+  data <- ref_join_class(x = data, classobj= "prod_type", date_time = time_vars)
 
   data$observed[is.na(data$observed)] <- FALSE
 
@@ -47,7 +44,7 @@ anta_prod_channel <- function(production_dir = NULL,
 
   data <- as.data.frame(data)
 
-  class(data) <- c(class(data), "raw_channel_prod" )
+  class(data) <- c(class(data), "raw_prod_type" )
   attr( data, "id.vars") <- c("country", "MapCode", "AreaTypeCode", "DateTime", "AreaName", "production_type")
   attr( data, "timevar") <- "DateTime"
   attr( data, "countryvar") <- "country"
@@ -72,7 +69,7 @@ anta_capacity_channel <- function( data_dir = NULL){
   setnames(data, "ProductionType_Name", "production_type")
   data <- data[installed_capacity>0]
 
-  data <- ref_join_class(x = data, classobj = "channel_capacity", date_time = time_vars)
+  data <- ref_join_class(x = data, classobj = "prod_capacity_type", date_time = time_vars)
 
   data
 }

@@ -25,7 +25,7 @@ anta_prod_group <- function(production_dir = NULL){
   setnames(data, "ProductionTypeName", "production_type")
   data$observed <- TRUE
 
-  data <- ref_join_class(x = data, classobj= "channel_prod", date_time = time_vars)
+  data <- ref_join_class(x = data, classobj= "prod_type", date_time = time_vars)
 
   data$observed[is.na(data$observed)] <- FALSE
 

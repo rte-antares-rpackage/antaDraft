@@ -56,7 +56,7 @@ ref_join.agg_data <- function(x, date_time){
 }
 
 
-ref_join.channel_prod <- function(x, date_time){
+ref_join.prod_type <- function(x, date_time){
 
   dimensions <- get_ctry_rules( add_complex = FALSE )
   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
@@ -87,7 +87,7 @@ ref_join.channel_prod <- function(x, date_time){
   x
 }
 
-ref_join.channel_capacity <- function(x, date_time){
+ref_join.prod_capacity_type <- function(x, date_time){
 
   dimensions <- get_ctry_rules( add_complex = FALSE )
   dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
@@ -127,7 +127,7 @@ ref_join.channel_capacity <- function(x, date_time){
 }
 
 
-ref_join.channel_prod_agg <- function(x, date_time){
+ref_join.incomplete_raw_prod_type <- function(x, date_time){
 
   ref_data <- data.table(
     DateTime = seq(min( x[[date_time]], na.rm = TRUE),

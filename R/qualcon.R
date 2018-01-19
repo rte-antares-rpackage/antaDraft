@@ -3,7 +3,8 @@
 #' @description perform quality control
 #' @param x data where controls have been evaluated
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
@@ -24,7 +25,8 @@ qualcon <- function( x ){
 #' @param x an object of class \code{qualcon}
 #' @param dir directory where reports should be written
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
@@ -264,14 +266,14 @@ render_quality.aggregated <- function( x, dir ){
 
 
 #' @export
-qualcon.raw_channel_prod <- qualcon.raw_level
+qualcon.raw_prod_type <- qualcon.raw_level
 
 #' @export
 qualcon.raw_group_prod <- qualcon.raw_level
 
 #' @rdname render_quality
 #' @export
-render_quality.raw_channel_prod <- function( x, dir ){
+render_quality.raw_prod_type <- function( x, dir ){
 
   if( !dir.exists(dir) ){
     dir.create(dir, recursive = TRUE, showWarnings = FALSE)

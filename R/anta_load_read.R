@@ -7,7 +7,8 @@
 #' @importFrom lubridate minute
 #' @importFrom data.table fread rbindlist CJ data.table
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #' load_data <- anta_load_read(data_dir = load_dir )
 anta_load_read <- function( data_dir = NULL ){
   stopifnot(dir.exists(data_dir))

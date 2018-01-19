@@ -6,7 +6,8 @@
 #' @param x raw dataset.
 #' @param ... arguments to be passed to methods.
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #'
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
@@ -66,7 +67,7 @@ agg_data.raw_level <- function(x, ...){
 
 #' @export
 #' @rdname agg_data
-agg_data.raw_channel_prod <- function(x, ...){
+agg_data.raw_prod_type <- function(x, ...){
 
   meta <- new_df_meta()
   dimensions <- get_ctry_rules(add_complex = TRUE )
@@ -90,7 +91,7 @@ agg_data.raw_channel_prod <- function(x, ...){
   out <- dcast(out, country + DateTime + production_type ~ AreaTypeCode,
                value.var = "y",
                fun.aggregate = sum, na.rm = FALSE)
-  out <- ref_join_class(x = out, classobj = "channel_prod_agg", date_time = "DateTime")
+  out <- ref_join_class(x = out, classobj = "incomplete_raw_prod_type", date_time = "DateTime")
 
   meta <- add_df_meta(meta, "id.vars", c("country", "production_type", "DateTime"))
   meta <- add_df_meta(meta, "timevar", c("DateTime"))

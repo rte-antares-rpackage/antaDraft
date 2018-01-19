@@ -3,7 +3,8 @@
 #' @description correct data based on condition expressed in a yaml file.
 #' @param data dataset
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #'
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)

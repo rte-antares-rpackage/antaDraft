@@ -7,7 +7,8 @@
 #' @param subset a logical vector used to subset x before plotting
 #' @param ... unused parameter
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
 #' aggregated_db <- agg_data(load_data)
@@ -41,7 +42,8 @@ plot.aggregated <- function( x, y = "CTY", subset = NULL, ...){
 #' @param subset a logical vector used to subset x before plotting
 #' @param ... unused parameter
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
@@ -93,7 +95,8 @@ plot.qualcon_raw <- plot.qualcon_agg
 #' @param subset a logical vector used to subset x before plotting
 #' @param ... parameters to be sent to \code{\link[UpSetR]{upset}}
 #' @examples
-#' load_dir <- system.file(package = "antaDraft", "data_sample")
+#' load_dir <- system.file(package = "antaDraft",
+#'   "data_sample/load_sample_2017")
 #' load_data <- anta_load_read(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
 #' aggregated_db <- agg_data(load_data)
