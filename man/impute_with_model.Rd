@@ -31,7 +31,7 @@ impute invalid data with models created by \code{\link{define_model_rf}}
 \dontrun{
 load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_files"
 
-load_data <- anta_load_read(data_dir = load_dir )
+load_data <- anta_load(data_dir = load_dir )
 load_data <- augment_validation(load_data)
 
 aggregated_db <- agg_data(load_data)

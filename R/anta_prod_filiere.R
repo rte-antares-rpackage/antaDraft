@@ -35,7 +35,7 @@ anta_prod_type <- function(production_dir = NULL, capacity_dir = NULL){
 
   data$observed[is.na(data$observed)] <- FALSE
 
-  capacity_channel <- anta_capacity_channel(data_dir = capacity_dir)
+  capacity_channel <- anta_prod_capacity(data_dir = capacity_dir)
 
   data <- merge( x = capacity_channel, y = data,
                  by = c("DateTime", "MapCode", "AreaTypeCode",
@@ -51,27 +51,4 @@ anta_prod_type <- function(production_dir = NULL, capacity_dir = NULL){
 
   data
 }
-
-anta_capacity_channel <- function( data_dir = NULL){
-  stopifnot(dir.exists(data_dir))
-
-  id_vars <- c("DateTime", "AreaTypeCode", "MapCode", "ProductionType_Name")
-  time_vars <- "DateTime"
-  submission_time_var <- "SubmissionTS"
-  drops <- c("year", "month", "day", "AreaName")
-  data <- entsoe_dir_reader(dir = data_dir, datetime_col = time_vars,
-                            submissin_col = submission_time_var,
-                            drops = drops,
-                            id_vars = id_vars,
-                            ct_format = "%Y-%m-%d %H:%M:%S")
-
-  setnames(data, "AggregatedInstalledCapacity","installed_capacity")
-  setnames(data, "ProductionType_Name", "production_type")
-  data <- data[installed_capacity>0]
-
-  data <- ref_join_class(x = data, classobj = "prod_capacity_type", date_time = time_vars)
-
-  data
-}
-
 

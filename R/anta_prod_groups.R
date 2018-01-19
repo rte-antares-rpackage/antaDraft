@@ -31,7 +31,7 @@ anta_prod_group <- function(production_dir = NULL){
 
   data <- as.data.frame(data)
 
-  class(data) <- c(class(data), "raw_group_prod" )
+  class(data) <- c(class(data), "raw_prod_group" )
   attr( data, "id.vars") <- c("country", "MapCode", "AreaTypeCode", "DateTime", "AreaName", "production_type", "PowerSystemResourceName")
   attr( data, "timevar") <- "DateTime"
   attr( data, "countryvar") <- "country"

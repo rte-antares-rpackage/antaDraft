@@ -8,7 +8,7 @@
 #' load_dir <- system.file(package = "antaDraft",
 #'   "data_sample/load_sample_2017")
 #'
-#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
 #' head(load_data)
 #'
@@ -118,7 +118,7 @@ augment_validation.raw_prod_type <- function( data ){
 
 #' @export
 #' @rdname augment_validation
-augment_validation.raw_group_prod <- function( data ){
+augment_validation.raw_prod_group <- function( data ){
 
   load_options <- getOption("prod_options")
 

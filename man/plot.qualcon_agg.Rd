@@ -22,7 +22,7 @@ display on a new plot qualcon informations
 \examples{
 load_dir <- system.file(package = "antaDraft",
   "data_sample/load_sample_2017")
-load_data <- anta_load_read(data_dir = load_dir )
+load_data <- anta_load(data_dir = load_dir )
 load_data <- augment_validation(load_data)
 
 raw_qualcon <- qualcon(load_data)

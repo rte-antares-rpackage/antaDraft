@@ -9,7 +9,7 @@
 #' @examples
 #' load_dir <- system.file(package = "antaDraft",
 #'   "data_sample/load_sample_2017")
-#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
 #' aggregated_db <- agg_data(load_data)
 #' plot(aggregated_db)
@@ -44,7 +44,7 @@ plot.aggregated <- function( x, y = "CTY", subset = NULL, ...){
 #' @examples
 #' load_dir <- system.file(package = "antaDraft",
 #'   "data_sample/load_sample_2017")
-#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
 #' raw_qualcon <- qualcon(load_data)
@@ -97,7 +97,7 @@ plot.qualcon_raw <- plot.qualcon_agg
 #' @examples
 #' load_dir <- system.file(package = "antaDraft",
 #'   "data_sample/load_sample_2017")
-#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
 #' aggregated_db <- agg_data(load_data)
 #' aggregated_db <- augment_validation(aggregated_db)

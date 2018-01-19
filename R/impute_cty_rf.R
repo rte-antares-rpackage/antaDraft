@@ -72,7 +72,7 @@ define_model_rf <- function( data, x_vars, y_var, save_model_dir = getwd(), id =
 #' \dontrun{
 #' load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_files"
 #'
-#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
 #' aggregated_db <- agg_data(load_data)

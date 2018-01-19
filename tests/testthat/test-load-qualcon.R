@@ -3,7 +3,7 @@ context("quality control on load data")
 test_that("expected columns", {
   load_dir <- system.file(package = "antaDraft",
     "data_sample/load_sample_2017")
-  load_data <- anta_load_read(data_dir = load_dir )
+  load_data <- anta_load(data_dir = load_dir )
   load_data <- augment_validation(load_data)
 
   qc_raw <- qualcon(load_data)
@@ -23,7 +23,7 @@ test_that("expected columns", {
 
 test_that("reporting files", {
   load_dir <- system.file(package = "antaDraft", "data_sample/load_sample_2017")
-  load_data <- anta_load_read(data_dir = load_dir )
+  load_data <- anta_load(data_dir = load_dir )
   load_data <- augment_validation(load_data)
 
   qc_raw <- qualcon(load_data)

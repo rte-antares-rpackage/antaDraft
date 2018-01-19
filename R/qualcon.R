@@ -5,7 +5,7 @@
 #' @examples
 #' load_dir <- system.file(package = "antaDraft",
 #'   "data_sample/load_sample_2017")
-#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
 #' qualcon(load_data)
@@ -27,7 +27,7 @@ qualcon <- function( x ){
 #' @examples
 #' load_dir <- system.file(package = "antaDraft",
 #'   "data_sample/load_sample_2017")
-#' load_data <- anta_load_read(data_dir = load_dir )
+#' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(load_data)
 #'
 #' qc <- qualcon(load_data)
@@ -269,7 +269,7 @@ render_quality.aggregated <- function( x, dir ){
 qualcon.raw_prod_type <- qualcon.raw_level
 
 #' @export
-qualcon.raw_group_prod <- qualcon.raw_level
+qualcon.raw_prod_group <- qualcon.raw_level
 
 #' @rdname render_quality
 #' @export
@@ -440,7 +440,7 @@ render_quality.aggregated_prod <- function( x, dir ){
 
 #' @rdname render_quality
 #' @export
-render_quality.raw_group_prod <- function( x, dir ){
+render_quality.raw_prod_group <- function( x, dir ){
 
   if( !dir.exists(dir) ){
     dir.create(dir, recursive = TRUE, showWarnings = FALSE)

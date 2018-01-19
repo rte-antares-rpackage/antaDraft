@@ -81,7 +81,7 @@ Avant de dégager une série de consommation par pays
 
 ```{r}
 library(antaDraft)
-load_data <- anta_load_read(data_dir = load_dir )
+load_data <- anta_load(data_dir = load_dir )
 ```
 
 ### Validation des données brutes
@@ -116,7 +116,7 @@ atc_per_country <- paste0(readLines(atc_per_country), collapse = "\n" )
 htmltools::tags$pre(atc_per_country)
 ```
 
-La fonction prend des données de *load* comme argument, c'est à dire obtenue avec la fonction `anta_load_read()`.
+La fonction prend des données de *load* comme argument, c'est à dire obtenue avec la fonction `anta_load()`.
 
 ```{r}
 aggregated_db <- agg_data(load_data)

@@ -2,7 +2,7 @@ library(antaDraft)
 library(magrittr)
 library(dplyr)
 
-load_data <- anta_load_read(
+load_data <- anta_load(
   data_dir = "/Users/davidgohel/Documents/consulting/RTE/load_files") %>%
   augment_validation()
 

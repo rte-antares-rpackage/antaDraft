@@ -2,7 +2,7 @@ library(antaDraft)
 
 load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_20180115/"
 
-load_data <- anta_load_read(data_dir = load_dir )
+load_data <- anta_load(data_dir = load_dir )
 
 View(load_data[load_data$country %in% "LUXEMBOURG" &
             data.table::year(load_data$DateTime) == 2015 &

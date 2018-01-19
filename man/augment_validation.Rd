@@ -6,7 +6,7 @@
 \alias{augment_validation.aggregated}
 \alias{augment_validation.aggregated_prod}
 \alias{augment_validation.raw_prod_type}
-\alias{augment_validation.raw_group_prod}
+\alias{augment_validation.raw_prod_group}
 \alias{augment_validation.channel_group_prod}
 \title{evaluate validation rules for each line of a dataset}
 \usage{
@@ -20,7 +20,7 @@ augment_validation(data)
 
 \method{augment_validation}{raw_prod_type}(data)
 
-\method{augment_validation}{raw_group_prod}(data)
+\method{augment_validation}{raw_prod_group}(data)
 
 \method{augment_validation}{channel_group_prod}(data)
 }
@@ -35,7 +35,7 @@ perform against dataset.
 load_dir <- system.file(package = "antaDraft",
   "data_sample/load_sample_2017")
 
-load_data <- anta_load_read(data_dir = load_dir )
+load_data <- anta_load(data_dir = load_dir )
 load_data <- augment_validation(data = load_data)
 head(load_data)
 
