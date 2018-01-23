@@ -136,8 +136,8 @@ augment_validation.channel_group_prod <- function( data ){
 
   load_options <- getOption("prod_options")
 
-  val_rules <- load_options$validate$cmp_chn_grp$validate
-  fp_rules <- load_options$validate$cmp_chn_grp$false_pos
+  val_rules <- load_options$validate$cmp_typ_grp$validate
+  fp_rules <- load_options$validate$cmp_typ_grp$false_pos
 
   add_validation_columns( val_rules_file = val_rules,
                           falsepos_rules_file = fp_rules,

@@ -19,7 +19,7 @@ production:
     agg:
       validate: /Library/Frameworks/R.framework/Versions/3.4/Resources/library/antaDraft/config/production/agg_validate.yml
       false_pos: /Library/Frameworks/R.framework/Versions/3.4/Resources/library/antaDraft/config/production/agg_fp.yml
-    cmp_chn_grp:
+    cmp_type_grp:
       validate: /Library/Frameworks/R.framework/Versions/3.4/Resources/library/antaDraft/config/production/compare_validate.yml
       false_pos: /Library/Frameworks/R.framework/Versions/3.4/Resources/library/antaDraft/config/production/compare_fp.yml
 
