@@ -548,3 +548,8 @@ render_quality.raw_prod_group <- function( x, dir ){
 }
 
 
+
+
+#' @rdname render_quality
+#' @export
+render_quality.qualcon_comp_prod <- render_quality.aggregated_prod

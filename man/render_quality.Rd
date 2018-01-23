@@ -7,6 +7,7 @@
 \alias{render_quality.raw_prod_type}
 \alias{render_quality.aggregated_prod}
 \alias{render_quality.raw_prod_group}
+\alias{render_quality.qualcon_comp_prod}
 \title{report QC results}
 \usage{
 render_quality(x, dir)
@@ -20,6 +21,8 @@ render_quality(x, dir)
 \method{render_quality}{aggregated_prod}(x, dir)
 
 \method{render_quality}{raw_prod_group}(x, dir)
+
+\method{render_quality}{qualcon_comp_prod}(x, dir)
 }
 \arguments{
 \item{x}{an object of class \code{qualcon}}
