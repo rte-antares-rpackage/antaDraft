@@ -7,7 +7,7 @@
 \alias{augment_validation.aggregated_prod}
 \alias{augment_validation.raw_prod_type}
 \alias{augment_validation.raw_prod_group}
-\alias{augment_validation.channel_group_prod}
+\alias{augment_validation.type_group_prod}
 \title{evaluate validation rules for each line of a dataset}
 \usage{
 augment_validation(data)
@@ -22,7 +22,7 @@ augment_validation(data)
 
 \method{augment_validation}{raw_prod_group}(data)
 
-\method{augment_validation}{channel_group_prod}(data)
+\method{augment_validation}{type_group_prod}(data)
 }
 \arguments{
 \item{data}{dataset}

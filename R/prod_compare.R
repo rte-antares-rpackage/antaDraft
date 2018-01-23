@@ -31,7 +31,7 @@ prod_compare <- function(prod_type, group_prod){
 
   data <- as.data.frame(data)
 
-  class(data) <- c(class(data), "channel_group_prod" )
+  class(data) <- c(class(data), "type_group_prod" )
   attr( data, "id.vars") <- c("country", "DateTime", "production_type")
   attr( data, "timevar") <- "DateTime"
   attr( data, "countryvar") <- "country"

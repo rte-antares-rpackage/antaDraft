@@ -4,6 +4,7 @@
 \alias{qualcon}
 \alias{qualcon.raw_level}
 \alias{qualcon.aggregated}
+\alias{qualcon.type_group_prod}
 \title{perform quality control}
 \usage{
 qualcon(x)
@@ -11,6 +12,8 @@ qualcon(x)
 \method{qualcon}{raw_level}(x)
 
 \method{qualcon}{aggregated}(x)
+
+\method{qualcon}{type_group_prod}(x)
 }
 \arguments{
 \item{x}{data where controls have been evaluated}

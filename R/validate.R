@@ -132,7 +132,7 @@ augment_validation.raw_prod_group <- function( data ){
 
 #' @export
 #' @rdname augment_validation
-augment_validation.channel_group_prod <- function( data ){
+augment_validation.type_group_prod <- function( data ){
 
   load_options <- getOption("prod_options")
 
