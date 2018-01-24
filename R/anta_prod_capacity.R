@@ -1,4 +1,4 @@
-anta_prod_capacity <- function( data_dir = NULL){
+anta_prod_capacity <- function( data_dir = NULL, join_class = "prod_capacity_type"){
   stopifnot(dir.exists(data_dir))
 
   id_vars <- c("DateTime", "AreaTypeCode", "MapCode", "ProductionType_Name")
@@ -11,12 +11,10 @@ anta_prod_capacity <- function( data_dir = NULL){
                             id_vars = id_vars,
                             ct_format = "%Y-%m-%d %H:%M:%S")
 
-  setnames(data, "AggregatedInstalledCapacity","installed_capacity")
+  setnames(data, "AggregatedInstalledCapacity", "installed_capacity")
   setnames(data, "ProductionType_Name", "production_type")
   data <- data[installed_capacity>0]
-
-  data <- ref_join_class(x = data, classobj = "prod_capacity_type", date_time = time_vars)
-
+  data <- ref_join_class(x = data, classobj = join_class, date_time = time_vars)
   data
 }
 

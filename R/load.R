@@ -4,7 +4,8 @@
 
   global_options <- list(
     atc_per_country = system.file(package = package_name, "config", "global", "atc_per_country.yml"),
-    production_per_country = system.file(package = package_name, "config", "global", "production_per_country.yml")
+    thermal_production_per_country = system.file(package = package_name, "config", "global", "thermal_production.yml"),
+    renewable_production_per_country = system.file(package = package_name, "config", "global", "renewable_production.yml")
   )
   options("global_options" = global_options)
 

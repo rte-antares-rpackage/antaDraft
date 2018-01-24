@@ -25,5 +25,5 @@ production:
 
 global:
   atc_per_country: /Library/Frameworks/R.framework/Versions/3.4/Resources/library/antaDraft/config/global/atc_per_country.yml
-  production_per_country: /Library/Frameworks/R.framework/Versions/3.4/Resources/library/antaDraft/config/global/production_per_country.yml
+  thermal_production_per_country: /Library/Frameworks/R.framework/Versions/3.4/Resources/library/antaDraft/config/global/thermal_production.yml
 
