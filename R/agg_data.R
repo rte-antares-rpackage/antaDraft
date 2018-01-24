@@ -100,6 +100,41 @@ agg_data.raw_prod_type <- function(x, ...){
   restore_df_meta(out, meta = meta, new_class = "aggregated_prod" )
 }
 
+#' @export
+#' @rdname agg_data
+agg_data.raw_prod_renewable_type <- function(x, ...){
+
+  meta <- new_df_meta()
+  dimensions <- get_ctry_rules(add_complex = TRUE )
+  measures <- unique(dimensions[["AreaTypeCode"]])
+
+  # x <- x[ apply( x[, attr(x, "validators"), drop = FALSE], 1, all ) , , drop = FALSE]
+  out <- as.data.table(x)
+  out$y <- out$generation_output + out$consumption
+  out <- out[, list(y = sum(y, na.rm = FALSE) ), by=c("country", "AreaTypeCode", "production_type", "DateTime")]
+
+  add_db <- cyclic_dataset(out, y = "y",
+                           gp_col = c("DateTime", "production_type"),
+                           group_col = c("country"),
+                           measures_col = "AreaTypeCode" )
+
+  out <- rbind(out, add_db)
+
+  out <- out[, list(y = sum(y, na.rm = FALSE) ),
+             by=c("country", "AreaTypeCode", "production_type", "DateTime")]
+
+  out <- dcast(out, country + DateTime + production_type ~ AreaTypeCode,
+               value.var = "y",
+               fun.aggregate = sum, na.rm = FALSE)
+  out <- ref_join_class(x = out, classobj = "incomplete_raw_prod_renewable_type", date_time = "DateTime")
+
+  meta <- add_df_meta(meta, "id.vars", c("country", "production_type", "DateTime"))
+  meta <- add_df_meta(meta, "timevar", c("DateTime"))
+  meta <- add_df_meta(meta, "measures", measures )
+  meta <- add_df_meta(meta, "countryvar", "country" )
+  restore_df_meta(out, meta = meta, new_class = "aggregated_prod" )
+}
+
 
 
 cyclic_dataset <- function(x, y = "TotalLoadValue",

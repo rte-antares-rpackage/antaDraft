@@ -192,3 +192,28 @@ ref_join.incomplete_raw_prod_type <- function(x, date_time){
   x
 }
 
+ref_join.incomplete_raw_prod_renewable_type <- function(x, date_time){
+
+  ref_data <- data.table(
+    DateTime = seq(min( x[[date_time]], na.rm = TRUE),
+                   max( x[[date_time]], na.rm = TRUE),
+                   by = "hour"))
+  ref_data$dummy_id <- 1
+
+  global_options <- getOption("global_options")
+  existing_prod <- yaml.load_file(global_options$renewable_production_per_country)
+  existing_prod <- rbindlist(
+    lapply( existing_prod,
+            function(x)
+              data.frame(production_type = x, stringsAsFactors = FALSE)
+    ), idcol = "country" )
+  existing_prod$dummy_id <- 1
+
+  ref_data <- merge(ref_data, existing_prod, by = c("dummy_id"), all = FALSE, allow.cartesian=TRUE)
+  ref_data$dummy_id <- NULL
+
+  by_vars <- intersect(names(ref_data), names(x) )
+  x <- merge(ref_data, x, by = by_vars, all.x = TRUE, all.y = FALSE)
+  x
+}
+
