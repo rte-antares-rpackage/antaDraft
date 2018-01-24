@@ -299,6 +299,8 @@ render_quality.aggregated <- function( x, dir ){
 
 #' @export
 qualcon.raw_prod_type <- qualcon.raw_level
+#' @export
+qualcon.raw_prod_renewable_type <- qualcon.raw_level
 
 #' @export
 qualcon.raw_prod_group <- qualcon.raw_level
@@ -553,3 +555,8 @@ render_quality.raw_prod_group <- function( x, dir ){
 #' @rdname render_quality
 #' @export
 render_quality.qualcon_comp_prod <- render_quality.aggregated_prod
+
+#' @rdname render_quality
+#' @export
+render_quality.raw_prod_renewable_type <- render_quality.raw_prod_type
+

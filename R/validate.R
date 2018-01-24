@@ -115,6 +115,8 @@ augment_validation.raw_prod_type <- function( data ){
                           data = data )
 }
 
+#' @export
+augment_validation.raw_prod_renewable_type <- augment_validation.raw_prod_type
 
 #' @export
 #' @rdname augment_validation
