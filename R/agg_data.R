@@ -132,7 +132,7 @@ agg_data.raw_prod_renewable_type <- function(x, ...){
   meta <- add_df_meta(meta, "timevar", c("DateTime"))
   meta <- add_df_meta(meta, "measures", measures )
   meta <- add_df_meta(meta, "countryvar", "country" )
-  restore_df_meta(out, meta = meta, new_class = "aggregated_prod" )
+  restore_df_meta(out, meta = meta, new_class = "aggregated_renewable_prod" )
 }
 
 

@@ -297,11 +297,15 @@ render_quality.aggregated <- function( x, dir ){
 
 
 
+#' @rdname qualcon
 #' @export
 qualcon.raw_prod_type <- qualcon.raw_level
+
+#' @rdname qualcon
 #' @export
 qualcon.raw_prod_renewable_type <- qualcon.raw_level
 
+#' @rdname qualcon
 #' @export
 qualcon.raw_prod_group <- qualcon.raw_level
 
@@ -386,10 +390,17 @@ render_quality.raw_prod_type <- function( x, dir ){
 }
 
 
+#' @rdname qualcon
 #' @export
 qualcon.aggregated_prod <- qualcon.aggregated
 
+#' @rdname qualcon
+#' @export
+qualcon.aggregated_renewable_prod <- qualcon.aggregated
 
+#' @rdname qualcon
+#' @export
+aggregated_renewable_prod <- qualcon.aggregated_prod
 
 
 
@@ -560,3 +571,6 @@ render_quality.qualcon_comp_prod <- render_quality.aggregated_prod
 #' @export
 render_quality.raw_prod_renewable_type <- render_quality.raw_prod_type
 
+#' @rdname render_quality
+#' @export
+render_quality.aggregated_renewable_prod <- render_quality.aggregated_prod

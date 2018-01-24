@@ -146,3 +146,20 @@ augment_validation.type_group_prod <- function( data ){
                           data = data )
 }
 
+
+#' @export
+#' @rdname augment_validation
+augment_validation.aggregated_renewable_prod <- function( data ){
+
+  load_options <- getOption("prod_options")
+
+  val_rules <- load_options$validate$agg$validate
+  fp_rules <- load_options$validate$agg$false_pos
+
+  add_validation_columns( val_rules_file = val_rules,
+                          falsepos_rules_file = fp_rules,
+                          data = data )
+}
+
+
+
