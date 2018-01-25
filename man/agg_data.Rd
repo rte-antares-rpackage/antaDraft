@@ -34,4 +34,25 @@ load_data <- augment_validation(data = load_data)
 head(load_data)
 
 aggregated_db <- agg_data(load_data)
+
+
+data_neg_val <- structure(list(country = rep("LUXEMBOURG", 24),
+DateTime = structure(seq(1502582400, to = 1502665200, by = 3600),
+class = c("POSIXct", "POSIXt")), BZN = c(346.000000000003,
+352.000000000003, 354.999999999998, 330.000000000002, 345.000000000003,
+363.999999999998, 367, 374,
+389.999999999997, 373, 351, 342, 339, 344, 367, 386, -36032.64,
+398.999999999998, 414.000000000005, 412.000000000005, 381.999999999998,
+351.999999999998, 336.000000000002, 332.999999999995), CTA = c(346,
+352, 355, 330, 345, 364, 367, 374, 390, 373, 351, 342, 339, 344,
+367, 386, 401, 399, 414, 412, 382, 352, 336, 333), CTY = c(346,
+352, 355, 330, 345, 364, 367, 374, 390, 373, 351, 342, 339, 344,
+367, 386, 401, 399, 414, 412, 382, 352, 336, 333)), .Names = c("country",
+"DateTime", "BZN", "CTA", "CTY"), row.names = 179664:179687,
+class = c("data.frame",
+"aggregated"))
+
+aggregated_db <- augment_validation(data_neg_val)
+aggregated_db[data.table::hour(aggregated_db$DateTime) \%in\% 18,
+              "BZN_LAG_LT_30"]
 }
