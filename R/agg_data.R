@@ -18,13 +18,6 @@ agg_data <- function( x, ... ){
   UseMethod("agg_data")
 }
 
-#' @export
-#' @rdname agg_data
-aggregate_with_rules <- function(x, ...){
-  .Deprecated(new = "agg_data")
-  agg_data(x, ...)
-}
-
 
 #' @export
 #' @rdname agg_data
@@ -51,7 +44,7 @@ agg_data.raw_level <- function(x, ...){
                value.var = "TotalLoadValue",
                fun.aggregate = sum, na.rm = FALSE)
 
-  out <- ref_join_class(x = out, classobj = "agg_data", date_time = "DateTime")
+  out <- ref_join_class(x = out, classobj = "on_ctry_dates", date_time = "DateTime")
 
   meta <- add_df_meta(meta, "id.vars", c("country", "DateTime"))
   meta <- add_df_meta(meta, "timevar", c("DateTime"))
@@ -91,7 +84,11 @@ agg_data.raw_prod_type <- function(x, ...){
   out <- dcast(out, country + DateTime + production_type ~ AreaTypeCode,
                value.var = "y",
                fun.aggregate = sum, na.rm = FALSE)
-  out <- ref_join_class(x = out, classobj = "incomplete_raw_prod_type", date_time = "DateTime")
+
+  global_options <- getOption("global_options")
+  out <- ref_join_class(x = out, classobj = "on_ctry_dates_prod_type", date_time = "DateTime", global_options$thermal_production_per_country)
+
+  # out <- ref_join_class(x = out, classobj = "incomplete_raw_prod_type", date_time = "DateTime")
 
   meta <- add_df_meta(meta, "id.vars", c("country", "production_type", "DateTime"))
   meta <- add_df_meta(meta, "timevar", c("DateTime"))
@@ -126,7 +123,9 @@ agg_data.raw_prod_renewable_type <- function(x, ...){
   out <- dcast(out, country + DateTime + production_type ~ AreaTypeCode,
                value.var = "y",
                fun.aggregate = sum, na.rm = FALSE)
-  out <- ref_join_class(x = out, classobj = "incomplete_raw_prod_renewable_type", date_time = "DateTime")
+
+  global_options <- getOption("global_options")
+  out <- ref_join_class(x = out, classobj = "on_ctry_dates_prod_type", date_time = "DateTime", global_options$renewable_production_per_country)
 
   meta <- add_df_meta(meta, "id.vars", c("country", "production_type", "DateTime"))
   meta <- add_df_meta(meta, "timevar", c("DateTime"))

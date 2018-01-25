@@ -23,7 +23,7 @@ anta_load <- function( data_dir = NULL ){
                             ct_format = "%Y-%m-%d %H:%M:%S")
 
   data <- ref_join_class(x = data,
-                         classobj = "std_data",
+                         classobj = "raw_load",
                          date_time = time_vars)
 
   data <- as.data.frame(data)

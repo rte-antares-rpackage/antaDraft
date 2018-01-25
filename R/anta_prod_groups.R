@@ -25,7 +25,8 @@ anta_prod_group <- function(production_dir = NULL){
   setnames(data, "ProductionTypeName", "production_type")
   data$observed <- TRUE
 
-  data <- ref_join_class(x = data, classobj= "prod_type", date_time = time_vars)
+  global_options <- getOption("global_options")
+  data <- ref_join_class(x = data, classobj= "on_ctry_dates_prod_type", date_time = time_vars, global_options$thermal_production_per_country )
 
   data$observed[is.na(data$observed)] <- FALSE
 

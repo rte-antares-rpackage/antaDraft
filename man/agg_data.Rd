@@ -2,15 +2,12 @@
 % Please edit documentation in R/agg_data.R
 \name{agg_data}
 \alias{agg_data}
-\alias{aggregate_with_rules}
 \alias{agg_data.raw_level}
 \alias{agg_data.raw_prod_type}
 \alias{agg_data.raw_prod_renewable_type}
 \title{Aggregate raw dataset from country rules}
 \usage{
 agg_data(x, ...)
-
-aggregate_with_rules(x, ...)
 
 \method{agg_data}{raw_level}(x, ...)
 
