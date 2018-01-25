@@ -17,3 +17,9 @@ by types.}
 import csv data representing production per types. The data
 is read from an entsoe repository.
 }
+\examples{
+production_dir <- system.file(package = "antaDraft", "data_sample",
+  "prod_sample_20160129")
+raw_type_renewable <- anta_prod_renewable(file.path(production_dir, "B01"),
+  file.path(production_dir, "B06") )
+}

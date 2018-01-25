@@ -6,6 +6,11 @@
 #' by types.
 #' @param capacity_dir datasets directory of data energy capacities
 #' by types.
+#' @examples
+#' production_dir <- system.file(package = "antaDraft", "data_sample",
+#'   "prod_sample_20160129")
+#' raw_type_renewable <- anta_prod_renewable(file.path(production_dir, "B01"),
+#'   file.path(production_dir, "B06") )
 anta_prod_renewable <- function(production_dir = NULL, capacity_dir = NULL){
 
   stopifnot(dir.exists(production_dir))
@@ -18,13 +23,14 @@ anta_prod_renewable <- function(production_dir = NULL, capacity_dir = NULL){
                     drops = c("year", "month", "day"),
                     id_vars = id_vars,
                     ct_format = "%Y-%m-%d %H:%M:%S")
-
   setnames(data, "ProductionType_Name", "production_type")
   setnames(data, "ActualConsumption","consumption")
   setnames(data, "ActualGenerationOutput","generation_output")
   data$observed <- TRUE
 
-  data <- ref_join_class(x = data, classobj = "renewable_prod_type", date_time = time_vars)
+  global_options <- getOption("global_options")
+  data <- ref_join_class(x = data, classobj = "on_ctry_dates_prod_type",
+                          date_time = time_vars, prod_file_yaml = global_options$renewable_production_per_country)
   data$observed[is.na(data$observed)] <- FALSE
 
   capacity_channel <- anta_prod_capacity(data_dir = capacity_dir, join_class = "renewable_prod_type")
