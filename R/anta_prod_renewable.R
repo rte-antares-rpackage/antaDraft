@@ -11,6 +11,14 @@
 #'   "prod_sample_20160129")
 #' raw_type_renewable <- anta_prod_renewable(file.path(production_dir, "B01"),
 #'   file.path(production_dir, "B06") )
+#' raw_type_renewable <- augment_validation(raw_type_renewable)
+#' raw_qc <- qualcon(raw_type_renewable)
+#' render_quality(raw_qc,"raw_type_renewable")
+#'
+#' agg_type_renewable <- agg_data(raw_type_renewable)
+#' agg_type_renewable <- augment_validation(agg_type_renewable)
+#' agg_qc <- qualcon(agg_type_renewable)
+#' render_quality(agg_qc,"agg_type_renewable")
 anta_prod_renewable <- function(production_dir = NULL, capacity_dir = NULL){
 
   stopifnot(dir.exists(production_dir))
