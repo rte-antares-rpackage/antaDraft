@@ -3,6 +3,19 @@
 #' @description compare by types and by groups production data.
 #' @param prod_type data produced by \code{anta_prod_type}
 #' @param group_prod data produced by \code{anta_prod_group}
+#' @examples
+#' production_dir <- system.file(package = "antaDraft", "data_sample",
+#'   "prod_sample_20160129/B01")
+#' capacity_dir <- system.file(package = "antaDraft", "data_sample",
+#'   "prod_sample_20160129/B06")
+#' prod_by_types <- anta_prod_type(production_dir, capacity_dir)
+#' production_dir <- system.file(package = "antaDraft", "data_sample",
+#'   "prod_sample_20160129/B02")
+#' prod_by_groups <- anta_prod_group(production_dir)
+#' comparison <- prod_compare( prod_by_types, prod_by_groups )
+#' comparison <- augment_validation(comparison)
+#' qc_comp <- qualcon(comparison)
+#' render_quality(qc_comp, "qc_cmp_dir")
 prod_compare <- function(prod_type, group_prod){
 
   group_prod_data <- as.data.table(group_prod)
