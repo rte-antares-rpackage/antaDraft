@@ -7,6 +7,7 @@
 \alias{augment_validation.aggregated_prod}
 \alias{augment_validation.raw_prod_type}
 \alias{augment_validation.raw_prod_group}
+\alias{augment_validation.raw_prod_renewable_group}
 \alias{augment_validation.type_group_prod}
 \alias{augment_validation.aggregated_renewable_prod}
 \title{evaluate validation rules for each line of a dataset}
@@ -22,6 +23,8 @@ augment_validation(data)
 \method{augment_validation}{raw_prod_type}(data)
 
 \method{augment_validation}{raw_prod_group}(data)
+
+\method{augment_validation}{raw_prod_renewable_group}(data)
 
 \method{augment_validation}{type_group_prod}(data)
 

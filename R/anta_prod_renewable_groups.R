@@ -7,6 +7,7 @@
 #' production_dir <- system.file(package = "antaDraft", "data_sample",
 #'   "prod_sample_20160129/B02")
 #' raw_groups <- anta_prod_renewable_group(production_dir)
+#' raw_groups <- augment_validation(raw_groups)
 anta_prod_renewable_group <- function(production_dir = NULL){
 
   stopifnot(dir.exists(production_dir))
