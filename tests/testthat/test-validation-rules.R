@@ -38,7 +38,7 @@ test_that("issue 18 with LAG", {
   "MapCode", "AreaTypeCode", "country", "TotalLoadValue", "observed",
   "IS_OBS", "IS_FINITE", "IS_POS"), row.names = c(931540L, 931541L,
   931542L, 931587L, 931588L, 931589L, 931634L, 931635L, 931636L,
-  931681L, 931682L, 931683L), class = c("data.frame", "raw_level",
+  931681L, 931682L, 931683L), class = c("data.frame", "load_raw",
   "controled"))
 
   aggregated_db <- agg_data(raw_belgium)

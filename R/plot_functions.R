@@ -12,9 +12,8 @@
 #' load_data <- anta_load(data_dir = load_dir )
 #' load_data <- augment_validation(data = load_data)
 #' aggregated_db <- agg_data(load_data)
-#' plot(aggregated_db)
-plot.aggregated <- function( x, y = "CTY", subset = NULL, ...){
-  x <- augment_seasons_id(x)
+#' plot_agg(aggregated_db)
+plot_agg <- function( x, y = "CTY", subset = NULL, ...){
   meta <- capture_df_meta(x)
 
   stopifnot(y %in% meta$measures)
@@ -55,7 +54,7 @@ plot.aggregated <- function( x, y = "CTY", subset = NULL, ...){
 #'
 #' add_qualcon <- qualcon(aggregated_db)
 #' plot(add_qualcon)
-plot.qualcon_agg <- function( x, subset = NULL, ...){
+plot.qualcon <- function( x, subset = NULL, ...){
   meta <- capture_df_meta(x)
 
   if( !is.null(subset) )
@@ -82,9 +81,6 @@ plot.qualcon_agg <- function( x, subset = NULL, ...){
     scale_color_gradient(name = "Duration", low = "#E50008", high = "#5C5C5C", labels = seconds_to_period)
 }
 
-#' @export
-#' @rdname plot.qualcon_agg
-plot.qualcon_raw <- plot.qualcon_agg
 
 
 #' @export
@@ -104,7 +100,6 @@ plot.qualcon_raw <- plot.qualcon_agg
 #' plot( aggregated_db, nsets = 7 )
 plot.controled <- function(x, subset = NULL, ...){
   meta <- capture_df_meta(x)
-
   if( !is.null(subset) )
     data <- x[subset,]
   else data <- x

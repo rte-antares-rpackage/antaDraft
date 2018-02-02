@@ -1,7 +1,7 @@
 Package: antaDraft
 Type: Package
 Title: clean and validate entsoe datasets
-Version: 0.1.9.0001
+Version: 0.2.0.0001
 Authors@R: c(
     person(given = "David", family = "Gohel", 
       email = "david.gohel@rte-france.com", role = c("aut", "cre")),

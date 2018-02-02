@@ -2,9 +2,9 @@ rules:
 
 - expr: is.finite(group_generation)
   name: IS_FINITE_GRP_GENERATION
-- expr: is.finite(channel_generation)
+- expr: is.finite(type_generation)
   name: IS_FINITE_TYP_GENERATION
-- expr: abs(group_generation-channel_generation) < 1
+- expr: abs(group_generation-type_generation) < 1
   name: GRP_TYP_GENERATION_EQUAL
 
 - expr: is.finite(group_capacity)

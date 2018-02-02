@@ -1,22 +1,21 @@
 library(antaDraft)
 
-load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_20180115/"
+# consommation -----
+main_dir <- "quality/load"
+dir.create(main_dir, recursive = TRUE, showWarnings = TRUE)
+
+load_dir <- "/Users/davidgohel/Documents/consulting/RTE/load_2016"
 
 load_data <- anta_load(data_dir = load_dir )
-
-View(load_data[load_data$country %in% "LUXEMBOURG" &
-            data.table::year(load_data$DateTime) == 2015 &
-            data.table::month(load_data$DateTime) == 3,] )
 
 # > dim(load_data)
 # [1] 1221671       6
 # > dim(load_data)
 # [1] 1222141       6
 load_data <- augment_validation(load_data)
-plot( load_data, subset = load_data$country %in% "FRANCE" )
-plot( load_data)
+plot( load_data )
 qc <- qualcon(load_data)
-render_quality(qc, dir = "test")
+render_quality(qc, dir = file.path(main_dir, "raw"))
 plot(qc)
 plot(qc, subset = qc$country %in% "FRANCE")
 # head(load_data)

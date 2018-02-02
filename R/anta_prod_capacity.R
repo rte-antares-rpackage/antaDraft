@@ -1,4 +1,4 @@
-anta_prod_capacity <- function( data_dir = NULL, join_class = "prod_capacity_type"){
+read_prod_capacity <- function( data_dir = NULL, join_class = "prod_capacity_type"){
   stopifnot(dir.exists(data_dir))
 
   id_vars <- c("DateTime", "AreaTypeCode", "MapCode", "ProductionType_Name")

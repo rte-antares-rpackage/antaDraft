@@ -7,22 +7,25 @@
 prod_compare(prod_type, group_prod)
 }
 \arguments{
-\item{prod_type}{data produced by \code{anta_prod_type}}
+\item{prod_type}{data produced by \code{read_prod_type}}
 
-\item{group_prod}{data produced by \code{anta_prod_group}}
+\item{group_prod}{data produced by \code{read_prod_group}}
 }
 \description{
 compare by types and by groups production data.
 }
 \examples{
+global_options <- getOption("global_options")
 production_dir <- system.file(package = "antaDraft", "data_sample",
   "prod_sample_20160129/B01")
 capacity_dir <- system.file(package = "antaDraft", "data_sample",
   "prod_sample_20160129/B06")
-prod_by_types <- anta_prod_type(production_dir, capacity_dir)
+prod_by_types <- read_prod_type(production_dir, capacity_dir,
+  production_file = global_options$thermal_production_per_country)
 production_dir <- system.file(package = "antaDraft", "data_sample",
   "prod_sample_20160129/B02")
-prod_by_groups <- anta_prod_group(production_dir)
+prod_by_groups <- read_prod_group(production_dir,
+  production_file = global_options$thermal_production_per_country)
 comparison <- prod_compare( prod_by_types, prod_by_groups )
 comparison <- augment_validation(comparison)
 qc_comp <- qualcon(comparison)

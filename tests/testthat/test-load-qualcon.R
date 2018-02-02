@@ -35,7 +35,7 @@ test_that("reporting files", {
                        AreaTypeCode = qc_raw$AreaTypeCode,
                        MapCode = qc_raw$MapCode, validator = qc_raw$validator),
             FUN = length )
-  expected_file_names <- paste0(combs$country, "_", combs$AreaTypeCode, "_", combs$MapCode, "_", combs$validator, ".md")
+  expected_file_names <- paste0(combs$country, "_", combs$MapCode, "_", combs$AreaTypeCode, "_", combs$validator, ".md")
   expect_identical( sort( list.files(qc_raw_dir) ), sort(expected_file_names) )
 
   aggregated_db <- agg_data(load_data)

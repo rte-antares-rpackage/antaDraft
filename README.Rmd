@@ -123,10 +123,10 @@ aggregated_db <- agg_data(load_data)
 ```
 
 Ces données peuvent être représentées graphiquement avec la 
-fonction `plot` (voire `?plot.aggregated`).
+fonction `plot` (voire `?plot_agg`).
 
 ```{r}
-plot(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
+plot_agg(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
 ```
 
 

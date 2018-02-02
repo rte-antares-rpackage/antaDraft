@@ -2,6 +2,8 @@
 #' @title correct datasets
 #' @description correct data based on condition expressed in a yaml file.
 #' @param data dataset
+#' @param refresh_validation indicate to run \code{augment_validation}
+#' after corrections.
 #' @examples
 #' load_dir <- system.file(package = "antaDraft",
 #'   "data_sample/load_sample_2017")
@@ -14,7 +16,7 @@
 #' aggregated_db <- augment_validation(aggregated_db)
 #' aggregated_db <- data_correct_with_rules(aggregated_db)
 #' head(aggregated_db)
-data_correct_with_rules <- function( data ){
+data_correct_with_rules <- function( data, refresh_validation = TRUE ){
 
   load_options <- getOption("load_options")
   meta <- capture_df_meta(data)
@@ -26,7 +28,13 @@ data_correct_with_rules <- function( data ){
   new_names <- setdiff( names(data), old_names )
 
   meta <- add_df_meta(meta, "corrected_markers", new_names )
-  restore_df_meta(data, meta = meta, new_class = "corrected" )
+  data <- restore_df_meta(data, meta = meta, new_class = "corrected" )
+
+  if( refresh_validation ){
+    data <- augment_validation(data)
+  }
+
+  data
 }
 
 when_false_str <- function(rules){

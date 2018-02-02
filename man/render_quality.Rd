@@ -2,33 +2,12 @@
 % Please edit documentation in R/qualcon.R
 \name{render_quality}
 \alias{render_quality}
-\alias{render_quality.raw_level}
-\alias{render_quality.aggregated}
-\alias{render_quality.raw_prod_type}
-\alias{render_quality.aggregated_prod}
-\alias{render_quality.raw_prod_group}
-\alias{render_quality.qualcon_comp_prod}
-\alias{render_quality.raw_prod_renewable_type}
-\alias{render_quality.aggregated_renewable_prod}
+\alias{render_quality.data.frame}
 \title{report QC results}
 \usage{
 render_quality(x, dir)
 
-\method{render_quality}{raw_level}(x, dir)
-
-\method{render_quality}{aggregated}(x, dir)
-
-\method{render_quality}{raw_prod_type}(x, dir)
-
-\method{render_quality}{aggregated_prod}(x, dir)
-
-\method{render_quality}{raw_prod_group}(x, dir)
-
-\method{render_quality}{qualcon_comp_prod}(x, dir)
-
-\method{render_quality}{raw_prod_renewable_type}(x, dir)
-
-\method{render_quality}{aggregated_renewable_prod}(x, dir)
+\method{render_quality}{data.frame}(x, dir)
 }
 \arguments{
 \item{x}{an object of class \code{qualcon}}

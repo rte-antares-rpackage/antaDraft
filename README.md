@@ -57,7 +57,7 @@ utils::unzip(load_zip, exdir = load_dir )
 ```
 
 Les données sont disponibles dans le répertoire
-/var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmppeRr0i/load\_files.
+/var/folders/51/6jygptvs3bb4njv0t6x7br900000gn/T//RtmpKjomya/load\_files.
 Celui ci contient les fichiers suivants :
 
 ``` r
@@ -293,10 +293,10 @@ aggregated_db <- agg_data(load_data)
 ```
 
 Ces données peuvent être représentées graphiquement avec la fonction
-`plot` (voire `?plot.aggregated`).
+`plot` (voire `?plot_agg`).
 
 ``` r
-plot(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
+plot_agg(aggregated_db, subset = aggregated_db$country %in% "SWITZERLAND")
 ```
 
 ![](tools/README/unnamed-chunk-9-1.png)
@@ -391,9 +391,9 @@ aggregated_db %>%
 | country        |  corrected|  invalid|  original|
 |:---------------|----------:|--------:|---------:|
 | AUSTRIA        |      13989|    13044|       218|
-| BELGIUM        |          9|    24500|      2742|
+| BELGIUM        |          9|    22724|      4518|
 | FRANCE         |          1|    26985|       265|
-| GERMANY        |      14012|     1212|     12027|
+| GERMANY        |      14012|     1211|     12028|
 | IRELAND        |          9|    27242|        NA|
 | ITALY          |         24|    25440|      1787|
 | LUXEMBOURG     |      13854|    13351|        46|
@@ -414,69 +414,69 @@ variables potentiellement explicatives. On utilise la fonction
 ``` r
 dat <- as_learning_db(aggregated_db )
 head(dat)
-#>   country            DateTime BZN CTA CTY CTY_NA CTA_NA BZN_NA CTY_IS_POS
-#> 1 AUSTRIA 2014-12-01 00:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
-#> 2 AUSTRIA 2014-12-01 01:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
-#> 3 AUSTRIA 2014-12-01 02:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
-#> 4 AUSTRIA 2014-12-01 03:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
-#> 5 AUSTRIA 2014-12-01 04:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
-#> 6 AUSTRIA 2014-12-01 05:00:00   0   0   0   TRUE   TRUE   TRUE      FALSE
-#>   CTA_IS_POS BZN_IS_POS CTY_CTA_EQUAL CTY_BZN_EQUAL CTA_BZN_EQUAL
-#> 1      FALSE      FALSE          TRUE          TRUE          TRUE
-#> 2      FALSE      FALSE          TRUE          TRUE          TRUE
-#> 3      FALSE      FALSE          TRUE          TRUE          TRUE
-#> 4      FALSE      FALSE          TRUE          TRUE          TRUE
-#> 5      FALSE      FALSE          TRUE          TRUE          TRUE
-#> 6      FALSE      FALSE          TRUE          TRUE          TRUE
-#>   CTY_CTA_DIFF_LT_05 CTY_BZN_DIFF_LT_05 CTA_BZN_DIFF_LT_05
+#>   country            DateTime BZN CTA CTY rule_0003_BZN rule_0002_CTY
+#> 1 AUSTRIA 2014-12-01 00:00:00   0   0   0         FALSE         FALSE
+#> 2 AUSTRIA 2014-12-01 01:00:00   0   0   0         FALSE         FALSE
+#> 3 AUSTRIA 2014-12-01 02:00:00   0   0   0         FALSE         FALSE
+#> 4 AUSTRIA 2014-12-01 03:00:00   0   0   0         FALSE         FALSE
+#> 5 AUSTRIA 2014-12-01 04:00:00   0   0   0         FALSE         FALSE
+#> 6 AUSTRIA 2014-12-01 05:00:00   0   0   0         FALSE         FALSE
+#>   rule_0001_CTA CTY_NA CTA_NA BZN_NA CTY_IS_POS CTA_IS_POS BZN_IS_POS
+#> 1         FALSE   TRUE   TRUE   TRUE      FALSE      FALSE      FALSE
+#> 2         FALSE   TRUE   TRUE   TRUE      FALSE      FALSE      FALSE
+#> 3         FALSE   TRUE   TRUE   TRUE      FALSE      FALSE      FALSE
+#> 4         FALSE   TRUE   TRUE   TRUE      FALSE      FALSE      FALSE
+#> 5         FALSE   TRUE   TRUE   TRUE      FALSE      FALSE      FALSE
+#> 6         FALSE   TRUE   TRUE   TRUE      FALSE      FALSE      FALSE
+#>   CTY_CTA_EQUAL CTY_BZN_EQUAL CTA_BZN_EQUAL CTY_CTA_DIFF_LT_05
+#> 1          TRUE          TRUE          TRUE               TRUE
+#> 2          TRUE          TRUE          TRUE               TRUE
+#> 3          TRUE          TRUE          TRUE               TRUE
+#> 4          TRUE          TRUE          TRUE               TRUE
+#> 5          TRUE          TRUE          TRUE               TRUE
+#> 6          TRUE          TRUE          TRUE               TRUE
+#>   CTY_BZN_DIFF_LT_05 CTA_BZN_DIFF_LT_05 CTY_CTA_DIFF_LT_10
 #> 1               TRUE               TRUE               TRUE
 #> 2               TRUE               TRUE               TRUE
 #> 3               TRUE               TRUE               TRUE
 #> 4               TRUE               TRUE               TRUE
 #> 5               TRUE               TRUE               TRUE
 #> 6               TRUE               TRUE               TRUE
-#>   CTY_CTA_DIFF_LT_10 CTY_BZN_DIFF_LT_10 CTA_BZN_DIFF_LT_10 CTY_LAG_LT_30
-#> 1               TRUE               TRUE               TRUE          TRUE
-#> 2               TRUE               TRUE               TRUE          TRUE
-#> 3               TRUE               TRUE               TRUE          TRUE
-#> 4               TRUE               TRUE               TRUE          TRUE
-#> 5               TRUE               TRUE               TRUE          TRUE
-#> 6               TRUE               TRUE               TRUE          TRUE
-#>   CTA_LAG_LT_30 BZN_LAG_LT_30 rule_0003_BZN rule_0002_CTY rule_0001_CTA
-#> 1          TRUE          TRUE         FALSE         FALSE         FALSE
-#> 2          TRUE          TRUE         FALSE         FALSE         FALSE
-#> 3          TRUE          TRUE         FALSE         FALSE         FALSE
-#> 4          TRUE          TRUE         FALSE         FALSE         FALSE
-#> 5          TRUE          TRUE         FALSE         FALSE         FALSE
-#> 6          TRUE          TRUE         FALSE         FALSE         FALSE
-#>   summary is_off likely_off year.iso week.iso hour.iso day.iso light_time
-#> 1 invalid  FALSE      FALSE     2014       49        0       2        524
-#> 2 invalid  FALSE      FALSE     2014       49        1       2        524
-#> 3 invalid  FALSE      FALSE     2014       49        2       2        524
-#> 4 invalid  FALSE      FALSE     2014       49        3       2        524
-#> 5 invalid  FALSE      FALSE     2014       49        4       2        524
-#> 6 invalid  FALSE      FALSE     2014       49        5       2        524
-#>   HOUR_SHIFT_CTY_PLUS_1 HOUR_SHIFT_CTY_MINUS_1 DAILY_MIN_CTY_PLUS_1
-#> 1                    NA                     NA                   NA
-#> 2                    NA                     NA                   NA
-#> 3                    NA                     NA                   NA
-#> 4                    NA                     NA                   NA
-#> 5                    NA                     NA                   NA
-#> 6                    NA                     NA                   NA
-#>   DAILY_AVG_CTY_PLUS_1 DAILY_MAX_CTY_PLUS_1 DAILY_MIN_CTY_MINUS_1
-#> 1                   NA                   NA                  6306
-#> 2                   NA                   NA                  6306
-#> 3                   NA                   NA                  6306
-#> 4                   NA                   NA                  6306
-#> 5                   NA                   NA                  6306
-#> 6                   NA                   NA                  6306
-#>   DAILY_AVG_CTY_MINUS_1 DAILY_MAX_CTY_MINUS_1
-#> 1              7581.317                8661.2
-#> 2              7581.317                8661.2
-#> 3              7581.317                8661.2
-#> 4              7581.317                8661.2
-#> 5              7581.317                8661.2
-#> 6              7581.317                8661.2
+#>   CTY_BZN_DIFF_LT_10 CTA_BZN_DIFF_LT_10 CTY_LAG_LT_30 CTA_LAG_LT_30
+#> 1               TRUE               TRUE          TRUE          TRUE
+#> 2               TRUE               TRUE          TRUE          TRUE
+#> 3               TRUE               TRUE          TRUE          TRUE
+#> 4               TRUE               TRUE          TRUE          TRUE
+#> 5               TRUE               TRUE          TRUE          TRUE
+#> 6               TRUE               TRUE          TRUE          TRUE
+#>   BZN_LAG_LT_30 summary is_off likely_off year.iso week.iso hour.iso
+#> 1          TRUE invalid  FALSE      FALSE     2014       49        0
+#> 2          TRUE invalid  FALSE      FALSE     2014       49        1
+#> 3          TRUE invalid  FALSE      FALSE     2014       49        2
+#> 4          TRUE invalid  FALSE      FALSE     2014       49        3
+#> 5          TRUE invalid  FALSE      FALSE     2014       49        4
+#> 6          TRUE invalid  FALSE      FALSE     2014       49        5
+#>   day.iso light_time HOUR_SHIFT_CTY_PLUS_1 HOUR_SHIFT_CTY_MINUS_1
+#> 1       2        524                    NA                     NA
+#> 2       2        524                    NA                     NA
+#> 3       2        524                    NA                     NA
+#> 4       2        524                    NA                     NA
+#> 5       2        524                    NA                     NA
+#> 6       2        524                    NA                     NA
+#>   DAILY_MIN_CTY_PLUS_1 DAILY_AVG_CTY_PLUS_1 DAILY_MAX_CTY_PLUS_1
+#> 1                   NA                   NA                   NA
+#> 2                   NA                   NA                   NA
+#> 3                   NA                   NA                   NA
+#> 4                   NA                   NA                   NA
+#> 5                   NA                   NA                   NA
+#> 6                   NA                   NA                   NA
+#>   DAILY_MIN_CTY_MINUS_1 DAILY_AVG_CTY_MINUS_1 DAILY_MAX_CTY_MINUS_1
+#> 1                  6306              7581.317                8661.2
+#> 2                  6306              7581.317                8661.2
+#> 3                  6306              7581.317                8661.2
+#> 4                  6306              7581.317                8661.2
+#> 5                  6306              7581.317                8661.2
+#> 6                  6306              7581.317                8661.2
 ```
 
 On peut alors créer deux modèles, un dépandant des mesures suivantes et

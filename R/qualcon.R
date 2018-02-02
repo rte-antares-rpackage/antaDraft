@@ -42,63 +42,27 @@ render_quality <- function( x, dir ){
   UseMethod("render_quality")
 }
 
-#' @rdname qualcon
-#' @export
-qualcon.raw_level <- function( x ){
-
-  if( !inherits(x, "controled") )
-    stop("x has not been validated by function augment_validation(), please run it before.")
-
-  meta <- capture_df_meta(x)
-
-  dat <- isolate_invalid(x)
-
-  measure.vars <- intersect(names(dat), meta$validators)
-
-  x <- data.table::melt.data.table(
-    as.data.table(dat), id.vars = meta$id.vars,
-    measure.vars = measure.vars,
-    variable.name = "validator", value.name = "validated")
-
-  x <- x[!x$validated, ]
-
-  index_vars_1 <- c( setdiff(meta$id.vars, meta$timevar), "validator" )
-  index_vars_2 <- c( index_vars_1, "time_frame" )
-
-  out <- x[, time_frame := cumsum( c( TRUE, diff(DateTime) != 1 ) ), by = index_vars_1 ]
-  out <- out[, list(start = min(get(meta$timevar)), end = max(get(meta$timevar)) ), by = index_vars_2 ]
-
-  out$end <- out$end + ifelse( out$end - out$start > 0, 60*60, 0 )
-  out$time_frame <- NULL
-  out <- as.data.frame(out)
-
-  restore_df_meta(out, meta = meta, new_class = "qualcon_raw" )
-}
-
-
-
 #' @importFrom data.table melt.data.table
 #' @rdname qualcon
 #' @export
-qualcon.aggregated <- function( x ){
+qualcon.data.frame <- function( x ){
 
   if( !inherits(x, "controled") )
     stop("x has not been validated by function augment_validation(), please run it before.")
 
   meta <- capture_df_meta(x)
-
   dat <- isolate_invalid(x)
 
   measure.vars <- intersect(names(dat), meta$validators)
 
   x <- data.table::melt.data.table(
-    as.data.table(dat), id.vars = meta$id.vars,
+    as.data.table(dat), id.vars = c(meta$countryvar, meta$timevar, meta$id.vars),
     measure.vars = measure.vars,
     variable.name = "validator", value.name = "validated")
 
   x <- x[!x$validated, ]
 
-  index_vars_1 <- c( setdiff(meta$id.vars, meta$timevar), "validator" )
+  index_vars_1 <- c( meta$id.vars, meta$countryvar, "validator" )
   index_vars_2 <- c( index_vars_1, "time_frame" )
 
   out <- x[, time_frame := cumsum( c( TRUE, diff(DateTime) != 1 ) ), by = index_vars_1 ]
@@ -106,48 +70,16 @@ qualcon.aggregated <- function( x ){
 
   out$end <- out$end + ifelse( out$end - out$start > 0, 60*60, 0 )
   out$time_frame <- NULL
-  out <- as.data.frame(out)
-  restore_df_meta(out, meta = meta, new_class = "qualcon_agg" )
+  setDF(out)
+
+  restore_df_meta(out, meta = meta, new_class = "qualcon" )
 }
-
-
-#' @rdname qualcon
-#' @export
-qualcon.type_group_prod <- function( x ){
-
-  if( !inherits(x, "controled") )
-    stop("x has not been validated by function augment_validation(), please run it before.")
-
-  meta <- capture_df_meta(x)
-
-  dat <- isolate_invalid(x)
-  measure.vars <- intersect(names(dat), meta$validators)
-
-  x <- data.table::melt.data.table(
-    as.data.table(dat), id.vars = meta$id.vars,
-    measure.vars = measure.vars,
-    variable.name = "validator", value.name = "validated")
-
-  x <- x[!x$validated, ]
-
-  index_vars_1 <- c( setdiff(meta$id.vars, meta$timevar), "validator" )
-  index_vars_2 <- c( index_vars_1, "time_frame" )
-
-  out <- x[, time_frame := cumsum( c( TRUE, diff(DateTime) != 1 ) ), by = index_vars_1 ]
-  out <- out[, list(start = min(get(meta$timevar)), end = max(get(meta$timevar)) ), by = index_vars_2 ]
-
-  out$end <- out$end + ifelse( out$end - out$start > 0, 60*60, 0 )
-  out$time_frame <- NULL
-  out <- as.data.frame(out)
-  restore_df_meta(out, meta = meta, new_class = "qualcon_comp_prod" )
-}
-
 
 
 
 #' @rdname render_quality
 #' @export
-render_quality.raw_level <- function( x, dir ){
+render_quality.data.frame <- function( x, dir ){
 
   if( !dir.exists(dir) ){
     dir.create(dir, recursive = TRUE, showWarnings = FALSE)
@@ -156,140 +88,63 @@ render_quality.raw_level <- function( x, dir ){
   meta <- capture_df_meta(x)
 
   x$period = ifelse(x$end - x$start>0, TRUE, FALSE)
-  by_vars <- c(meta$countryvar, "AreaTypeCode", "MapCode", "validator" )
-  by_data <- split(as.data.table(x), flatten = FALSE, by = by_vars )
 
-  for(country in names(by_data) ){
-    for( atc in names(by_data[[country]]) ){
-      for( mc in names(by_data[[country]][[atc]]) ){
-        for( validator in names(by_data[[country]][[atc]][[mc]]) ){
-          dat <- by_data[[country]][[atc]][[mc]][[validator]]
-          if( nrow( dat ) < 1 ) next
+  by_vars <- c(meta$countryvar, meta$id.vars, "validator" )
+  setDT(x)
+  x <- x[, (by_vars) := lapply(.SD, function(x) as.character(x) ), .SDcols = by_vars]
+  x <- x[ , "new" := do.call(paste, c(.SD, sep = "_")), .SDcols = by_vars]
+  by_data <- split(as.data.table(x), flatten = TRUE, by = "new" )
 
-          outfile <- paste0(country,
-                            "_" , atc,
-                            "_" , mc,
-                            "_" , validator,
-                            ".md" )
-          outfile <- file.path(dir, outfile)
+  for( i in seq_len(length(by_data))){
+    dat <- by_data[[i]]
+    if( nrow( dat ) < 1 ) next
 
-          sink(file = outfile )
+    by_vars_values <- unique( as.data.frame(dat)[by_vars] )
 
-          cat( "# Quality report\n", sep = "")
-          cat( "\n", sep = "")
+    args_list <- append(by_vars_values, list(sep = "_" ) )
 
-          cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
-          cat( "\n", sep = "")
+    outfile <- make.names( do.call( paste, args_list ) )
+    outfile <- file.path(dir, paste0(outfile, ".md") )
 
-          cat( "**Item: Actual Total Load [6.1]**", "\n", sep = "")
-          cat( "\n", sep = "")
+    sink(file = outfile )
 
-          cat( sprintf("Country: **%s** | AreaTypeCode: **%s** | MapCode: **%s** | validator: **%s**", country, atc, mc, validator), "\n", sep = "")
-          cat( "\n", sep = "")
+    cat( "# Quality report\n", sep = "")
+    cat( "\n", sep = "")
 
-          data <- dat[dat$period,  ]
+    cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
+    cat( "\n", sep = "")
 
-          if( nrow( data) > 0 ){
+    cat( "**Item: ", meta$label, "**", "\n", sep = "")
+    cat( "\n", sep = "")
 
-            between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
-                                     " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
-            cat( "### Between", "\n", sep = "")
-            cat( "\n", sep = "")
-            cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
-            cat( "\n", sep = "")
-          }
+    fmt <- paste0(by_vars, ": **%s** ", collapse = "| ")
+    cat( do.call( sprintf, append( list(fmt = fmt), by_vars_values ) ), "\n", sep = "")
+    cat( "\n", sep = "")
 
-          data <- dat[!dat$period,  ]
-          if( nrow( data) > 0 ){
+    data <- dat[dat$period,  ]
 
-            at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
-            cat( "### At", "\n", sep = "")
-            cat( "\n", sep = "")
-            cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
-            cat( "\n", sep = "")
-          }
+    if( nrow( data) > 0 ){
 
-          sink()
-
-        }
-      }
-    }
-  }
-
-
-  invisible()
-
-}
-
-
-
-
-
-#' @rdname render_quality
-#' @export
-render_quality.aggregated <- function( x, dir ){
-
-  if( !dir.exists(dir) ){
-    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  }
-
-  meta <- capture_df_meta(x)
-
-  x$period = ifelse(x$end - x$start>0, TRUE, FALSE)
-  by_vars <- c(meta$countryvar, "validator" )
-  by_data <- split(as.data.table(x), flatten = FALSE, by = by_vars )
-
-  for(country in names(by_data) ){
-    for( validator in names(by_data[[country]]) ){
-      dat <- by_data[[country]][[validator]]
-      if( nrow( dat ) < 1 ) next
-
-      outfile <- paste0(country,
-                        "_" , validator,
-                        ".md" )
-      outfile <- file.path(dir, outfile)
-
-      sink(file = outfile )
-
-      cat( "# Quality report\n", sep = "")
+      between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
+                               " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
+      cat( "### Between", "\n", sep = "")
       cat( "\n", sep = "")
-
-      cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
+      cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
       cat( "\n", sep = "")
+    }
 
-      cat( "**Item: Actual Total Load [6.1]**", "\n", sep = "")
+    data <- dat[!dat$period,  ]
+    if( nrow( data) > 0 ){
+
+      at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
+      cat( "### At", "\n", sep = "")
       cat( "\n", sep = "")
-
-      cat( sprintf("Country: **%s** | validator: **%s**", country, validator), "\n", sep = "")
+      cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
       cat( "\n", sep = "")
-
-      data <- dat[dat$period,  ]
-
-      if( nrow( data) > 0 ){
-
-        between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
-                                 " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
-        cat( "### Between", "\n", sep = "")
-        cat( "\n", sep = "")
-        cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
-        cat( "\n", sep = "")
-      }
-
-      data <- dat[!dat$period,  ]
-      if( nrow( data) > 0 ){
-
-        at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
-        cat( "### At", "\n", sep = "")
-        cat( "\n", sep = "")
-        cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
-        cat( "\n", sep = "")
-      }
-
-      sink()
-
     }
-  }
 
+    sink()
+  }
 
   invisible()
 
@@ -297,280 +152,3 @@ render_quality.aggregated <- function( x, dir ){
 
 
 
-#' @rdname qualcon
-#' @export
-qualcon.raw_prod_type <- qualcon.raw_level
-
-#' @rdname qualcon
-#' @export
-qualcon.raw_prod_renewable_type <- qualcon.raw_level
-
-#' @rdname qualcon
-#' @export
-qualcon.raw_prod_group <- qualcon.raw_level
-
-#' @rdname render_quality
-#' @export
-render_quality.raw_prod_type <- function( x, dir ){
-
-  if( !dir.exists(dir) ){
-    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  }
-
-  meta <- capture_df_meta(x)
-
-  x$period = ifelse(x$end - x$start>0, TRUE, FALSE)
-  by_vars <- c(meta$countryvar, "AreaTypeCode", "MapCode", "production_type", "validator" )
-  by_data <- split(as.data.table(x), flatten = FALSE, by = by_vars )
-
-  for(country in names(by_data) ){
-    for( atc in names(by_data[[country]]) ){
-      for( mc in names(by_data[[country]][[atc]]) ){
-        for( pt in names(by_data[[country]][[atc]][[mc]]) ){
-          for( validator in names(by_data[[country]][[atc]][[mc]][[pt]]) ){
-
-            dat <- by_data[[country]][[atc]][[mc]][[pt]][[validator]]
-            if( nrow( dat ) < 1 ) next
-
-            outfile <- paste0(country,
-                              "_" , atc,
-                              "_" , mc,
-                              "_" , make.names(pt),
-                              "_" , validator,
-                              ".md" )
-            outfile <- file.path(dir, outfile)
-
-            sink(file = outfile )
-
-            cat( "# Quality report\n", sep = "")
-            cat( "\n", sep = "")
-
-            cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
-            cat( "\n", sep = "")
-
-            cat( "**Item: Actual Total Prod [6.1]**", "\n", sep = "")
-            cat( "\n", sep = "")
-
-            cat( sprintf("Country: **%s** | AreaTypeCode: **%s** | MapCode: **%s** | Production type: **%s** | validator: **%s**", country, atc, mc, pt, validator), "\n", sep = "")
-            cat( "\n", sep = "")
-
-            data <- dat[dat$period,  ]
-
-            if( nrow( data) > 0 ){
-
-              between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
-                                       " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
-              cat( "### Between", "\n", sep = "")
-              cat( "\n", sep = "")
-              cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
-              cat( "\n", sep = "")
-            }
-
-            data <- dat[!dat$period,  ]
-            if( nrow( data) > 0 ){
-
-              at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
-              cat( "### At", "\n", sep = "")
-              cat( "\n", sep = "")
-              cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
-              cat( "\n", sep = "")
-            }
-
-            sink()
-          }
-
-        }
-      }
-    }
-  }
-
-
-  invisible()
-
-}
-
-
-#' @rdname qualcon
-#' @export
-qualcon.aggregated_prod <- qualcon.aggregated
-
-#' @rdname qualcon
-#' @export
-qualcon.aggregated_renewable_prod <- qualcon.aggregated
-
-#' @rdname qualcon
-#' @export
-aggregated_renewable_prod <- qualcon.aggregated_prod
-
-
-
-
-#' @rdname render_quality
-#' @export
-render_quality.aggregated_prod <- function( x, dir ){
-
-  if( !dir.exists(dir) ){
-    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  }
-
-  meta <- capture_df_meta(x)
-
-  x$period = ifelse(x$end - x$start>0, TRUE, FALSE)
-  by_vars <- c(meta$countryvar, "validator", "production_type" )
-  by_data <- split(as.data.table(x), flatten = FALSE, by = by_vars )
-
-  for(country in names(by_data) ){
-    for( validator in names(by_data[[country]]) ){
-      for( ptype in names(by_data[[country]][[validator]]) ){
-
-        dat <- by_data[[country]][[validator]][[ptype]]
-        if( nrow( dat ) < 1 ) next
-
-        outfile <- paste0(country,
-                          "_" , validator,
-                          "_" , make.names(ptype),
-                          ".md" )
-        outfile <- file.path(dir, outfile)
-
-        sink(file = outfile )
-
-        cat( "# Quality report\n", sep = "")
-        cat( "\n", sep = "")
-
-        cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
-        cat( "\n", sep = "")
-
-        cat( "**Item: Actual Total Prod [6.1]**", "\n", sep = "")
-        cat( "\n", sep = "")
-
-        cat( sprintf("Country: **%s** | validator: **%s** | Production type: **%s**", country, validator, ptype), "\n", sep = "")
-        cat( "\n", sep = "")
-
-        data <- dat[dat$period,  ]
-
-        if( nrow( data) > 0 ){
-
-          between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
-                                   " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
-          cat( "### Between", "\n", sep = "")
-          cat( "\n", sep = "")
-          cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
-          cat( "\n", sep = "")
-        }
-
-        data <- dat[!dat$period,  ]
-        if( nrow( data) > 0 ){
-
-          at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
-          cat( "### At", "\n", sep = "")
-          cat( "\n", sep = "")
-          cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
-          cat( "\n", sep = "")
-        }
-
-        sink()
-      }
-
-    }
-  }
-
-
-  invisible()
-
-}
-
-
-
-
-
-#' @rdname render_quality
-#' @export
-render_quality.raw_prod_group <- function( x, dir ){
-
-  if( !dir.exists(dir) ){
-    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  }
-
-  meta <- capture_df_meta(x)
-
-  x$period = ifelse(x$end - x$start>0, TRUE, FALSE)
-  by_vars <- c(meta$countryvar, "MapCode", "production_type", "validator" )
-  by_data <- split(as.data.table(x), flatten = FALSE, by = by_vars )
-
-  for(country in names(by_data) ){
-    for( atc in names(by_data[[country]]) ){
-        for( pt in names(by_data[[country]][[atc]]) ){
-          for( validator in names(by_data[[country]][[atc]][[pt]]) ){
-
-            dat <- by_data[[country]][[atc]][[pt]][[validator]]
-            if( nrow( dat ) < 1 ) next
-
-            outfile <- paste0(country,
-                              "_" , atc,
-                              "_" , make.names(pt),
-                              "_" , validator,
-                              ".md" )
-            outfile <- file.path(dir, outfile)
-
-            sink(file = outfile )
-
-            cat( "# Quality report\n", sep = "")
-            cat( "\n", sep = "")
-
-            cat( "### ", sprintf("timestamp: %s", format(Sys.time(), '%Y-%m-%d %H:%M:%S')), "\n", sep = "")
-            cat( "\n", sep = "")
-
-            cat( "**Item: Actual Total Prod [6.1]**", "\n", sep = "")
-            cat( "\n", sep = "")
-
-            cat( sprintf("Country: **%s** | AreaTypeCode: **%s** | Production type: **%s** | validator: **%s**", country, atc, pt, validator), "\n", sep = "")
-            cat( "\n", sep = "")
-
-            data <- dat[dat$period,  ]
-
-            if( nrow( data) > 0 ){
-
-              between_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S"),
-                                       " to ", format(data$end, "%Y-%m-%d %H:%M:%S"))
-              cat( "### Between", "\n", sep = "")
-              cat( "\n", sep = "")
-              cat( paste0(between_values, collapse = "\n"), "\n", sep = "")
-              cat( "\n", sep = "")
-            }
-
-            data <- dat[!dat$period,  ]
-            if( nrow( data) > 0 ){
-
-              at_values <- paste0("* ", format(data$start, "%Y-%m-%d %H:%M:%S") )
-              cat( "### At", "\n", sep = "")
-              cat( "\n", sep = "")
-              cat( paste0(at_values, collapse = "\n"), "\n", sep = "")
-              cat( "\n", sep = "")
-            }
-
-            sink()
-          }
-
-        }
-    }
-  }
-
-
-  invisible()
-
-}
-
-
-
-
-#' @rdname render_quality
-#' @export
-render_quality.qualcon_comp_prod <- render_quality.aggregated_prod
-
-#' @rdname render_quality
-#' @export
-render_quality.raw_prod_renewable_type <- render_quality.raw_prod_type
-
-#' @rdname render_quality
-#' @export
-render_quality.aggregated_renewable_prod <- render_quality.aggregated_prod

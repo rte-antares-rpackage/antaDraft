@@ -2,36 +2,12 @@
 % Please edit documentation in R/qualcon.R
 \name{qualcon}
 \alias{qualcon}
-\alias{qualcon.raw_level}
-\alias{qualcon.aggregated}
-\alias{qualcon.type_group_prod}
-\alias{qualcon.raw_prod_type}
-\alias{qualcon.raw_prod_renewable_type}
-\alias{qualcon.raw_prod_group}
-\alias{qualcon.aggregated_prod}
-\alias{qualcon.aggregated_renewable_prod}
-\alias{aggregated_renewable_prod}
+\alias{qualcon.data.frame}
 \title{perform quality control}
 \usage{
 qualcon(x)
 
-\method{qualcon}{raw_level}(x)
-
-\method{qualcon}{aggregated}(x)
-
-\method{qualcon}{type_group_prod}(x)
-
-\method{qualcon}{raw_prod_type}(x)
-
-\method{qualcon}{raw_prod_renewable_type}(x)
-
-\method{qualcon}{raw_prod_group}(x)
-
-\method{qualcon}{aggregated_prod}(x)
-
-\method{qualcon}{aggregated_renewable_prod}(x)
-
-aggregated_renewable_prod(x)
+\method{qualcon}{data.frame}(x)
 }
 \arguments{
 \item{x}{data where controls have been evaluated}

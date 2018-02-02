@@ -31,15 +31,15 @@ augment_shifted <- function(x, col, hour_shift = -1, summary_colname = "summary"
                      ifelse(sign(hour_shift)<0, "PLUS", "MINUS"), "_", abs(hour_shift) )
 
   x <- as.data.table(x[, setdiff(names(x), new_name ) ])
-  x <- setorderv(x, meta$id.vars )
+  x <- setorderv(x, c(meta$countryvar, meta$timevar, meta$id.vars ) )
 
-  CTY_H1 <- x[, c(meta$id.vars, col, summary_colname), with=FALSE]
+  CTY_H1 <- x[, c(meta$countryvar, meta$timevar, meta$id.vars, col, summary_colname), with=FALSE]
   CTY_H1[[col]] <- ifelse( CTY_H1[[summary_colname]] %in% "invalid", NA_real_ , CTY_H1[[col]])
   CTY_H1[[summary_colname]] <- NULL
   CTY_H1 <- CTY_H1[, DateTime := DateTime + (-hour_shift * 60*60 ), by = "country" ]
   names( CTY_H1 )[3] <- new_name
 
-  x <- merge(x, CTY_H1, all.x = TRUE, all.y = FALSE, by = meta$id.vars)
+  x <- merge(x, CTY_H1, all.x = TRUE, all.y = FALSE, by = c(meta$countryvar, meta$timevar, meta$id.vars ) )
 
   meta <- add_df_meta(meta, "shift_columns", unique( c(meta$shift_columns, new_name ) ) )
 

@@ -4,10 +4,13 @@
 \alias{data_correct_with_rules}
 \title{correct datasets}
 \usage{
-data_correct_with_rules(data)
+data_correct_with_rules(data, refresh_validation = TRUE)
 }
 \arguments{
 \item{data}{dataset}
+
+\item{refresh_validation}{indicate to run \code{augment_validation}
+after corrections.}
 }
 \description{
 correct data based on condition expressed in a yaml file.
