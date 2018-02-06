@@ -1,7 +1,7 @@
 #' @importFrom fasttime fastPOSIXct
 entsoe_dir_reader <- function(dir, datetime_col, submissin_col,
                               drops = character(0), id_vars,
-                              sep = "\t", ct_format = "%Y-%m-%d %H:%M:%S"){
+                              sep = "\t"){
 
   agg_files <- list.files(dir, pattern = "(\\.csv)$", full.names = TRUE)
 

@@ -8,8 +8,7 @@ read_prod_capacity <- function( data_dir = NULL, join_class = "prod_capacity_typ
   data <- entsoe_dir_reader(dir = data_dir, datetime_col = time_vars,
                             submissin_col = submission_time_var,
                             drops = drops,
-                            id_vars = id_vars,
-                            ct_format = "%Y-%m-%d %H:%M:%S")
+                            id_vars = id_vars)
 
   setnames(data, "AggregatedInstalledCapacity", "installed_capacity")
   setnames(data, "ProductionType_Name", "production_type")

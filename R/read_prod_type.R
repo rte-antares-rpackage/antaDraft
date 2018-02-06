@@ -26,8 +26,7 @@ read_prod_type <- function(production_dir = NULL, capacity_dir = NULL, productio
   data <- entsoe_dir_reader(dir = production_dir, datetime_col = time_vars,
                             submissin_col = submission_time_var,
                             drops = c("year", "month", "day"),
-                            id_vars = id_vars,
-                            ct_format = "%Y-%m-%d %H:%M:%S")
+                            id_vars = id_vars)
 
   setnames(data, "ProductionType_Name", "production_type")
   setnames(data, "ActualConsumption","consumption")
@@ -87,7 +86,6 @@ agg_data.prod_by_type <- function(x, ...){
   dimensions <- get_ctry_rules(add_complex = TRUE )
   measures <- unique(dimensions[["AreaTypeCode"]])
 
-  # x <- x[ apply( x[, attr(x, "validators"), drop = FALSE], 1, all ) , , drop = FALSE]
   out <- as.data.table(x)
   out$y <- out$generation_output + out$consumption
   out <- out[, list(y = sum(y, na.rm = FALSE) ), by=c("country", "AreaTypeCode", "production_type", "DateTime")]

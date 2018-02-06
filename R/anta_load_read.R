@@ -19,8 +19,7 @@ anta_load <- function( data_dir = NULL ){
   data <- entsoe_dir_reader(dir = data_dir, datetime_col = time_vars,
                             submissin_col = submission_time_var,
                             drops = c("year", "month", "day"),
-                            id_vars = id_vars,
-                            ct_format = "%Y-%m-%d %H:%M:%S")
+                            id_vars = id_vars)
 
   data <- ref_join_class(x = data,
                          classobj = "raw_load",
