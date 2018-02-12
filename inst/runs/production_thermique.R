@@ -5,8 +5,8 @@ library(magrittr)
 main_dir <- "quality/thermique"
 dir.create(main_dir, recursive = TRUE, showWarnings = TRUE)
 
-production_dir <- "/Users/davidgohel/Documents/consulting/RTE/prod_201601/B01"
-capacity_dir <- "/Users/davidgohel/Documents/consulting/RTE/prod_201601/B06"
+production_dir <- "/Users/davidgohel/Documents/consulting/RTE/prod_20180115/B01"
+capacity_dir <- "/Users/davidgohel/Documents/consulting/RTE/prod_20180115/B06"
 
 global_options <- getOption("global_options")
 p_thermique_file <- global_options$thermal_production_per_country
@@ -25,7 +25,7 @@ qualcon(PTTA) %>% render_quality( file.path(main_dir, "types_agg") )
 
 # Production thermique par groupes -----
 
-production_dir <- "/Users/davidgohel/Documents/consulting/RTE/prod_201601/B02"
+production_dir <- "/Users/davidgohel/Documents/consulting/RTE/prod_20180115/B02"
 PTG <- read_prod_group(
   production_dir = production_dir,
   production_file = p_thermique_file) %>%
