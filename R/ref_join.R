@@ -34,28 +34,6 @@ ref_join.raw_load <- function(x, date_time){
   x
 }
 
-ref_join.prod_capacity_type <- function(x, date_time){
-
-  dimensions <- get_ctry_rules( add_complex = FALSE )
-  dimensions <- dimensions[, c("country", "MapCode", "AreaTypeCode") ]
-  global_options <- getOption("global_options")
-  existing_prod <- yaml.load_file(global_options$thermal_production_per_country)
-  existing_prod <- rbindlist(
-    lapply( existing_prod,
-            function(x)
-              data.frame(production_type = x, stringsAsFactors = FALSE)
-    ), idcol = "country" )
-
-  ref_data <- merge(dimensions, existing_prod, by = c("country"), all = FALSE, allow.cartesian=TRUE)
-
-
-  by_vars <- intersect(names(ref_data), names(x) )
-  x <- merge(ref_data, x, by = by_vars, all.x = TRUE, all.y = FALSE)
-
-  as.data.frame(x)
-}
-
-
 
 ref_join.on_ctry_dates <- function(x, date_time){
 

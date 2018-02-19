@@ -1,4 +1,4 @@
-read_prod_capacity <- function( data_dir = NULL, join_class = "prod_capacity_type"){
+read_prod_capacity <- function( data_dir = NULL, join_class, production_file){
   stopifnot(dir.exists(data_dir))
 
   id_vars <- c("DateTime", "AreaTypeCode", "MapCode", "ProductionType_Name")
@@ -12,8 +12,13 @@ read_prod_capacity <- function( data_dir = NULL, join_class = "prod_capacity_typ
 
   setnames(data, "AggregatedInstalledCapacity", "installed_capacity")
   setnames(data, "ProductionType_Name", "production_type")
+
   data <- data[installed_capacity>0]
-  data <- ref_join_class(x = data, classobj = join_class, date_time = time_vars)
+
+  data <- ref_join_class(x = data, classobj = join_class,
+                         date_time = time_vars, production_file)
+
+  # data <- ref_join_class(x = data, classobj = join_class, date_time = time_vars)
   data
 }
 

@@ -64,3 +64,32 @@ test_that("missing combinations are added", {
   expect_true( all( fr_prods %in% prod_data$production_type ) )
 })
 
+
+
+prod_type_dir <- system.file(package = "antaDraft", "data_sample",
+                             "prod_sample_20160114_BE_FR/B01")
+prod_group_dir <- system.file(package = "antaDraft", "data_sample",
+                              "prod_sample_20160114_BE_FR/B02")
+capacity_dir <- system.file(package = "antaDraft", "data_sample",
+                            "prod_sample_20160114_BE_FR/B06")
+
+
+test_that("minimum ensemble is giving dimensions", {
+
+  prod_file <- tempfile(fileext = ".yml")
+  cat("FRANCE:\n- Fossil Gas\n- Fossil Hard coal\n- Fossil Oil\n- Nuclear\nBELGIUM:\n- Fossil Gas\n- Fossil Hard coal\n- Fossil Oil\n- Nuclear\n",
+      file = prod_file)
+
+  ctry_file <- tempfile(fileext = ".yml")
+  cat("FRANCE:\n  CTY:\n    - FR\n  CTA:\n    - FR\n  BZN:\n    - FR\n",
+    file = ctry_file)
+
+  antaDraft::set_antadraft_load_option(atc_per_country = ctry_file)
+
+  prod_data <- read_prod_type(
+    production_dir = prod_type_dir, capacity_dir = capacity_dir,
+    production_file = prod_file)
+  expect_true( all( unique(prod_data$country) %in% "FRANCE" ) )
+
+})
+

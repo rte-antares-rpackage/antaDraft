@@ -7,7 +7,8 @@
 #' by types.
 #' @param capacity_dir datasets directory of data energy capacities
 #' by types.
-#' @param production_file production file to be used
+#' @param production_file YAML production file to be used. This file
+#' should contain for each country a list of production types.
 #' @examples
 #' production_dir <- system.file(package = "antaDraft", "data_sample",
 #'   "prod_sample_20160129/B01")
@@ -17,6 +18,11 @@
 #' prod_by_types <- read_prod_type(production_dir = production_dir,
 #'   capacity_dir = capacity_dir,
 #'   production_file = global_options$thermal_production_per_country)
+#'
+#' # Existing lists of production types -----
+#' system.file(package = "antaDraft", "config/global/thermal_production.yml")
+#' system.file(package = "antaDraft", "config/global/hps_production.yml")
+#' system.file(package = "antaDraft", "config/global/thermal_production.yml")
 read_prod_type <- function(production_dir = NULL, capacity_dir = NULL, production_file = NULL){
   stopifnot(dir.exists(production_dir), dir.exists(capacity_dir), file.exists(production_file))
 
@@ -38,12 +44,12 @@ read_prod_type <- function(production_dir = NULL, capacity_dir = NULL, productio
 
   data$observed[is.na(data$observed)] <- FALSE
 
-  capacity_channel <- read_prod_capacity(data_dir = capacity_dir)
+  capacity_channel <- read_prod_capacity(data_dir = capacity_dir, join_class= "on_ctry_dates_prod_type", production_file )
+
   capacity_channel$year_date <- year(capacity_channel$DateTime)
   capacity_channel$DateTime <- NULL
 
   data$year_date <- year(data$DateTime)
-
   data <- merge( x = data, y = capacity_channel,
                  by = c("year_date", "country", "MapCode", "AreaTypeCode",
                         "production_type"),

@@ -14,7 +14,8 @@ by types.}
 \item{capacity_dir}{datasets directory of data energy capacities
 by types.}
 
-\item{production_file}{production file to be used}
+\item{production_file}{YAML production file to be used. This file
+should contain for each country a list of production types.}
 }
 \description{
 import csv data representing production per types. The data
@@ -29,4 +30,9 @@ global_options <- getOption("global_options")
 prod_by_types <- read_prod_type(production_dir = production_dir,
   capacity_dir = capacity_dir,
   production_file = global_options$thermal_production_per_country)
+
+# Existing lists of production types -----
+system.file(package = "antaDraft", "config/global/thermal_production.yml")
+system.file(package = "antaDraft", "config/global/hps_production.yml")
+system.file(package = "antaDraft", "config/global/thermal_production.yml")
 }
