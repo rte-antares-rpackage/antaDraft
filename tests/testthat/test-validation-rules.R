@@ -19,6 +19,12 @@ test_that("expected results with lag less than 30 percent", {
 
 test_that("issue 18 with LAG", {
 
+  ctry_file <- tempfile(fileext = ".yml")
+  cat("BELGIUM:\n  CTY:\n    - BE\n  CTA:\n    - BE\n  BZN:\n    - BE\n",
+      file = ctry_file)
+
+  antaDraft::set_antadraft_load_option(atc_per_country = ctry_file)
+
   raw_belgium <- structure(list(DateTime = structure(c(1488733200, 1488733200,
   1488733200, 1488736800, 1488736800, 1488736800, 1488740400, 1488740400,
   1488740400, 1488744000, 1488744000, 1488744000), class = c("POSIXct",
@@ -53,7 +59,6 @@ test_that("issue 18 with LAG", {
   expect_true(all(aggregated_db$CTY_LAG_LT_30 ) )
   expect_true(all(aggregated_db$BZN_LAG_LT_30 ) )
   expect_true(all(aggregated_db$CTA_LAG_LT_30 ) )
-
 
 
 
