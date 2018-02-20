@@ -2,11 +2,15 @@ cyclic_dataset <- function(x, y = "TotalLoadValue",
                            gp_col = "DateTime",
                            group_col = "country",
                            measures_col = "AreaTypeCode" ){
+
   dimensions <- get_ctry_rules(add_complex = TRUE )
+  setDF(dimensions)
   measures <- unique(dimensions[[measures_col]])
-  # browser()
+
   cyclic_computations <- dimensions[!dimensions$simple_type,]
-  # print(cyclic_computations)
+  if( nrow(cyclic_computations) < 1 )
+    return(x[0])
+
   cyclic_computations$id <- seq_along(cyclic_computations[[group_col]])
   cyclic_computations <- as.data.frame(cyclic_computations)
   pivot_data <- unique(cyclic_computations[, c("rel_ctry", "rel", "prod", "id") ])
