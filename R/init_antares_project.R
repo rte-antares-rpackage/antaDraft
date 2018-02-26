@@ -36,7 +36,47 @@ add_load_to_project <- function(data, start_time, end_time){
     if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
     filename <- sprintf("load_%s.txt", casefold(ctry, upper = TRUE) )
     filename <- file.path(getOption("antares")$studyPath, "input/load/series", filename)
-    print(filename)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE)
+  }
+
+  invisible()
+}
+
+
+#' @export
+add_wind_to_project <- function(data, start_time, end_time){
+  newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
+  setDT(newdata)
+  newdata <- newdata[grepl("^wind", production_type, ignore.case = TRUE),]
+  newdata <- newdata[, list(CTY = sum(CTY, na.rm = FALSE) ),
+           by=c("country", "DateTime")]
+  setDF(newdata)
+  for( ctry in unique(newdata$country) ){
+    createArea(ctry, overwrite = TRUE)
+    curr_data <- newdata[newdata$country %in% ctry, c("DateTime", "CTY")]
+    if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
+    filename <- sprintf("wind_%s.txt", casefold(ctry, upper = TRUE) )
+    filename <- file.path(getOption("antares")$studyPath, "input/wind/series", filename)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE)
+  }
+
+  invisible()
+}
+
+#' @export
+add_solar_to_project <- function(data, start_time, end_time){
+  newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
+  setDT(newdata)
+  newdata <- newdata[grepl("^solar", production_type, ignore.case = TRUE),]
+  newdata <- newdata[, list(CTY = sum(CTY, na.rm = FALSE) ),
+           by=c("country", "DateTime")]
+  setDF(newdata)
+  for( ctry in unique(newdata$country) ){
+    createArea(ctry, overwrite = TRUE)
+    curr_data <- newdata[newdata$country %in% ctry, c("DateTime", "CTY")]
+    if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
+    filename <- sprintf("solar_%s.txt", casefold(ctry, upper = TRUE) )
+    filename <- file.path(getOption("antares")$studyPath, "input/solar/series", filename)
     fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE)
   }
 
