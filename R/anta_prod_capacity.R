@@ -14,9 +14,9 @@ read_prod_capacity <- function( data_dir = NULL, join_class, production_file){
   setnames(data, "ProductionType_Name", "production_type")
 
   data <- data[installed_capacity>0]
-
-  data <- ref_join_class(x = data, classobj = join_class,
-                         date_time = time_vars, production_file)
+  # browser()
+  # data <- ref_join_class(x = data, classobj = join_class,
+  #                        date_time = time_vars, production_file)
 
   # data <- ref_join_class(x = data, classobj = join_class, date_time = time_vars)
   data

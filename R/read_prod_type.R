@@ -51,7 +51,7 @@ read_prod_type <- function(production_dir = NULL, capacity_dir = NULL, productio
 
   data$year_date <- year(data$DateTime)
   data <- merge( x = data, y = capacity_channel,
-                 by = c("year_date", "country", "MapCode", "AreaTypeCode",
+                 by = c("year_date", "MapCode", "AreaTypeCode",
                         "production_type"),
                  all.x = TRUE, all.y = FALSE )
   data$year_date <- NULL
