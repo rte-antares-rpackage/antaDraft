@@ -2,12 +2,25 @@
 % Please edit documentation in R/init_antares_project.R
 \name{init_antares_project}
 \alias{init_antares_project}
+\alias{add_load_to_project}
+\alias{add_wind_to_project}
+\alias{add_solar_to_project}
 \title{create an empty antares project}
 \usage{
 init_antares_project(path)
+
+add_load_to_project(data, start_time, end_time)
+
+add_wind_to_project(data, start_time, end_time)
+
+add_solar_to_project(data, start_time, end_time)
 }
 \arguments{
 \item{path}{folder to be created}
+
+\item{data}{dataset}
+
+\item{start_time, end_time}{time limits (posixct)}
 }
 \description{
 create an empty antares project to be then

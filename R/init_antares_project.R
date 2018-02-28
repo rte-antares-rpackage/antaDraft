@@ -28,6 +28,9 @@ init_antares_project <- function(path){
 
 #' @export
 #' @importFrom data.table fwrite
+#' @param data dataset
+#' @param start_time,end_time time limits (posixct)
+#' @rdname init_antares_project
 add_load_to_project <- function(data, start_time, end_time){
   data <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
   for( ctry in unique(data$country) ){
@@ -36,7 +39,7 @@ add_load_to_project <- function(data, start_time, end_time){
     if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
     filename <- sprintf("load_%s.txt", casefold(ctry, upper = TRUE) )
     filename <- file.path(getOption("antares")$studyPath, "input/load/series", filename)
-    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
   }
 
   invisible()
@@ -44,6 +47,7 @@ add_load_to_project <- function(data, start_time, end_time){
 
 
 #' @export
+#' @rdname init_antares_project
 add_wind_to_project <- function(data, start_time, end_time){
   newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
   setDT(newdata)
@@ -57,13 +61,14 @@ add_wind_to_project <- function(data, start_time, end_time){
     if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
     filename <- sprintf("wind_%s.txt", casefold(ctry, upper = TRUE) )
     filename <- file.path(getOption("antares")$studyPath, "input/wind/series", filename)
-    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
   }
 
   invisible()
 }
 
 #' @export
+#' @rdname init_antares_project
 add_solar_to_project <- function(data, start_time, end_time){
   newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
   setDT(newdata)
@@ -77,7 +82,7 @@ add_solar_to_project <- function(data, start_time, end_time){
     if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
     filename <- sprintf("solar_%s.txt", casefold(ctry, upper = TRUE) )
     filename <- file.path(getOption("antares")$studyPath, "input/solar/series", filename)
-    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
   }
 
   invisible()
