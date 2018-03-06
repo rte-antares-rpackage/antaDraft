@@ -1,6 +1,6 @@
 #' @importFrom utils unzip
 #' @importFrom antaresEditObject createArea readIniFile writeIni
-#' @importFrom antaresRead setSimulationPath
+#' @importFrom antaresRead setSimulationPath getAreas
 #' @export
 #' @title create an empty antares project
 #' @description create an empty antares project to be then
@@ -26,6 +26,12 @@ init_antares_project <- function(path){
   setSimulationPath(path = path)
 }
 
+create_area_if_necessary <- function( ctry ){
+  if( !casefold(ctry, upper = FALSE) %in% getAreas() )
+    createArea(ctry, overwrite = FALSE)
+  invisible()
+}
+
 #' @export
 #' @importFrom data.table fwrite
 #' @param data dataset
@@ -33,10 +39,16 @@ init_antares_project <- function(path){
 #' @rdname init_antares_project
 add_load_to_project <- function(data, start_time, end_time){
   data <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
+
   for( ctry in unique(data$country) ){
-    createArea(ctry, overwrite = TRUE)
-    curr_data <- data[data$country %in% ctry, c("DateTime", "CTY")]
+    curr_data <- data[data$country %in% ctry, "CTY", drop = FALSE]
     if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
+    if( any( is.na(curr_data$CTY) ) )
+      stop(ctry, " has NA values")
+
+    create_area_if_necessary(ctry)
+
+    curr_data <- rbind( curr_data, data.frame( CTY = rep( 0, 8760 - nrow(curr_data) ) ) )
     filename <- sprintf("load_%s.txt", casefold(ctry, upper = TRUE) )
     filename <- file.path(getOption("antares")$studyPath, "input/load/series", filename)
     fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
@@ -56,9 +68,12 @@ add_wind_to_project <- function(data, start_time, end_time){
            by=c("country", "DateTime")]
   setDF(newdata)
   for( ctry in unique(newdata$country) ){
-    createArea(ctry, overwrite = TRUE)
-    curr_data <- newdata[newdata$country %in% ctry, c("DateTime", "CTY")]
+    curr_data <- newdata[newdata$country %in% ctry, "CTY", drop = FALSE]
     if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
+    if( any( is.na(curr_data$CTY) ) )
+      stop(ctry, " has NA values")
+    create_area_if_necessary(ctry)
+    curr_data <- rbind( curr_data, data.frame( CTY = rep( 0, 8760 - nrow(curr_data) ) ) )
     filename <- sprintf("wind_%s.txt", casefold(ctry, upper = TRUE) )
     filename <- file.path(getOption("antares")$studyPath, "input/wind/series", filename)
     fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
@@ -77,11 +92,37 @@ add_solar_to_project <- function(data, start_time, end_time){
            by=c("country", "DateTime")]
   setDF(newdata)
   for( ctry in unique(newdata$country) ){
-    createArea(ctry, overwrite = TRUE)
-    curr_data <- newdata[newdata$country %in% ctry, c("DateTime", "CTY")]
+    curr_data <- newdata[newdata$country %in% ctry, "CTY", drop = FALSE]
     if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
+    if( any( is.na(curr_data$CTY) ) )
+      stop(ctry, " has NA values")
+    create_area_if_necessary(ctry)
+    curr_data <- rbind( curr_data, data.frame( CTY = rep( 0, 8760 - nrow(curr_data) ) ) )
     filename <- sprintf("solar_%s.txt", casefold(ctry, upper = TRUE) )
     filename <- file.path(getOption("antares")$studyPath, "input/solar/series", filename)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
+  }
+
+  invisible()
+}
+
+
+#' @export
+#' @rdname init_antares_project
+add_ror_to_project <- function(data, start_time, end_time){
+  newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
+  setDT(newdata)
+  newdata <- newdata[grepl("^hydro", production_type, ignore.case = TRUE),]
+  newdata <- newdata[, list(CTY = sum(CTY, na.rm = FALSE) ),
+           by=c("country", "DateTime")]
+  setDF(newdata)
+  for( ctry in unique(newdata$country) ){
+    create_area_if_necessary(ctry)
+    curr_data <- newdata[newdata$country %in% ctry, "CTY", drop = FALSE]
+    if( any( is.na(curr_data$CTY) ) )
+      stop(ctry, " has NA values")
+    if( nrow(curr_data) > 8760 ) stop("can not write more than 8760 rows", call. = FALSE)
+    filename <- file.path(getOption("antares")$studyPath, "input/hydro/series", casefold(ctry, upper = FALSE), "ror.txt")
     fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
   }
 

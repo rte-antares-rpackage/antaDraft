@@ -16,9 +16,11 @@ Description: Read and transform data from entsoe to make them available in antar
   missing data imputation and data corrections.
 License: GPL (>= 2) | file LICENSE
 Depends: R (>= 2.10), antaresRead
-Imports: lubridate, validate, yaml, data.table, h2o, stats, ggplot2, UpSetR, fasttime, antaresEditObject
+Imports: lubridate, validate, yaml, data.table, h2o, stats, ggplot2, UpSetR, fasttime, 
+ antaresEditObject
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat, covr, magrittr,
     knitr, rmarkdown
 RoxygenNote: 6.0.1.9000
+remotes: rte-antares-rpackage/antaresEditObject
