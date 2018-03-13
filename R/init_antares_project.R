@@ -61,6 +61,33 @@ do_write_files_option1 <- function(data, iter_on_column = "country", y_column = 
     fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
   }
 }
+do_write_files_option2 <- function(data, iter_on_column = "country", y_column = "CTY",
+                           data_path, file_mask ){
+  list_index <- unique(data[[iter_on_column]])
+  for( ctry in list_index ){
+
+    create_area_if_necessary(ctry)
+
+    curr_data <- data[data[[iter_on_column]] %in% ctry, y_column, drop = FALSE]
+
+    if( any( is.na(curr_data[[y_column]]) ) ){
+      warning(ctry, " has NA values")
+    }
+
+    if( nrow(curr_data) > 12 )
+      stop("can not write more than 12 rows", call. = FALSE)
+    else if( nrow(curr_data) < 1 ) next
+    else if( nrow(curr_data) < 12 ){
+      curr_data <- rbind(curr_data,
+                         data.frame(CTY = rep(0, 12 - nrow(curr_data) ))
+      )
+    }
+
+    filename <- sprintf(file_mask, casefold(ctry, upper = FALSE) )
+    filename <- file.path(getOption("antares")$studyPath, data_path, filename)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
+  }
+}
 
 #' @export
 #' @importFrom data.table fwrite
@@ -133,7 +160,7 @@ add_hwr_to_project <- function(data, start_time, end_time){
   setorderv(newdata, cols = c("country", "DateTimeYear", "DateTimeMonth") )
   setDF(newdata)
 
-  do_write_files_option1(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/hydro/series", file_mask = "%s/mod.txt")
+  do_write_files_option2(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/hydro/series", file_mask = "%s/mod.txt")
 
   invisible()
 }
