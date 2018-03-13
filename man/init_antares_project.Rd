@@ -6,6 +6,7 @@
 \alias{add_wind_to_project}
 \alias{add_solar_to_project}
 \alias{add_ror_to_project}
+\alias{add_hwr_to_project}
 \title{create an empty antares project}
 \usage{
 init_antares_project(path)
@@ -16,7 +17,11 @@ add_wind_to_project(data, start_time, end_time)
 
 add_solar_to_project(data, start_time, end_time)
 
-add_ror_to_project(data, start_time, end_time)
+add_ror_to_project(data, start_time, end_time,
+  productions = c("Hydro Pumped Storage", "Hydro Water Reservoir",
+  "Hydro Run-of-river and poundage"))
+
+add_hwr_to_project(data, start_time, end_time)
 }
 \arguments{
 \item{path}{folder to be created}

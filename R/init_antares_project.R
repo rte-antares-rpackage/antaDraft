@@ -34,7 +34,7 @@ create_area_if_necessary <- function( ctry ){
   invisible()
 }
 
-do_write_files <- function(data, iter_on_column = "country", y_column = "CTY",
+do_write_files_option1 <- function(data, iter_on_column = "country", y_column = "CTY",
                            data_path, file_mask ){
   list_index <- unique(data[[iter_on_column]])
   for( ctry in list_index ){
@@ -50,11 +50,18 @@ do_write_files <- function(data, iter_on_column = "country", y_column = "CTY",
     if( nrow(curr_data) > 8760 )
       stop("can not write more than 8760 rows", call. = FALSE)
     else if( nrow(curr_data) < 1 ) next
+    else if( nrow(curr_data) < 8760 ){
+      curr_data <- rbind(curr_data,
+                         data.frame(CTY = rep(0, 8760 - nrow(curr_data) ))
+      )
+    }
+
     filename <- sprintf(file_mask, casefold(ctry, upper = FALSE) )
     filename <- file.path(getOption("antares")$studyPath, data_path, filename)
     fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
   }
 }
+
 #' @export
 #' @importFrom data.table fwrite
 #' @param data dataset
@@ -62,7 +69,7 @@ do_write_files <- function(data, iter_on_column = "country", y_column = "CTY",
 #' @rdname init_antares_project
 add_load_to_project <- function(data, start_time, end_time){
   data <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
-  do_write_files(data = data, iter_on_column = "country", y_column = "CTY", data_path = "input/load/series", file_mask = "load_%s.txt")
+  do_write_files_option1(data = data, iter_on_column = "country", y_column = "CTY", data_path = "input/load/series", file_mask = "load_%s.txt")
   invisible()
 }
 
@@ -75,7 +82,7 @@ add_wind_to_project <- function(data, start_time, end_time){
   newdata <- newdata[grepl("^wind", production_type, ignore.case = TRUE),]
   newdata <- newdata[, list(CTY = sum(CTY, na.rm = TRUE) ), by=c("country", "DateTime")]
   setDF(newdata)
-  do_write_files(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/wind/series", file_mask = "wind_%s.txt")
+  do_write_files_option1(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/wind/series", file_mask = "wind_%s.txt")
   invisible()
 }
 
@@ -88,7 +95,7 @@ add_solar_to_project <- function(data, start_time, end_time){
   newdata <- newdata[, list(CTY = sum(CTY, na.rm = TRUE) ), by=c("country", "DateTime")]
   setDF(newdata)
 
-  do_write_files(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/solar/series", file_mask = "solar_%s.txt")
+  do_write_files_option1(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/solar/series", file_mask = "solar_%s.txt")
 
   invisible()
 }
@@ -96,15 +103,37 @@ add_solar_to_project <- function(data, start_time, end_time){
 
 #' @export
 #' @rdname init_antares_project
-add_ror_to_project <- function(data, start_time, end_time){
+add_ror_to_project <- function(data, start_time, end_time,
+                               productions = c("Hydro Pumped Storage",
+                                               "Hydro Water Reservoir",
+                                               "Hydro Run-of-river and poundage") ){
   newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
+  newdata <- newdata[newdata$production_type %in% productions,]
   setDT(newdata)
-  newdata <- newdata[grepl("^hydro", production_type, ignore.case = TRUE),]
   newdata <- newdata[, list(CTY = sum(CTY, na.rm = TRUE) ),
            by=c("country", "DateTime")]
   setDF(newdata)
 
-  do_write_files(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/hydro/series", file_mask = "ror_%s.txt")
+  do_write_files_option1(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/hydro/series", file_mask = "%s/ror.txt")
+
+  invisible()
+}
+
+
+#' @export
+#' @rdname init_antares_project
+add_hwr_to_project <- function(data, start_time, end_time){
+  newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
+  newdata <- newdata[newdata$production_type %in% "Hydro Water Reservoir",]
+  newdata$DateTimeMonth <- data.table::month(newdata$DateTime)
+  newdata$DateTimeYear <- data.table::year(newdata$DateTime)
+  setDT(newdata)
+  newdata <- newdata[, list(CTY = sum(CTY, na.rm = TRUE) ),
+           by=c("country", "DateTimeYear", "DateTimeMonth")]
+  setorderv(newdata, cols = c("country", "DateTimeYear", "DateTimeMonth") )
+  setDF(newdata)
+
+  do_write_files_option1(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/hydro/series", file_mask = "%s/mod.txt")
 
   invisible()
 }
