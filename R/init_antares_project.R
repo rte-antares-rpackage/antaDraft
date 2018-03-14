@@ -7,7 +7,35 @@
 #' enriched with data.
 #' @param path folder to be created
 #' @examples
+#' \dontrun{
+#' library(antaresEditObject)
+#' library(magrittr)
+#'
+#' load_dir <- "/.../load_20180115"
+#' load_data <- anta_load(data_dir = load_dir ) %>% agg_data()
+#'
+#' production_dir <- "/.../prod_20180115/B01"
+#' capacity_dir <- "/.../prod_20180115/B06"
+#'
+#' global_options <- getOption("global_options")
+#' p_renewable_file <- global_options$renewable_production_per_country
+#'
+#' PTT <- read_prod_type(
+#'   production_dir = production_dir,
+#'   capacity_dir = capacity_dir,
+#'   production_file = p_renewable_file) %>%
+#'   agg_data()
+#'
+#' start_time <- fasttime::fastPOSIXct("2017-01-01 00:00:00", tz = "GMT")
+#' end_time <- fasttime::fastPOSIXct("2017-01-31 23:00:00", tz = "GMT")
+#'
 #' init_antares_project("demo_proj")
+#' add_load_to_project(load_data,  start_time = start_time,  end_time = end_time )
+#' add_wind_to_project(PTT, start_time = start_time, end_time = end_time )
+#' add_solar_to_project(PTT, start_time = start_time, end_time = end_time )
+#' add_ror_to_project(PTT, start_time = start_time, end_time = end_time )
+#' add_hwr_to_project(PTT, start_time = start_time, end_time = end_time )
+#' }
 init_antares_project <- function(path){
   f_template <- system.file(package = package_name, "etude_vide_package.zip")
 
