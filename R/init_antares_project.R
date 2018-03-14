@@ -117,6 +117,36 @@ do_write_files_option2 <- function(data, iter_on_column = "country", y_column = 
   }
 }
 
+do_write_files_psp <- function(data, iter_on_column = "country", y_column = "CTY",
+                           data_path, file_mask ){
+  list_index <- unique(data[[iter_on_column]])
+  for( ctry in list_index ){
+
+    create_area_if_necessary(ctry)
+
+    curr_data <- data[data[[iter_on_column]] %in% ctry, y_column, drop = FALSE]
+
+    if( any( is.na(curr_data[[y_column]]) ) ){
+      warning(ctry, " has NA values")
+    }
+
+    if( nrow(curr_data) > 8760 )
+      stop("can not write more than 8760 rows", call. = FALSE)
+    else if( nrow(curr_data) < 1 ) next
+    else if( nrow(curr_data) < 8760 ){
+      curr_data <- rbind(curr_data,
+                         data.frame(CTY = rep(0, 8760 - nrow(curr_data) ))
+      )
+    }
+    proto_ <- rep(0, 8760)
+    curr_data <- data.frame(X1 = proto_, X2 = proto_, X3 = proto_, X4 = proto_, X5 = proto_,
+               X6 = proto_, X7 = proto_, CTY = curr_data$CTY, X9 = proto_ )
+    filename <- sprintf(file_mask, casefold(ctry, upper = FALSE) )
+    filename <- file.path(getOption("antares")$studyPath, data_path, filename)
+    fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
+  }
+}
+
 #' @export
 #' @importFrom data.table fwrite
 #' @param data dataset
@@ -131,6 +161,8 @@ add_load_to_project <- function(data, start_time, end_time){
 
 #' @export
 #' @rdname init_antares_project
+#' @section add_wind_to_project:
+#' The function will aggregate wind productions and generate an hourly TS.
 add_wind_to_project <- function(data, start_time, end_time){
   newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
   setDT(newdata)
@@ -143,6 +175,8 @@ add_wind_to_project <- function(data, start_time, end_time){
 
 #' @export
 #' @rdname init_antares_project
+#' @section add_solar_to_project:
+#' The function will aggregate solar productions and generate an hourly TS.
 add_solar_to_project <- function(data, start_time, end_time){
   newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
   setDT(newdata)
@@ -158,6 +192,12 @@ add_solar_to_project <- function(data, start_time, end_time){
 
 #' @export
 #' @rdname init_antares_project
+#' @param productions production types to be summed (default to
+#' c("Hydro Pumped Storage", "Hydro Water Reservoir",
+#' "Hydro Run-of-river and poundage"))
+#' @section add_ror_to_project:
+#' The function will aggregate hydro productions type (that can specified with
+#' argument \code{productions}) and generate an hourly TS.
 add_ror_to_project <- function(data, start_time, end_time,
                                productions = c("Hydro Pumped Storage",
                                                "Hydro Water Reservoir",
@@ -177,6 +217,9 @@ add_ror_to_project <- function(data, start_time, end_time,
 
 #' @export
 #' @rdname init_antares_project
+#' @section add_hwr_to_project:
+#' The function will aggregate Hydro Water Reservoir production
+#' and generate a monthly TS.
 add_hwr_to_project <- function(data, start_time, end_time){
   newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
   newdata <- newdata[newdata$production_type %in% "Hydro Water Reservoir",]
@@ -189,6 +232,20 @@ add_hwr_to_project <- function(data, start_time, end_time){
   setDF(newdata)
 
   do_write_files_option2(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/hydro/series", file_mask = "%s/mod.txt")
+
+  invisible()
+}
+
+#' @export
+#' @rdname init_antares_project
+#' @section add_hps_to_project_in_psp:
+#' The function will use Hydro Pumped Storage production
+#' and write a TS to "input/misc-gen" directory.
+add_hps_to_project_in_psp <- function(data, start_time, end_time){
+  newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
+  newdata <- newdata[newdata$production_type %in% "Hydro Pumped Storage",]
+
+  do_write_files_psp(data = newdata, iter_on_column = "country", y_column = "CTY", data_path = "input/misc-gen", file_mask = "miscgen-%s.txt")
 
   invisible()
 }

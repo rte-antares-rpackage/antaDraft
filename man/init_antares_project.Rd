@@ -7,6 +7,7 @@
 \alias{add_solar_to_project}
 \alias{add_ror_to_project}
 \alias{add_hwr_to_project}
+\alias{add_hps_to_project_in_psp}
 \title{create an empty antares project}
 \usage{
 init_antares_project(path)
@@ -22,6 +23,8 @@ add_ror_to_project(data, start_time, end_time,
   "Hydro Run-of-river and poundage"))
 
 add_hwr_to_project(data, start_time, end_time)
+
+add_hps_to_project_in_psp(data, start_time, end_time)
 }
 \arguments{
 \item{path}{folder to be created}
@@ -29,11 +32,43 @@ add_hwr_to_project(data, start_time, end_time)
 \item{data}{dataset}
 
 \item{start_time, end_time}{time limits (posixct)}
+
+\item{productions}{production types to be summed (default to
+c("Hydro Pumped Storage", "Hydro Water Reservoir",
+"Hydro Run-of-river and poundage"))}
 }
 \description{
 create an empty antares project to be then
 enriched with data.
 }
+\section{add_wind_to_project}{
+
+The function will aggregate wind productions and generate an hourly TS.
+}
+
+\section{add_solar_to_project}{
+
+The function will aggregate solar productions and generate an hourly TS.
+}
+
+\section{add_ror_to_project}{
+
+The function will aggregate hydro productions type (that can specified with
+argument \code{productions}) and generate an hourly TS.
+}
+
+\section{add_hwr_to_project}{
+
+The function will aggregate Hydro Water Reservoir production
+and generate a monthly TS.
+}
+
+\section{add_hps_to_project_in_psp}{
+
+The function will use Hydro Pumped Storage production
+and write a TS to "input/misc-gen" directory.
+}
+
 \examples{
 \dontrun{
 library(antaresEditObject)
