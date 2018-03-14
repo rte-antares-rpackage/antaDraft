@@ -43,7 +43,7 @@ enriched with data.
 }
 \section{add_wind_to_project}{
 
-The function will aggregate wind productions and generate an hourly TS.
+The function will aggregate on and off shore wind productions and generate an hourly TS.
 }
 
 \section{add_solar_to_project}{

@@ -140,7 +140,7 @@ do_write_files_psp <- function(data, iter_on_column = "country", y_column = "CTY
     }
     proto_ <- rep(0, 8760)
     curr_data <- data.frame(X1 = proto_, X2 = proto_, X3 = proto_, X4 = proto_, X5 = proto_,
-               X6 = proto_, X7 = proto_, CTY = curr_data$CTY, X9 = proto_ )
+               X6 = proto_, CTY = curr_data$CTY, X7 = proto_ )
     filename <- sprintf(file_mask, casefold(ctry, upper = FALSE) )
     filename <- file.path(getOption("antares")$studyPath, data_path, filename)
     fwrite(curr_data, file = filename, sep = "\t", col.names = FALSE, dateTimeAs = "write.csv")
@@ -162,7 +162,7 @@ add_load_to_project <- function(data, start_time, end_time){
 #' @export
 #' @rdname init_antares_project
 #' @section add_wind_to_project:
-#' The function will aggregate wind productions and generate an hourly TS.
+#' The function will aggregate on and off shore wind productions and generate an hourly TS.
 add_wind_to_project <- function(data, start_time, end_time){
   newdata <- data[data$DateTime >= start_time & data$DateTime <= end_time,]
   setDT(newdata)
