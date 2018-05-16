@@ -93,7 +93,14 @@ agg_data.prod_by_type <- function(x, ...){
   measures <- unique(dimensions[["AreaTypeCode"]])
 
   out <- as.data.table(x)
-  out$y <- out$generation_output + out$consumption
+
+  if("Hydro Pumped Storage" %in% unique(out$production_type)){
+    out$y <- out$generation_output + out$consumption
+  }else{
+    out[production_type=="Hydro Pumped Storage", y:=generation_output-consumption]
+    out[production_type!="Hydro Pumped Storage", y:=generation_output+consumption]
+  }
+
   out <- out[, list(y = sum(y, na.rm = FALSE) ), by=c("country", "AreaTypeCode", "production_type", "DateTime")]
 
   add_db <- cyclic_dataset(out, y = "y",
