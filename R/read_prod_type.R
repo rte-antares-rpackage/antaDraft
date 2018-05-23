@@ -95,6 +95,7 @@ agg_data.prod_by_type <- function(x, ...){
   out <- as.data.table(x)
 
   if("Hydro Pumped Storage" %in% unique(out$production_type)){
+
     out$y <- out$generation_output + out$consumption
   }else{
     out[production_type=="Hydro Pumped Storage", y:=generation_output-consumption]
