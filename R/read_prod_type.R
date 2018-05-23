@@ -94,10 +94,12 @@ agg_data.prod_by_type <- function(x, ...){
 
   out <- as.data.table(x)
 
-  if("Hydro Pumped Storage" %in% unique(out$production_type)){
+  #if we have no PSP then we can add prod and consumption together
+  if(!("Hydro Pumped Storage" %in% unique(out$production_type))){
 
     out$y <- out$generation_output + out$consumption
   }else{
+    #if we have PSP, we must compute psp correctly
     out[production_type=="Hydro Pumped Storage", y:=generation_output-consumption]
     out[production_type!="Hydro Pumped Storage", y:=generation_output+consumption]
   }

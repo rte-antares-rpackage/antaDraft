@@ -93,3 +93,35 @@ test_that("minimum ensemble is giving dimensions", {
 
 })
 
+
+
+
+test_that("Hydro Pumped Storage pump during the night", {
+
+  prod_type_dir<-system.file(package = "antaDraft", "data_sample",
+                             "prod_sample_ren_fr/B01")
+
+  capacity_dir<-system.file(package = "antaDraft", "data_sample",
+                                      "prod_sample_ren_fr/B06")
+
+  tmpfile <- tempfile(fileext = ".yml")
+  cat("FRANCE:\n- Hydro Pumped Storage\n", file = tmpfile)
+
+  prod_data <- read_prod_type(
+    production_dir = prod_type_dir, capacity_dir = capacity_dir,
+    production_file = tmpfile)
+
+  prod_type_valid <- augment_validation(prod_data)
+
+  prod_type_valid_agg <- agg_data(prod_type_valid)
+
+  start_time<-as.POSIXct("2016/03/02", tz = "GMT")
+  end_time<-as.POSIXct("2016/03/02 04:00:00", tz = "GMT")
+
+  sapply(prod_type_valid_agg[ prod_type_valid_agg$DateTime >= start_time & prod_type_valid_agg$DateTime <= end_time , ]$CTY,
+         test<-function(x){
+           expect_lt(x,0)
+         })
+
+
+})
