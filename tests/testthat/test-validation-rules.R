@@ -82,6 +82,14 @@ test_that("issue 18 with LAG", {
   expect_is(aggregated_db$DateTime, "POSIXct")
   expect_true(aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
                 "BZN_LAG_LT_30"])
+  resToCheck <- aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
+                         "BZN_LAG_LT_30"]
+  if(!resToCheck){
+    warnings(paste0("aggregated_db[aggregated_db$DateTime==2017-08-13 18:00:00,
+                         BZN_LAG_LT_30]", " is not true" ))
+    warnings(paste0( "value : " , aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
+                                                      "BZN_LAG_LT_30"]))
+  }
   #dont work in appveyor
   #expect_true(aggregated_db[data.table::hour(aggregated_db$DateTime) %in% 18,
   #                          "BZN_LAG_LT_30"])
