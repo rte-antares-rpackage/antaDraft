@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 read_prod_capacity <- function( data_dir = NULL, join_class, production_file){
   stopifnot(dir.exists(data_dir))
 

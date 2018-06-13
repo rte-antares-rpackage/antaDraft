@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 cyclic_dataset <- function(x, y = "TotalLoadValue",
                            gp_col = "DateTime",
                            group_col = "country",

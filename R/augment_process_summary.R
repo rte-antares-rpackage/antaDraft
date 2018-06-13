@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @title add summary columns
 #' @description add validation column

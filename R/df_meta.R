@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 capture_df_meta <- function( x ){
   out <- attributes(x)
   out$names <- NULL

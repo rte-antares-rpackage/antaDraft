@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 ref_join_class <- function(x, classobj, ...){
   old_class <- class(x)
   class(x) <- c(classobj, old_class)

@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 isolate_invalid <- function( x ){
   UseMethod("isolate_invalid")
 }

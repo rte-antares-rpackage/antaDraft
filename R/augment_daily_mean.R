@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @title add daily average value
 #' @description add daily average values to an existing dataset

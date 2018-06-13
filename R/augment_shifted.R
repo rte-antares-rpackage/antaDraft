@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @title add a shifted value
 #' @description add a shifted value to an existing dataset.

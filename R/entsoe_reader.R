@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @importFrom fasttime fastPOSIXct
 entsoe_dir_reader <- function(dir, datetime_col, submissin_col,
                               drops = character(0), id_vars,

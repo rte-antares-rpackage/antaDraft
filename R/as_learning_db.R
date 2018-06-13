@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @title prepare an aggregated load dataset to be model
 #' @description add columns to an aggregated load dataset
 #' so that a model can be run.

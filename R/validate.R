@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @importFrom validate validator confront values voptions
 #' @export
 #' @title evaluate validation rules for each line of a dataset

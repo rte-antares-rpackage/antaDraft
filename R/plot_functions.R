@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @importFrom ggplot2 ggplot aes_string geom_line scale_y_continuous theme_minimal
 #' @title plot an aggregated dataset

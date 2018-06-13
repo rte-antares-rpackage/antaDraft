@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @title add weekly season id columns
 #' @description add weekly season id columns

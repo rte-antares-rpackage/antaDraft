@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @title correct datasets
 #' @description correct data based on condition expressed in a yaml file.

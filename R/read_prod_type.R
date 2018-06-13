@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @importFrom data.table year setnames setDF setDT
 #' @export
 #' @title production data per types of production
@@ -93,7 +95,17 @@ agg_data.prod_by_type <- function(x, ...){
   measures <- unique(dimensions[["AreaTypeCode"]])
 
   out <- as.data.table(x)
-  out$y <- out$generation_output + out$consumption
+
+  #if we have no PSP then we can add prod and consumption together
+  if(!("Hydro Pumped Storage" %in% unique(out$production_type))){
+
+    out$y <- out$generation_output + out$consumption
+  }else{
+    #if we have PSP, we must compute psp correctly
+    out[production_type=="Hydro Pumped Storage", y:=generation_output-consumption]
+    out[production_type!="Hydro Pumped Storage", y:=generation_output+consumption]
+  }
+
   out <- out[, list(y = sum(y, na.rm = FALSE) ), by=c("country", "AreaTypeCode", "production_type", "DateTime")]
 
   add_db <- cyclic_dataset(out, y = "y",

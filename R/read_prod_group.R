@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @importFrom data.table year setnames setDF setDT
 #' @export
 #' @title production data per groups of production
