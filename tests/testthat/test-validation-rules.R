@@ -83,11 +83,12 @@ test_that("issue 18 with LAG", {
   resToCheck <- aggregated_db[as.character(aggregated_db$DateTime)=="2017-08-13 18:00:00",
                          "BZN_LAG_LT_30"]
   if(!resToCheck){
-    expect_error(max(2), warning(paste0("aggregated_db[aggregated_db$DateTime==2017-08-13 18:00:00,
-                         BZN_LAG_LT_30]", " is not true" )))
-    expect_error(max(2), warning(paste0( " value : " , aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
+    expect_error(stop("nothing"),
+                 warning("aggregated_db[aggregated_db$DateTime==2017-08-13 18:00:00,BZN_LAG_LT_30]
+                         is not true" ))
+    expect_error(stop("nothing"), warning(paste0( " value : " , aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
                                                       ])))
-    expect_error(max(2), warning(paste0( " date : " , aggregated_db[as.character(aggregated_db$DateTime)=="2017-08-13 18:00:00",
+    expect_error(stop("nothing"), warning(paste0( " date : " , aggregated_db[as.character(aggregated_db$DateTime)=="2017-08-13 18:00:00",
                         "DateTime"] )))
   }
   expect_true(resToCheck)
