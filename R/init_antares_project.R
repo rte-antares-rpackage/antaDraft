@@ -264,7 +264,7 @@ add_hps_to_project_in_psp <- function(data, start_time, end_time){
 #' @section add_hps_to_project_in_virtualPsp:
 #' The function will use Hydro Pumped Storage installed capacity
 #' and create Pumped Storage Power plant (PSP) with the function \code{\link[antaresEditObject]{createPSP}}
-add_hps_to_project_in_virtualPsp <- function(data, namePumping="PSP_In", nameTurbining="PSP_Out", overwrite = FALSE, efficiency=NULL, timeStepBindConstraint="weekly", ...){
+add_hps_to_project_in_virtualPsp <- function(data, namePumping="PSP_In", nameTurbining="PSP_Out", overwrite = FALSE, efficiency=NULL, timeStepBindConstraint="weekly"){
 
   #data.table warning
   AreaTypeCode <- NULL
