@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 globalVariables(c(":=", "DateTime", "SubmissionTS", "TotalLoadValue", "installed_capacity",
                   "time_frame", "y", "CTY", "production_type",
                   "generation_output", "consumption"))

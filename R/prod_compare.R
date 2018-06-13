@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @title compare production by types and production by groups
 #' @description compare by types and by groups production data.

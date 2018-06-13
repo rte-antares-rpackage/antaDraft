@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @title define and save model
 #' @description create a model for each country of an validated and corrected
 #' load dataset. Each model is saved in a file.

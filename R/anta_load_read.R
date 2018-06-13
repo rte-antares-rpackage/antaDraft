@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @importFrom yaml yaml.load_file
 #' @export
 #' @title import load data from an entsoe repository

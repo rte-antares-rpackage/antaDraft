@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' @export
 #' @title Aggregate raw dataset from country rules
 #' @description From a raw dataset and a set of rules, aggregations are performed

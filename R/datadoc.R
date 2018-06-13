@@ -1,3 +1,5 @@
+#Copyright © 2018 RTE Réseau de transport d’électricité
+
 #' load data for Germany, Luxembourg and Austria
 #'
 #' The dataset describes raw load data sent by entsoe.
