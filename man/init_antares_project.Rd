@@ -29,7 +29,7 @@ add_hps_to_project_in_psp(data, start_time, end_time)
 
 add_hps_to_project_in_virtualPsp(data, namePumping = "PSP_In",
   nameTurbining = "PSP_Out", overwrite = FALSE, efficiency = NULL,
-  timeStepBindConstraint = "weekly", ...)
+  timeStepBindConstraint = "weekly")
 }
 \arguments{
 \item{path}{folder to be created}
