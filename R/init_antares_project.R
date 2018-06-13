@@ -266,11 +266,16 @@ add_hps_to_project_in_psp <- function(data, start_time, end_time){
 #' and create Pumped Storage Power plant (PSP) with the function \code{\link[antaresEditObject]{createPSP}}
 add_hps_to_project_in_virtualPsp <- function(data, namePumping="PSP_In", nameTurbining="PSP_Out", overwrite = FALSE, efficiency=NULL, timeStepBindConstraint="weekly", ...){
 
+  #data.table warning
+  AreaTypeCode <- NULL
+  country <- NULL
+  installedCapacity <- NULL
+
   correctedData <- .check_data_for_add_hps_to_project_in_virtualPsp(data)
   #get the list of countries and their step capacity
   dataDT <- as.data.table(correctedData)
   #create a PSP only if generation_output is > 0
-  areasAndCapacities <- unique(dataDT[AreaTypeCode == "CTY" & production_type == "Hydro Pumped Storage"  & (installed_capacity > 0 | generation_output>0), .(country, installedCapacity)])
+  areasAndCapacities <- unique(dataDT[AreaTypeCode == "CTY" & production_type == "Hydro Pumped Storage"  & (installed_capacity > 0 | generation_output>0), list(country, installedCapacity)])
 
   for (area in areasAndCapacities$country){
     create_area_if_necessary(area)
