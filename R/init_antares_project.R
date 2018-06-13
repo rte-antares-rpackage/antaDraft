@@ -1,3 +1,5 @@
+#Copyright © 2016 RTE Réseau de transport d’électricité
+
 #' @importFrom utils unzip
 #' @importFrom antaresEditObject createArea readIniFile writeIni
 #' @importFrom antaresRead setSimulationPath getAreas
@@ -57,7 +59,7 @@ init_antares_project <- function(path){
 create_area_if_necessary <- function( ctry ){
   if( !casefold(ctry, upper = FALSE) %in% getAreas() ){
     message("createArea for ", ctry)
-    createArea(ctry, overwrite = FALSE)
+    createArea(ctry, overwrite = TRUE)
   }
   invisible()
 }
@@ -250,4 +252,81 @@ add_hps_to_project_in_psp <- function(data, start_time, end_time){
   invisible()
 }
 
+#' @importFrom antaresEditObject createPSP
+#' @export
+#' @rdname init_antares_project
+#' @param namePumping The name of the pumping area
+#' @param nameTurbining The name of the turbining area
+#' @param overwrite Overwrite the Pumped Storage Power plant if already exist.
+#' This will overwrite the previous area and links.
+#' @param efficiency The efficiency of the virtual PSP
+#' @param timeStepBindConstraint Time step for the binding constraint : \code{daily} or \code{weekly}
+#' @section add_hps_to_project_in_virtualPsp:
+#' The function will use Hydro Pumped Storage installed capacity
+#' and create Pumped Storage Power plant (PSP) with the function \code{\link[antaresEditObject]{createPSP}}
+add_hps_to_project_in_virtualPsp <- function(data, namePumping="PSP_In", nameTurbining="PSP_Out", overwrite = FALSE, efficiency=NULL, timeStepBindConstraint="weekly", ...){
 
+  correctedData <- .check_data_for_add_hps_to_project_in_virtualPsp(data)
+  #get the list of countries and their step capacity
+  dataDT <- as.data.table(correctedData)
+  #create a PSP only if generation_output is > 0
+  areasAndCapacities <- unique(dataDT[AreaTypeCode == "CTY" & production_type == "Hydro Pumped Storage"  & (installed_capacity > 0 | generation_output>0), .(country, installedCapacity)])
+
+  for (area in areasAndCapacities$country){
+    create_area_if_necessary(area)
+  }
+
+  antaresEditObject::createPSP(areasAndCapacities = areasAndCapacities, namePumping = namePumping, nameTurbining = nameTurbining, efficiency = efficiency, overwrite = overwrite)
+
+}
+
+.check_data_for_add_hps_to_project_in_virtualPsp <- function(data){
+  #data.frame
+  if (!is.data.frame(data)){
+    stop("data must be a data.frame.")
+  }
+
+  #check if we have the necessary data
+  if (is.null(data$installed_capacity) & is.null(data$installedCapacity) ){
+    stop("data should contain installed_capacity or installedCapacity")
+  }
+  if (is.null(data$installed_capacity)){
+    data$installed_capacity <- data$installedCapacity
+  }
+  if (is.null(data$installedCapacity)){
+    data$installedCapacity <- data$installed_capacity
+  }
+  #colum
+  if (is.null(data$production_type) ){
+    stop("data should contain production_type")
+  }
+  #colum
+  if (is.null(data$AreaTypeCode) ){
+    stop("data should contain AreaTypeCode")
+  }
+  #colum
+  if (!("CTY" %in% unique(data$AreaTypeCode))){
+    stop("AreaTypeCode should contain CTY")
+  }
+  #colum
+  if (is.null(data$generation_output) ){
+    stop("data should contain generation_output")
+  }
+  #colum
+  if (is.null(data$country) ){
+    stop("data should contain country")
+  }
+
+  #check if we have the necessary data
+  if (!("Hydro Pumped Storage" %in% unique(data$production_type))){
+    stop("production_type should contain Hydro Pumped Storage", call. = FALSE)
+  }
+
+  #add a step if a capacity of Hydro Pumped Storage is > than 0
+  if (max(unique(data[data$production_type == "Hydro Pumped Storage",]$installed_capacity), na.rm = TRUE)<0){
+    stop("All installed_capacities are negative.", call. = FALSE)
+  }
+
+  return(data)
+
+}

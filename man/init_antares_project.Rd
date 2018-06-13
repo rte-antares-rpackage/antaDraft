@@ -8,6 +8,7 @@
 \alias{add_ror_to_project}
 \alias{add_hwr_to_project}
 \alias{add_hps_to_project_in_psp}
+\alias{add_hps_to_project_in_virtualPsp}
 \title{create an empty antares project}
 \usage{
 init_antares_project(path)
@@ -25,6 +26,10 @@ add_ror_to_project(data, start_time, end_time,
 add_hwr_to_project(data, start_time, end_time)
 
 add_hps_to_project_in_psp(data, start_time, end_time)
+
+add_hps_to_project_in_virtualPsp(data, namePumping = "PSP_In",
+  nameTurbining = "PSP_Out", overwrite = FALSE, efficiency = NULL,
+  timeStepBindConstraint = "weekly", ...)
 }
 \arguments{
 \item{path}{folder to be created}
@@ -36,6 +41,17 @@ add_hps_to_project_in_psp(data, start_time, end_time)
 \item{productions}{production types to be summed (default to
 c("Hydro Pumped Storage", "Hydro Water Reservoir",
 "Hydro Run-of-river and poundage"))}
+
+\item{namePumping}{The name of the pumping area}
+
+\item{nameTurbining}{The name of the turbining area}
+
+\item{overwrite}{Overwrite the Pumped Storage Power plant if already exist.
+This will overwrite the previous area and links.}
+
+\item{efficiency}{The efficiency of the virtual PSP}
+
+\item{timeStepBindConstraint}{Time step for the binding constraint : \code{daily} or \code{weekly}}
 }
 \description{
 create an empty antares project to be then
@@ -67,6 +83,12 @@ and generate a monthly TS.
 
 The function will use Hydro Pumped Storage production
 and write a TS to "input/misc-gen" directory.
+}
+
+\section{add_hps_to_project_in_virtualPsp}{
+
+The function will use Hydro Pumped Storage installed capacity
+and create Pumped Storage Power plant (PSP) with the function \code{\link[antaresEditObject]{createPSP}}
 }
 
 \examples{
