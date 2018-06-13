@@ -80,16 +80,18 @@ test_that("issue 18 with LAG", {
 
   aggregated_db <- augment_validation(data_neg_val)
   expect_is(aggregated_db$DateTime, "POSIXct")
-  expect_true(aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
-                "BZN_LAG_LT_30"])
-  resToCheck <- aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
+  resToCheck <- aggregated_db[as.character(aggregated_db$DateTime)=="2017-08-13 18:00:00",
                          "BZN_LAG_LT_30"]
   if(!resToCheck){
-    warnings(paste0("aggregated_db[aggregated_db$DateTime==2017-08-13 18:00:00,
+    warning(paste0("aggregated_db[aggregated_db$DateTime==2017-08-13 18:00:00,
                          BZN_LAG_LT_30]", " is not true" ))
-    warnings(paste0( "value : " , aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
-                                                      "BZN_LAG_LT_30"]))
+    warning(paste0( " value : " , aggregated_db[aggregated_db$DateTime=="2017-08-13 18:00:00",
+                                                      ]))
+    warning(paste0( " date : " , aggregated_db[as.character(aggregated_db$DateTime)=="2017-08-13 18:00:00",
+                        "DateTime"] ))
   }
+  expect_true(resToCheck)
+
   #dont work in appveyor
   #expect_true(aggregated_db[data.table::hour(aggregated_db$DateTime) %in% 18,
   #                          "BZN_LAG_LT_30"])
